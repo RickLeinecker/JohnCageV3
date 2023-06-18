@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import ReactAudioPlayer from "react-audio-player";
-import { Container, Row, Form, Card, Col, Dropdown, ButtonGroup, Button, Table, Modal } from "react-bootstrap";
+import { Row, Form, Card } from "react-bootstrap";
 //import Collapsible from "react-collapsible";
 
 interface result {
-  name: string,
+  title: string,
   id: number
 }
 
@@ -14,33 +14,8 @@ function buildPath(route) {
 }
 
 function App() {
-  const [searchList, setSearchList] = useState<Array<result>>([{ name: 'one', id: 1 }]);
+  const [searchList, setSearchList] = useState<Array<result>>([{ title: 'defaultTitle', id: 1 }]);
   const [searchText, setSearchText] = useState<string>('');
-
-  const performSearch = async function () {
-    try {
-      //Get recording metadata according to search text
-      const response = await fetch(buildPath('api/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-      console.log(buildPath('api/searchSongs?search=' + searchText));
-      var res = JSON.parse(await response.text());
-      var sd = JSON.parse(JSON.stringify(res));
-      const searchResults = sd.searchResults;
-
-      //Save metadata to "result" interface array
-      var searchTemp: result[] = [];
-      for (var i = 0; i < searchResults.length; ++i) {
-        searchTemp.push({ name: searchResults[i].Title, id: searchResults[i].ID });
-      }
-
-      //Save metadata to page for display
-      console.log(searchTemp);
-      setSearchList(searchTemp);
-    }
-    catch (e) {
-      alert(e.toString());
-      return;
-    }
-  };
 
   const SearchChangeHandler = (event) => {
     event.preventDefault();
@@ -48,7 +23,33 @@ function App() {
   };
 
   useEffect(() => {
-    performSearch();
+    const performSearch = async function () {
+      try {
+        //Get recording metadata according to search text
+        const response = await fetch(buildPath('api/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        console.log(buildPath('api/searchSongs?search=' + searchText));
+        var res = JSON.parse(await response.text());
+        var sd = JSON.parse(JSON.stringify(res));
+        const searchResults = sd.searchResults;
+
+        //Save metadata to "result" interface array
+        var searchTemp: result[] = [];
+        for (var i = 0; i < searchResults.length; ++i) {
+          searchTemp.push({ title: searchResults[i].Title, id: searchResults[i].ID });
+        }
+
+        //Save metadata to page for display
+        console.log(searchTemp);
+        setSearchList(searchTemp);
+      }
+      catch (e) {
+        alert(e.toString());
+        return;
+      }
+    };
+
+    console.log(searchText);
+    //performSearch();
   }, [searchText]);
 
   return (
@@ -64,7 +65,7 @@ function App() {
             <Row>
               <Card style={{ width: '18rem' }}>
                 <Card.Body>
-                  <Card.Title>{searchList[index].name}</Card.Title>
+                  <Card.Title>{searchList[index].title}</Card.Title>
                   <ReactAudioPlayer src={'http://localhost:5000/api/getSong?id=' + String(searchList[index].id)} controls />
                 </Card.Body>
               </Card>

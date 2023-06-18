@@ -54,11 +54,13 @@ app.get('/api/getSong', async (req, res, next) => {
   console.log(sqlSelect);
 
   pool.execute(sqlSelect, function (err, result) {
-    if (err) throw err;
-    if (result[0]) {
+    if (err) {
+      console.log("Get song failed.");
+      ms.pipe(req, res, './Music/' + 'default' + '.mp3');
+    }
+    else if (result[0]) {
       fileName = result[0].Title;
       ms.pipe(req, res, './Music/' + fileName + '.mp3');
-      //res.status(200);
     }
   });
 });
