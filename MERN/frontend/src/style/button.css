@@ -1,0 +1,30 @@
+button {
+  display: block;
+  background-color: black;
+}
+
+.album>span:after {
+  content: ' (an album)';
+  background-color: chocolate;
+}
+
+.active {
+  font-weight: bold;
+}
+
+.active>span:after {
+  content: ' ACTIVE';
+  background-color: green;
+}
+
+button.current
+{
+  background-color: rgb(245, 200, 64);
+  color: black;
+}
+
+button.inactive
+{
+  background-color: black;
+  color: rgb(245, 200, 64);
+}
