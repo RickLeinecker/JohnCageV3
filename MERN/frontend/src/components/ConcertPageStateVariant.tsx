@@ -33,8 +33,8 @@ class ConcertPage extends Component
       }
     
     handleClick = (index:number) => {
-    this.setState({ activeIndex: index});
-    console.log("New state is "+this.state.activeIndex);
+        this.setState({ activeIndex: index});
+        console.log("New state is "+this.state.activeIndex);
     }
 
     mainList:string[] = ["/alarm.wav", "/bark.wav", "/reverb.wav", "/trap.mp3"];
@@ -51,9 +51,9 @@ class ConcertPage extends Component
                 )
             }
         </div>
-        <MusicCard songName = {this.mainList[this.state.activeIndex]}/>
+            <MusicCard songName = {this.mainList[this.state.activeIndex]}/>
         <div>
-        <ReactAudioPlayer src={this.mainList[this.state.activeIndex]} controls />
+            <ReactAudioPlayer src={this.mainList[this.state.activeIndex]} controls />
         </div>
         </div>
     }
