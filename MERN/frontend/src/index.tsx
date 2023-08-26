@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import NavBar from "./components/NavBar";
 import ConcertPage from "./components/ConcertPageStateVariant";
 import AppTest from "./components/AppTest"
+import AppCompiled from "./components/CompiledApp"
 import { create } from "domain";
 
 // const root = ReactDOM.createRoot(
@@ -16,6 +17,7 @@ import { create } from "domain";
 //     <App />
 //   </React.StrictMode>
 // );
+
 
 class X extends Component {
   render() {
@@ -32,7 +34,7 @@ class X extends Component {
 // }
 
 class Nav extends Component{
-  render(): React.ReactNode {
+  render() {
       {
         return <NavBar/>
       }
@@ -53,17 +55,17 @@ class ButtonState extends Component{
   }
 }
 
-const navElement = document.getElementById("nav");
-const navRoot = createRoot(navElement!);
-navRoot.render(<Nav/>);
+// const navElement = document.getElementById("nav");
+// const navRoot = createRoot(navElement!);
+// navRoot.render(<Nav/>);
 
 const musicElement = document.getElementById("musicMenu");
 const musicRoot = createRoot(musicElement!);
-musicRoot.render(<Concert />);
+musicRoot.render(<AppCompiled/>);
 
-const insertTest = document.getElementById("insertTest");
-const insertRoot = createRoot(insertTest!);
-insertRoot.render(<ButtonState />);
+// const insertTest = document.getElementById("insertTest");
+// const insertRoot = createRoot(insertTest!);
+// insertRoot.render(<ButtonState />);
 // const musicElement = document.getElementById("musicList");
 // ReactDOM.render(<AudioList />, musicElement);
 // const cardElement = document.getElementById("metaCard");

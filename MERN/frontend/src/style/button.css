@@ -1,6 +1,6 @@
 button {
   display: block;
-  background-color: black;
+  background-color: white;
 }
 
 .album>span:after {
@@ -27,4 +27,25 @@ button.inactive
 {
   background-color: black;
   color: rgb(245, 200, 64);
+}
+
+button.inactive:hover
+{
+  background-color: white;
+}
+
+button.current:hover
+{
+  background-color: rgb(245, 200, 64);
+}
+
+button.activeTag
+{
+  background-color: gray;
+  
+}
+
+button.inactiveTag
+{
+  background-color: white;
 }

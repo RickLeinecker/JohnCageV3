@@ -1,6 +1,28 @@
 import React, { Component } from "react";
 
-class NavBar extends Component {
+type ComponentPage = {
+  changePage?:Function;
+}
+
+type NavButton = {
+  changePage:Function;
+  index:number;
+}
+
+class NavButtons extends Component<NavButton>{
+
+  render(){
+    return <li className="nav-item">
+                  <a className="nav-link" aria-current="page" href="#">
+                    Home
+                  </a>
+                </li>
+  }
+
+}
+
+
+class NavBar extends Component<ComponentPage> {
   render() {
     return (
       <React.Fragment>
@@ -9,9 +31,9 @@ class NavBar extends Component {
           style={{ backgroundColor: "#d3b035" }}
         >
           <div className="container-fluid">
-            <a className="navbar-brand" href="#">
-              John Cage Tribute
-            </a>
+            <div className="row">
+            <h2>John Cage Tribute</h2>
+            </div>
             <button
               className="navbar-toggler"
               type="button"
@@ -30,12 +52,12 @@ class NavBar extends Component {
             >
               <ul className="nav navbar-nav ms-auto">
                 <li className="nav-item">
-                  <a className="nav-link active" aria-current="page" href="#">
+                  <a className="nav-link" aria-current="page" href="#">
                     Home
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link border" href="#">
+                  <a className="nav-link active" href="#">
                     Concert
                   </a>
                 </li>
