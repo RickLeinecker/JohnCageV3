@@ -19,7 +19,7 @@ class SongButton extends Component<ButtonState>
     nameOfClass:string = "btn "
     handleClick = () => this.props.onClick(this.props.index)
     render(){
-        console.log("Current song is "+this.props.index+" and isActive: "+this.props.isActive);
+        // console.log("Current song is "+this.props.index+" and isActive: "+this.props.isActive);
     return <button type="button" className={this.nameOfClass+
         (this.props.isActive ? 'current' : 'inactive')
       }

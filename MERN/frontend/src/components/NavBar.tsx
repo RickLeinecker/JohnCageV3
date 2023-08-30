@@ -1,29 +1,40 @@
 import React, { Component } from "react";
-
-type ComponentPage = {
-  changePage?:Function;
-}
+import {Link,useLocation, useMatch} from "react-router-dom"
+import PropTypes from 'prop-types'
 
 type NavButton = {
-  changePage:Function;
-  index:number;
+
+  buttonName:string;
 }
 
 class NavButtons extends Component<NavButton>{
 
+  goTo:string = "/"+this.props.buttonName;
+  nameOfClass:string = "nav-link ";
+
+  // location = useLocation();
+  // isActive = useMatch({path:this.location.pathname, end:true})
+
   render(){
     return <li className="nav-item">
-                  <a className="nav-link" aria-current="page" href="#">
-                    Home
-                  </a>
+                  <Link className={this.nameOfClass} aria-current="page" to={this.goTo}>
+                    {this.props.buttonName}
+                  </Link>
                 </li>
   }
 
 }
 
 
-class NavBar extends Component<ComponentPage> {
+
+
+class NavBar extends Component {
+
+  buttonList:string[] = ["Home", "Concert","Schedule","Register","Login"];
+  
+
   render() {
+    
     return (
       <React.Fragment>
         <nav
@@ -51,31 +62,13 @@ class NavBar extends Component<ComponentPage> {
               id="navbarSupportedContent"
             >
               <ul className="nav navbar-nav ms-auto">
-                <li className="nav-item">
-                  <a className="nav-link" aria-current="page" href="#">
-                    Home
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link active" href="#">
-                    Concert
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Schedule
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Login
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">
-                    Sign Up
-                  </a>
-                </li>
+                {
+                this.buttonList.map((key,i) =>
+                {
+                    return <NavButtons key ={i} buttonName={key}/>
+                }
+                )
+                }
               </ul>
             </div>
           </div>
@@ -84,5 +77,6 @@ class NavBar extends Component<ComponentPage> {
     );
   }
 }
+
 
 export default NavBar;

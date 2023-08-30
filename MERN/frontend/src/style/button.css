@@ -42,6 +42,7 @@ button.current:hover
 button.activeTag
 {
   background-color: gray;
+  color:white;
   
 }
 

@@ -8,6 +8,7 @@ import ConcertPage from "./components/ConcertPageStateVariant";
 import AppTest from "./components/AppTest"
 import AppCompiled from "./components/CompiledApp"
 import { create } from "domain";
+import { BrowserRouter,Route,Routes } from "react-router-dom"
 
 // const root = ReactDOM.createRoot(
 //   document.getElementById('nav') as HTMLElement
@@ -19,9 +20,40 @@ import { create } from "domain";
 // );
 
 
-class X extends Component {
+class Compiled extends Component {
+    state = {
+      activePage: 0
+  }
+
+  handleClick = (index:number) => {
+      this.setState({ activePage: index});
+      console.log("Now Selecting"+this.state.activePage);
+  }
+
   render() {
-    return <App />;
+    console.log("Now in "+window.location);
+
+    // switch(window.location.pathname)
+    // {
+    //     case "/Home":
+    //       rendered = <ConcertPage/>
+    //       break;
+    //     default:
+    //       console.log("Uh what to do");
+    //       rendered = <AppTest/>
+    //       break;
+    // }
+    return (<div>
+      <BrowserRouter>
+    <App/>
+    <br/>
+    <Routes>
+    <Route path ="/" element = {<ConcertPage/>}/>
+      <Route path ="/Home" element = {<AppTest/>}/>
+      <Route path ="/Concert" element = {<ConcertPage/>}/>
+    </Routes>
+    </BrowserRouter>
+    </div>);
   }
 }
 
@@ -33,13 +65,17 @@ class X extends Component {
 //   }
 // }
 
-class Nav extends Component{
-  render() {
-      {
-        return <NavBar/>
-      }
-  }
-}
+// class Nav extends Component{
+//   handleClick()
+//   {
+    
+//   }
+//   render() {
+//       {
+//         return <NavBar changePage={this.handleClick}/>
+//       }
+//   }
+// }
 
 class Concert extends Component {
   render() {
@@ -61,7 +97,7 @@ class ButtonState extends Component{
 
 const musicElement = document.getElementById("musicMenu");
 const musicRoot = createRoot(musicElement!);
-musicRoot.render(<AppCompiled/>);
+musicRoot.render(<Compiled/>);
 
 // const insertTest = document.getElementById("insertTest");
 // const insertRoot = createRoot(insertTest!);
