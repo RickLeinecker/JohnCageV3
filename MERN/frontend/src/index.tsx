@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import NavBar from "./components/NavBar";
 import ConcertPage from "./components/ConcertPageStateVariant";
 import AppTest from "./components/AppTest"
-import AppCompiled from "./components/CompiledApp"
+import HomePage from "./components/HomePage";
 import { create } from "domain";
 import { BrowserRouter,Route,Routes } from "react-router-dom"
 
@@ -48,8 +48,8 @@ class Compiled extends Component {
     <App/>
     <br/>
     <Routes>
-    <Route path ="/" element = {<ConcertPage/>}/>
-      <Route path ="/Home" element = {<AppTest/>}/>
+    <Route path ="/" element = {<HomePage/>}/>
+      <Route path ="/Home" element = {<HomePage/>}/>
       <Route path ="/Concert" element = {<ConcertPage/>}/>
     </Routes>
     </BrowserRouter>
