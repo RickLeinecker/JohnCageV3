@@ -1,17 +1,14 @@
-//Misc Libraries
 import { useEffect, useRef } from 'react';
-import '../CSS/App.css';
-import { Row, Card, Button } from "react-bootstrap";
-import io from 'socket.io-client'; //Investigate WebRTC to use instead of, or with, socket io
-import { useNavigate } from 'react-router-dom';
+import { Card } from "react-bootstrap";
+import io from 'socket.io-client';
 
 //Functions
 function Listen() {
 
-  let socket: any;
-  const navigate = useNavigate();
-  var audioElement = useRef<HTMLAudioElement>();
-  var sourceBuffer;
+  var socket: any;
+  var sourceBuffer: SourceBuffer;
+  const audioElement = useRef<HTMLAudioElement>(null);
+
 
   //useEffect hook "runs" the inside every time a variable in the square brackets at the bottom
   //changes. Since that array of variables is empty, it will run only once, when the page loads.
@@ -21,23 +18,24 @@ function Listen() {
     var mediaSource = new MediaSource();
     mediaSource.addEventListener("sourceopen", sourceOpen);
 
-    //buffer.addEventListener('error', console.log);
-
     function sourceOpen() {
       sourceBuffer = mediaSource.addSourceBuffer("audio/webm; codec=opus");// webm required for MediaSource compatibility.
-      console.log("sourceOpen");
-      console.log(mediaSource);
+      console.log("sourceOpen: ", mediaSource);
     };
 
-    audioElement.current.src = URL.createObjectURL(mediaSource);
+    if (audioElement.current) {
+      audioElement.current.src = URL.createObjectURL(mediaSource);
+    }
+
+    //buffer.addEventListener('error', console.log);
 
     socket = io("http://localhost:5001");
 
-    socket.on('receiveGreet', (data: String) => {
+    socket.on('greet', (data: String) => {
       console.log('Listen Page "receiveGreet" socket event:', data);
     });
 
-    socket.on('listening', function (data) {
+    socket.on('listening', function (data: any) {
       console.log(data);
       if (audioElement.current) {
         sourceBuffer.appendBuffer(data);
@@ -47,17 +45,18 @@ function Listen() {
 
   return (
     <div className="Listen Page">
-      <Row>
-        <Card>
-          <Card.Body>
-            <Card.Title>Listen to Streaming Audio</Card.Title>
-            <audio preload='auto' ref={audioElement} controls={true} autoPlay={true}></audio>
-          </Card.Body>
-        </Card>
-      </Row>
-      <Button onClick={() => console.log("Testing")}>Testing</Button>
-      <Button onClick={() => console.log("Initialize")}>Initialize Audio Context</Button>
-      <Button onClick={() => navigate("/")}>Home</Button>
+      <Card
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Card.Title>Listen Page</Card.Title>
+        <Card.Body>
+          <Card.Title>Listen to Stream</Card.Title>
+          <audio preload='auto' ref={audioElement} controls={true} autoPlay={true}></audio>
+        </Card.Body>
+      </Card>
     </div>
   );
 }

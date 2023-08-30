@@ -1,17 +1,13 @@
-//Misc Libraries
-import { useRef, useEffect } from 'react';
-import '../CSS/App.css';
-import { Row, Card, Button } from "react-bootstrap";
+import { useEffect, useRef } from 'react';
+import { Card, Button } from "react-bootstrap";
 import io from 'socket.io-client';
-import { useNavigate } from 'react-router-dom';
 
 //Functions
 function Record() {
 
-  let socket: any;
-  const navigate = useNavigate();
-  var mediaRecorder = useRef<MediaRecorder>();
-  var inputStream = null;
+  var socket: any;
+  var inputStream: MediaStream;
+  const mediaRecorder = useRef<MediaRecorder>();
 
   //useEffect hook "runs" the inside every time a variable in the square brackets at the bottom
   //changes. Since that array of variables is empty, it will run once when the page loads.
@@ -20,7 +16,7 @@ function Record() {
   useEffect(() => {
     socket = io("http://localhost:5001");
 
-    socket.on('receiveGreet', (data: String) => {
+    socket.on('greet', (data: String) => {
       console.log('Record Page "receiveGreet" socket event:', data);
     });
   }, []);
@@ -30,7 +26,7 @@ function Record() {
     inputStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
     // This object appears to take the data stream from the micrphone, presumably raw audio,
-    // then encodes it using the specified type,
+    // then encodes it using the specified mime type,
     // and makes it available in the ondataavailable event.
     mediaRecorder.current = new MediaRecorder(inputStream, { mimeType: "audio/webm; codecs=opus" });// webm required for MediaSource compatibility.
 
@@ -43,7 +39,7 @@ function Record() {
     };
 
     //This integer argument is the milliseconds between each "ondataavailable" call.
-    mediaRecorder.current.start(100);
+    mediaRecorder.current.start(1000);
   };
 
   const stopRecording = async function () {
@@ -56,17 +52,19 @@ function Record() {
 
   return (
     <div className="Audio Recording">
-      <Row>
-        <header>Record Page</header>
-        <Card>
-          <Card.Body>
-            <Card.Title>Record Audio</Card.Title>
-            <Button onClick={() => startRecording()}>Start</Button>
-            <Button onClick={() => stopRecording()}>Stop</Button>
-          </Card.Body>
-        </Card>
-      </Row>
-      <Button onClick={() => navigate("/")}>Home</Button>
+      <Card
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Card.Title>Record Page</Card.Title>
+        <Card.Body>
+          <Card.Title>Record Audio</Card.Title>
+          <Button onClick={() => startRecording()}>Start</Button>
+          <Button onClick={() => stopRecording()}>Stop</Button>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
