@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import ConcertPage from "./components/ConcertPageStateVariant";
 import AppTest from "./components/AppTest"
 import HomePage from "./components/HomePage";
+import ModeratorPage from "./components/ModeratorPage";
 import { create } from "domain";
 import { BrowserRouter,Route,Routes } from "react-router-dom"
 
@@ -48,7 +49,7 @@ class Compiled extends Component {
     <App/>
     <br/>
     <Routes>
-    <Route path ="/" element = {<HomePage/>}/>
+    <Route path ="/" element = {<ModeratorPage/>}/>
       <Route path ="/Home" element = {<HomePage/>}/>
       <Route path ="/Concert" element = {<ConcertPage/>}/>
     </Routes>
