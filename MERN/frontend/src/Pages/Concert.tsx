@@ -4,6 +4,7 @@ import { Component, useEffect, useState } from "react";
 import MusicCard from "../Components/MusicCard";
 import { TagCard } from "../Components/TagCard";
 import { Form } from "react-bootstrap";
+const ServerURL = "http://localhost";
 
 
 //Interfaces/objects
@@ -34,7 +35,7 @@ class SongButton extends Component<ButtonState>
 
 //Functions
 function buildPath(route: String) {
-    return 'http://localhost:5000/' + route;
+    return ServerURL + ':5000' + route;
 }
 
 function ConcertPage() {
@@ -57,8 +58,8 @@ function ConcertPage() {
         const performSearch = async function () {
             try {
                 //Get recording metadata according to search text
-                const response = await fetch(buildPath('api/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-                console.log("Fetch requrest URL: ", buildPath('api/searchSongs?search=' + searchText));
+                const response = await fetch(buildPath('/api/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                console.log("Fetch requrest URL: ", buildPath('/api/searchSongs?search=' + searchText));
                 var res = JSON.parse(await response.text());
                 var sd = JSON.parse(JSON.stringify(res));
                 const searchResults = sd.searchResults;

@@ -2,10 +2,11 @@ import "../Style/App.css";
 import "../Style/button.css"
 import JohnCage from "../Images/JohnCage.png"
 import { useEffect, useState } from "react";
+const ServerURL = "http://localhost";
 
 //Functions
 function buildPath(route: String) {
-    return 'http://localhost:5000/' + route;
+    return ServerURL + ':5000' + route;
 }
 
 function HomePage() {
@@ -16,7 +17,7 @@ function HomePage() {
     useEffect(() => {
         const helloWorld = async function () {
             try {
-                const response = await fetch(buildPath(""), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+                const response = await fetch(buildPath("/"), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
                 setResText("API Response Text: " + await response.text());
             }
             catch (e) {
