@@ -7,6 +7,7 @@ const fs = require("fs");
 const ms = require('mediaserver');
 const expressPort = 5000;
 const socketPort = 5001;
+const URL = "http://localhost";
 
 // Audio mixing tool: fluent-ffmpeg
 // Requires ffmpeg to be installed already, like MySQL
@@ -19,7 +20,7 @@ module.exports = app;
 //Socket server configuration
 const socketio = require("socket.io");
 const socketServer = http.createServer(app);
-const io = socketio(socketServer, { cors: { origin: "http://localhost:3000" } });
+const io = socketio(socketServer, { cors: { origin: URL + ":3000" } });
 
 //Socket server functionality
 io.on('connect', (socket) => {
@@ -116,6 +117,7 @@ app.post('/api/searchSongs', async (req, res, next) => {
 });
 
 app.get('/api/getSong', async (req, res, next) => {
+  //res.status(200).send({ searchResults: "REEEE" });
   ms.pipe(req, res, './Music/' + "bass" + '.mp3');
 
   /*
