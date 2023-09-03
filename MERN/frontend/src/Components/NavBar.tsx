@@ -6,14 +6,13 @@ type NavButton = {
   buttonName: string;
 }
 
-class NavButtons extends Component<NavButton>{
-
-  goTo: string = "/" + this.props.buttonName;
+class NavButtons extends Component<NavButton> {
+  Link: string = "/" + this.props.buttonName;
   nameOfClass: string = "nav-link ";
 
   render() {
     return <li className="nav-item">
-      <Link className={this.nameOfClass} aria-current="page" to={this.goTo}>
+      <Link className={this.nameOfClass} aria-current="page" to={this.Link}>
         {this.props.buttonName}
       </Link>
     </li>

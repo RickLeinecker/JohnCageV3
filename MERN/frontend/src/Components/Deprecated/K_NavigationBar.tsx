@@ -14,9 +14,9 @@ function NavigationBar() {
         </Navbar.Brand>
         <Stack direction="horizontal" gap={4}>
           <Button variant="secondary" onClick={() => navigate("/")}>Home</Button>
-          <Button variant="secondary" onClick={() => navigate("/listen")}>Listen</Button>
-          <Button variant="secondary" onClick={() => navigate("/record")}>Record</Button>
-          <Button variant="secondary" onClick={() => navigate("/catalogue")}>Catalogue</Button>
+          <Button variant="secondary" onClick={() => navigate("/Listen")}>Listen</Button>
+          <Button variant="secondary" onClick={() => navigate("/Record")}>Record</Button>
+          <Button variant="secondary" onClick={() => navigate("/Concerts")}>Concerts</Button>
         </Stack>
       </Navbar>
     </div>
