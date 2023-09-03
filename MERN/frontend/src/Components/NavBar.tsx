@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {Nav, Container, Navbar} from"react-bootstrap";
 import { Link, useLocation, useMatch } from "react-router-dom"
 import PropTypes from 'prop-types'
 
@@ -27,43 +28,29 @@ class NavBar extends Component {
   render() {
 
     return (
-      <React.Fragment>
-        <nav
+        <Navbar
           className="navbar navbar-expand-sm navbar-light"
           style={{ backgroundColor: "#d3b035" }}
+          expand="lg"
         >
-          <div className="container-fluid">
-            <div className="row">
+          <Container>
+            <Navbar.Brand>
               <h2>John Cage Tribute</h2>
-            </div>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls ="basic-navbar-nav"/>
+            <Navbar.Collapse id ="basic-navbar-nav">
             <br />
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul className="nav navbar-nav ms-auto">
+              <Nav className="me-auto">
                 {
                   this.buttonList.map((key, i) => {
                     return <NavButtons key={i} buttonName={key} />
                   }
                   )
                 }
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </React.Fragment>
+              </Nav>
+            </Navbar.Collapse>
+            </Container>
+        </Navbar>
     );
   }
 }
