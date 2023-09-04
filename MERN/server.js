@@ -22,6 +22,8 @@ const socketio = require("socket.io");
 const socketServer = http.createServer(app);
 const io = socketio(socketServer, { cors: { origin: URL + ":3000" } });
 
+console.log("NODE_ENV: " + process.env.NODE_ENV)
+
 //Socket server functionality
 io.on('connect', (socket) => {
 
@@ -90,8 +92,8 @@ app.use((req, res, next) => {
 });
 
 //Express "app" API
-app.get('/', (req, res) => {
-  res.send('Hello World');
+app.get('/api/', (req, res) => {
+  res.send('You get: JCT Express API');
 });
 
 app.post('/api/searchSongs', async (req, res, next) => {

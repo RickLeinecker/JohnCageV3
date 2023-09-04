@@ -5,7 +5,8 @@
     "main": "server.tsx",
     "scripts": {
         "test": "jest",
-        "start": "nodemon server.js"
+        "start": "NODE_ENV=development nodemon server.js",
+        "startServer": "NODE_ENV=production nodemon server.js"
     },
     "author": "",
     "license": "ISC",
