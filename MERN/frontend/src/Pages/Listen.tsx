@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Card } from "react-bootstrap";
 import io from 'socket.io-client';
-const ServerURL = "http://localhost";
+import { socketURL } from "../Variables/socketServer";
 
 //Functions
 function Listen() {
@@ -30,7 +30,7 @@ function Listen() {
 
     //buffer.addEventListener('error', console.log);
 
-    socket = io(ServerURL + ":5001");
+    socket = io(socketURL);
 
     socket.on('greet', (data: String) => {
       console.log('Listen Page "receiveGreet" socket event:', data);

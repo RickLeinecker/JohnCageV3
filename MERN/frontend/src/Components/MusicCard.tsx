@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../Style/button.css"
 import ReactAudioPlayer from "react-audio-player";
-const ServerURL = "http://localhost";
+import { expressURL } from "../Variables/expressServer";
 
 type SongName = {
   songName: string;
@@ -32,7 +32,7 @@ function MusicCard({ songName }: SongName) {
               Delete
             </button>
             <br /><br />
-            <ReactAudioPlayer src={ServerURL + ':5000/api/getSong?id=' + String(0)} controls />
+            <ReactAudioPlayer src={expressURL + '/getSong?id=' + String(0)} controls />
           </div>
         </div>
       </div>

@@ -2,11 +2,11 @@ import "../Style/App.css";
 import "../Style/button.css"
 import JohnCage from "../Images/JohnCage.png"
 import { useEffect, useState } from "react";
-const ServerURL = "http://localhost";
+import { expressURL } from "../Variables/expressServer";
 
 //Functions
 function buildPath(route: String) {
-    return ServerURL + ':5000' + route;
+    return expressURL + route;
 }
 
 function HomePage() {
@@ -39,6 +39,7 @@ function HomePage() {
                 </div>
                 <div className="col">
                     <div className="row">
+                        <h2>{"Environment: " + process.env.NODE_ENV}</h2>
                         <h2>{resText}</h2>
                     </div>
                     <br />
