@@ -7,7 +7,6 @@ const fs = require("fs");
 const ms = require('mediaserver');
 const expressPort = 5000;
 const socketPort = 5001;
-const URL = "http://localhost";
 
 // Audio mixing tool: fluent-ffmpeg
 // Requires ffmpeg to be installed already, like MySQL
@@ -18,9 +17,10 @@ const URL = "http://localhost";
 module.exports = app;
 
 //Socket server configuration
+const socketCORS = require("./socketCORS.js");
 const socketio = require("socket.io");
 const socketServer = http.createServer(app);
-const io = socketio(socketServer, { cors: { origin: URL + ":3000" } });
+const io = socketio(socketServer, { cors: { origin: socketCORS } });
 
 console.log("NODE_ENV: " + process.env.NODE_ENV)
 
