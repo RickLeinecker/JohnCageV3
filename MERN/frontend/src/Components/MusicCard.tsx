@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "../Style/button.css"
 import ReactAudioPlayer from "react-audio-player";
+import MusicPlayer from "./MusicPlayer";
+import AudioPlayer from "./AudioPlayer";
 
 type SongName = {
   songName: string;
@@ -31,7 +33,9 @@ function MusicCard({ songName }: SongName) {
               Delete
             </button>
             <br /><br />
-            <ReactAudioPlayer src={'http://localhost:5000/api/getSong?id=' + String(0)} controls />
+            {/* <ReactAudioPlayer src={'http://localhost:5000/api/getSong?id=' + String(0)} controls /> */}
+            <MusicPlayer songsrc={songName}/>
+            {/* <AudioPlayer/> */}
           </div>
         </div>
       </div>

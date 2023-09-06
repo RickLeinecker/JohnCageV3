@@ -44,7 +44,7 @@ function ConcertPage() {
     const boolList: boolean[] = new Array(tagList.length);
 
     const [searchText, setSearchText] = useState<string>('');
-    const [searchList, setSearchList] = useState<Array<result>>([{ title: 'defaultTitle', id: 1 }]);
+    const [searchList, setSearchList] = useState<Array<result>>([{ title: "../assets/alarm.mp3", id: 1 }]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
     const handleIndexChange = function (num: number) {
