@@ -6,7 +6,8 @@
     "scripts": {
         "test": "jest",
         "start": "NODE_ENV=development nodemon server.js",
-        "startServer": "NODE_ENV=production nodemon server.js"
+        "startServer": "NODE_ENV=production nodemon server.js",
+        "winStart": "set NODE_ENV=development&&nodemon server.js"
     },
     "author": "",
     "license": "ISC",
