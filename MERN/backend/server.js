@@ -1,3 +1,4 @@
+// Packages
 const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
@@ -5,24 +6,37 @@ const app = express();
 const cors = require('cors');
 const fs = require("fs");
 const ms = require('mediaserver');
+
+//Constants
 const expressPort = 5000;
 const socketPort = 5001;
+
+// Custom modules
+const variables = require("./Variables/variables.js");
+
+// Console.log overload to print to file and terminal
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
 
 // Audio mixing tool: fluent-ffmpeg
 // Requires ffmpeg to be installed already, like MySQL
 //var ffmpeg = require('fluent-ffmpeg');
 //var ffmpegInstance = ffmpeg();
 
-//Export express object required for Jest unit testing.
-module.exports = app;
-
 //Socket server configuration
-const socketCORS = require("./socketCORS.js");
 const socketio = require("socket.io");
 const socketServer = http.createServer(app);
-const io = socketio(socketServer, { cors: { origin: socketCORS } });
+const io = socketio(socketServer, { cors: { origin: variables.socketCORS } });
 
-console.log("NODE_ENV: " + process.env.NODE_ENV)
+
+// Tests
+console.log("NODE_ENV: " + process.env.NODE_ENV);
+console.log("socketCORS: " + variables.socketCORS);
 
 //Socket server functionality
 io.on('connect', (socket) => {
@@ -145,7 +159,7 @@ app.get('/api/getSong', async (req, res, next) => {
 app.listen(expressPort, console.log("Express server listening on socket " + expressPort));
 socketServer.listen(socketPort, console.log("Socket server listening on socket " + socketPort));
 
-
+module.exports = app; //Export express object required for Jest unit testing.
 
 
 //-----------------------------------------------------------------
