@@ -35,13 +35,16 @@ jobs:
             cd JohnCageV3
 
             cd MERN
+            cd backend
             npm install
 
+            cd ..
             cd frontend
             npm install
             npm run build
 
             cd ..
+            cd backend
             pm2 start 0
          
             pm2 save
