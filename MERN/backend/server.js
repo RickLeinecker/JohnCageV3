@@ -16,9 +16,9 @@ const variables = require("./Variables/variables.js");
 
 // Console.log overload to print to file and terminal
 var util = require('util');
-var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
 var log_stdout = process.stdout;
-console.log = function(d) { //
+console.log = function (d) { //
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
@@ -31,7 +31,7 @@ console.log = function(d) { //
 //Socket server configuration
 const socketio = require("socket.io");
 const socketServer = http.createServer(app);
-const io = socketio(socketServer, { cors: { origin: variables.socketCORS } });
+const io = socketio(socketServer, { cors: { origin: "*" } });
 
 
 // Tests
