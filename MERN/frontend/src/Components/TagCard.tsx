@@ -58,19 +58,15 @@ export class TagCard extends Component<Tags> {
       <React.Fragment>
         <div
           className="card"
-          style={{ width: "100%", height: "100%", backgroundColor: "#D9D9D9" }}
+          style={{ width: "100%", height: "50%", backgroundColor: "#D9D9D9" }}
         >
-          <div className="card-body">
-            <h5 className="card-title song-name">Filter by Tags</h5>
-
-            <div style={{ position: "relative", bottom: "0px", margin: "25%" }} className="btn-group-vertical">
+            <div className="btn-group-horizontal">
               {this.props.tagList.map((key, i) => {
                 return <TagButton index={i} tagName={key} isActive={this.props.activeTags[i]} toggleFunction={this.handleClick} />
               }
               )
               }
             </div>
-          </div>
         </div>
       </React.Fragment>
     );

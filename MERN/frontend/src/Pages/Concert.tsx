@@ -93,10 +93,11 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col"></div>
-                <div className="col-8">
+                <div className="col-10">
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
+                    <TagCard tagList={tagList} activeTags={boolList}/>
                 </div>
                 <div className="col"></div>
             </div>
@@ -105,7 +106,7 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col"></div>
-                <div className="col-4 scroller">
+                <div className="col-5 scroller">
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                         {
                             searchList.map((key, i) => {
@@ -115,11 +116,8 @@ function ConcertPage() {
                         }
                     </div>
                 </div>
-                <div className="col-4">
+                <div className="col-5">
                     <MusicCard songName={searchList[activeIndex].title} />
-                </div>
-                <div className="col-2">
-                    <TagCard tagList={tagList} activeTags={boolList} />
                 </div>
                 <div className="col"></div>
             </div>

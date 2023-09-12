@@ -22,7 +22,7 @@ function MusicCard({ songName }: SongName) {
             <p className="text-muted">Tags: Fruit, Spring</p>
           </div>
 
-          <div style={{ position: "absolute", bottom: "15px" }}>
+          <div>
             <button type="button" className="btn current">
               Edit
             </button>

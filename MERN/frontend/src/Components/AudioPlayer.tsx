@@ -12,13 +12,13 @@ export default function AudioPlayer()
 
     const audioRef = useRef<HTMLAudioElement>();
     const progressBarRef = useRef<HTMLInputElement>();
-    console.log("audio ref is "+audioRef);
+    console.log("audio ref is "+alarm);
 
     return(
         <div className = "audioPlayer">
             <div className="inner">
                 <DisplayTrack activeTrack= {currentTrack as string} audioRef={audioRef as LegacyRef<HTMLAudioElement>}/>
-                <ProgressBar progressRef={progressBarRef as LegacyRef<HTMLInputElement>}/>
+                
                 <Controls audioRef={audioRef.current as HTMLAudioElement}/>
                 </div>
         </div>

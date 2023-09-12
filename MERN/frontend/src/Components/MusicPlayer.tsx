@@ -19,7 +19,7 @@ export default function MusicPlayer(passedInSong :SongData)
     const[isPlaying,setIsPlaying] = useState(false);
     const [volume,setVolume] = useState(1);
     const soundByte = "../assets/trap.mp3";
-    const [play,{pause,duration,sound}] = useSound(soundByte,{volume});
+    const [play,{pause,duration,sound}] = useSound(alarm,{volume});
 
     const[currTime,setCurrTime] = useState({
         min: "00",
@@ -141,7 +141,7 @@ export default function MusicPlayer(passedInSong :SongData)
             defaultValue="50"
             max="100"
             value={volume * 100}
-            className="timeline"
+            className="time"
             onChange={(e) => {
               console.log("target value is "+e.target.value);
               setVolume(parseInt(e.target.value)/100);
