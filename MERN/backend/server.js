@@ -7,67 +7,65 @@ const cors = require('cors');
 const fs = require("fs");
 const ms = require('mediaserver');
 
+// Custom modules
+const variables = require("./Variables/variables.js");
+const { console_log } = require("./Modules/Logging/logging.js");
+const { print_status } = require("./Modules/Logging/status.js");
+
 //Constants
 const expressPort = 5000;
 const socketPort = 5001;
 
-// Custom modules
-const variables = require("./Variables/variables.js");
-
-// Console.log overload to print to file and terminal
-var util = require('util');
-var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
-var log_stdout = process.stdout;
-console.log = function (d) { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
+print_status();
 
 // Audio mixing tool: fluent-ffmpeg
 // Requires ffmpeg to be installed already, like MySQL
-//var ffmpeg = require('fluent-ffmpeg');
-//var ffmpegInstance = ffmpeg();
+/*
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegInstance = ffmpeg();
+const { Buffer } = require("node:buffer");
+const { Readable } = require("stream");
+*/
 
 //Socket server configuration
 const socketio = require("socket.io");
 const socketServer = http.createServer(app);
-const io = socketio(socketServer, { cors: { origin: "*" } });
-
-
-// Tests
-console.log("NODE_ENV: " + process.env.NODE_ENV);
-console.log("socketCORS: " + variables.socketCORS);
+const io = socketio(socketServer, { cors: { origin: variables.socketCORS } });
 
 //Socket server functionality
 io.on('connect', (socket) => {
 
-  console.log('Connected');
+  console_log('Connected');
 
   socket.emit('greet', { data: 'Greetings from socketServer' });
 
+  var previousBuffer = [];
+  var counter = 0;
+
   socket.on("recording", (chunk) => {
 
-    console.log("Audio chunk recieved. Transmitting to frontend...");
+    console_log("Audio chunk recieved. Transmitting to frontend...");
     socket.broadcast.emit('listening', chunk);
 
-    /* FFMPEG Testing ------------------------------------------------
+    //FFMPEG Testing ------------------------------------------------
+    /*
     //var dataBlob = new Blob(data, { type: 'audio/webm; codecs=opus' });
     //var file = new File([dataBlob], "blobAudioFile");
     //fs.writeFileSync("bufferversionnew.webm", Buffer.from(new Uint8Array(dataBlob)), () => console.log("Data saved"));
     //fs.writeFile("fileversion.webm", dataBlob, () => console.log("Data saved"));
 
-    var previousBuffer = [];
-    var counter = 0;
-
     if (counter > 3) {
       console.log("Trying ffmpeg...");
+      console.log("Data Chunk: ", chunk.buffer);
+      console.log("Data Chunk: ", typeof (chunk.buffer));
 
-      console.log("Data Chunk: ", data);
+      var stream = new Readable();
+      stream._read = () => {} // _read is required but you can noop it
+      stream.push(Buffer.from[1,2,3])
+      stream.push(null)
 
-      var stream = new ReadableStream(data);
+      //var stream2 = new ReadableStream(previousBuffer);
       console.log("Data Stream: ", stream);
-
-      var stream2 = new ReadableStream(previousBuffer);
 
       ffmpegInstance
         .input(stream)
@@ -76,16 +74,15 @@ io.on('connect', (socket) => {
             filter: 'amix'
           }])
         .save('./Music/FFMPEGSTREAM.mp3');
-
     }
 
-    //previousBuffer = data;
-    //counter++;
-    ------------------------------------------------*/
+    previousBuffer = chunk;
+    counter++;
+    //------------------------------------------------*/
   });
 
   socket.on('disconnect', () => {
-    console.log('Disconnected');
+    console_log('Disconnected');
   });
 });
 
@@ -156,8 +153,8 @@ app.get('/api/getSong', async (req, res, next) => {
 });
 
 //Servers listening
-app.listen(expressPort, console.log("Express server listening on socket " + expressPort));
-socketServer.listen(socketPort, console.log("Socket server listening on socket " + socketPort));
+app.listen(expressPort, console_log("Express server listening on socket " + expressPort));
+socketServer.listen(socketPort, console_log("Socket server listening on socket " + socketPort));
 
 module.exports = app; //Export express object required for Jest unit testing.
 
