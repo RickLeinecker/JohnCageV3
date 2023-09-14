@@ -43,7 +43,7 @@
 }
 
 .scroller {
-  height: 300px;
+  height: 100%;
   overflow: auto;
   background-color: #D9D9D9;
   padding :4px;

@@ -105,8 +105,9 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
-                <div className="col"></div>
-                <div className="col-5 scroller">
+                <div className="col-1"></div>
+                <div className="col-5">
+                    <div className="scroller">
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                         {
                             searchList.map((key, i) => {
@@ -114,7 +115,9 @@ function ConcertPage() {
                             }
                             )
                         }
+                       </div> 
                     </div>
+                    
                 </div>
                 <div className="col-5">
                     <MusicCard songName={searchList[activeIndex].title} />
