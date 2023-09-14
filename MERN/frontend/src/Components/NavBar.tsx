@@ -21,7 +21,7 @@ class NavButtons extends Component<NavButton> {
 
 class NavBar extends Component {
 
-  buttonList: string[] = ["Home", "Concerts", "Record", "Listen"];
+  buttonList: string[] = ["Home", "Concerts", "Record", "Listen", "Login", "AboutUs"];
 
   render() {
 
