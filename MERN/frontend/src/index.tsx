@@ -7,6 +7,9 @@ import ListenPage from "./Pages/Listen";
 import RecordPage from "./Pages/Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
+import LoginPage from "./Pages/Login";
+import AboutUsPage from "./Pages/AboutUs";
+import RegisterPage from "./Pages/Register";
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 class Compiled extends Component {
@@ -22,6 +25,9 @@ class Compiled extends Component {
             <Route path="/Concerts" element={<ConcertPage />} />
             <Route path="/Record" element={<RecordPage />} />
             <Route path="/Listen" element={<ListenPage />} />
+            <Route path="/Login" element={<LoginPage/>}></Route>
+            <Route path="/AboutUs" element={<AboutUsPage/>}></Route>
+            <Route path="/Register" element={<RegisterPage/>}></Route>
           </Routes>
         </BrowserRouter>
       </div>
