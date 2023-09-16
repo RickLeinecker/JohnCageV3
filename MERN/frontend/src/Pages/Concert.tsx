@@ -57,8 +57,8 @@ function ConcertPage() {
         const performSearch = async function () {
             try {
                 //Get recording metadata according to search text
-                const response = await fetch(buildPath('/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-                console.log("Fetch requrest URL: ", buildPath('/searchSongs?search=' + searchText));
+                const response = await fetch(buildPath('/concerts/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+                console.log("Fetch requrest URL: ", buildPath('/concerts/searchSongs?search=' + searchText));
                 var res = JSON.parse(await response.text());
                 var sd = JSON.parse(JSON.stringify(res));
                 const searchResults = sd.searchResults;
