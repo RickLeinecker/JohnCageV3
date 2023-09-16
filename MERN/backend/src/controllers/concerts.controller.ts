@@ -7,7 +7,7 @@ class ConcertsController {
 
   async listenToRecording(req: Request, res: Response) {
 
-    ms.pipe(req, res, '../../music/' + "bass" + '.mp3');
+    ms.pipe(req, res, '../../../music/' + "bass" + '.mp3');
 
     /*
     var concertId: number = parseInt(req.query.id as string);
