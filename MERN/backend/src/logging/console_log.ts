@@ -10,3 +10,20 @@ const console_log = (text: string) => {
 }
 
 export default console_log;
+
+/* Prints the contents of curent directory in windows. For linux change dir to ls.
+const { exec } = require("child_process");
+
+    exec("dir", (error: any, stdout: any, stderr: any) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+  });
+
+  */
