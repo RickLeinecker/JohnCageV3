@@ -32,7 +32,7 @@ function MusicCard({ songName }: SongName) {
               Delete
             </button>
             <br /><br />
-            <ReactAudioPlayer src={expressURL + '/getSong?id=' + String(0)} controls />
+            <ReactAudioPlayer src={expressURL + '/concerts/getSong?id=' + String(0)} controls />
           </div>
         </div>
       </div>
