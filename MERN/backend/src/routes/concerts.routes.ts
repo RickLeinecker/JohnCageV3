@@ -1,7 +1,7 @@
 import { Router } from "express";
 import ConcertsController from "../controllers/concerts.controller";
 
-class HomeRoutes {
+class ConcertsRoutes {
     router = Router();
     controller = new ConcertsController();
 
@@ -10,9 +10,11 @@ class HomeRoutes {
     }
   
     intializeRoutes() {
-      this.router.get("/getSong", this.controller.listenToRecording);
-      this.router.get("/searchSongs", this.controller.search);
+      this.router.get("/getSongFile", this.controller.pipeConcertFile);
+      this.router.get("/getSongData", this.controller.retrieveConcertData);
+      this.router.get("/searchSongs", this.controller.searchConcerts);
+      this.router.get("/getTags", this.controller.retrieveRandomTags);
     }
 }
   
-export default new HomeRoutes().router;
+export default new ConcertsRoutes().router;
