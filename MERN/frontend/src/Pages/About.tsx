@@ -2,7 +2,7 @@ import React from 'react';
 import MeetOurTeam from '../Components/MeetOurTeam';
 import '../Style/AboutUs.css';
 
-function AboutUsPage(){
+function AboutPage(){
     return(
        <div className='about'>
             <div className='about-layout'>
@@ -24,4 +24,4 @@ function AboutUsPage(){
     )
 }
 
-export default AboutUsPage;
+export default AboutPage;

@@ -1,13 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import "../Style/button.css"
-import ReactAudioPlayer from "react-audio-player";
-import { expressURL } from "../Variables/expressServer";
+import MusicPlayer from "./MusicPlayer";
+import concertData from "../Types/concert";
 
-type SongName = {
-  songName: string;
-}
-
-function MusicCard({ songName }: SongName) {
+// Backup { title, date, description, tags, maestro, performers }: concertData
+function MusicCard(thisConcert: concertData) {
   return (
     <React.Fragment>
       <div
@@ -16,12 +13,27 @@ function MusicCard({ songName }: SongName) {
       >
         <div className="card-body" style={{ left: "25px", right: "25px" }}>
           <div>
-            <h5 className="card-title song-name">{songName}</h5>
-            <h6 className="card-subtitle mb-2 text-muted">October 19th, 2022</h6>
-            <p className="text-muted">Tags: Fruit, Spring</p>
+            <h5 className="card-title song-name">
+              {thisConcert["title"]}
+            </h5>
+            <h6 className="card-subtitle mb-2 text-muted">
+              {thisConcert["date"]}
+            </h6>
+            <p className="text-muted">
+              {"Tags: "}
+              {
+                thisConcert["tags"].map((key, i) => {
+                  return <span key={i}>{key + " "}</span>
+                })
+              }
+            </p>
           </div>
-
-          <div style={{ position: "absolute", bottom: "15px" }}>
+          <div>
+            <MusicPlayer id={thisConcert["id"]} />
+            <p>
+              {"Description: "}
+              {thisConcert["description"]}
+            </p>
             <button type="button" className="btn current">
               Edit
             </button>
@@ -31,8 +43,6 @@ function MusicCard({ songName }: SongName) {
             <button type="button" className="btn btn-danger">
               Delete
             </button>
-            <br /><br />
-            <ReactAudioPlayer src={expressURL + '/getSong?id=' + String(0)} controls />
           </div>
         </div>
       </div>

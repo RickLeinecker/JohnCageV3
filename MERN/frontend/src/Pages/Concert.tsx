@@ -1,17 +1,24 @@
+// Style
 import "../Style/App.css";
 import "../Style/button.css"
+
+// Components
 import { Component, useEffect, useState } from "react";
 import MusicCard from "../Components/MusicCard";
 import { TagCard } from "../Components/TagCard";
 import { Form } from "react-bootstrap";
-import { expressURL } from "../Variables/expressServer";
+
+// API functions
+import getTags from "../API/getTagsAPI";
+import getMetadata from "../API/getMetadataAPI";
+
+// Types
+import tagList from "../Types/tagList";
+import concertData from "../Types/concert";
+import searchResult from "../Types/searchResult";
+import searchSongs from "../API/searchSongsAPI";
 
 //Interfaces/objects
-interface result {
-    title: string,
-    id: number
-}
-
 type ButtonState = {
     songName: string;
     index: number;
@@ -33,58 +40,44 @@ class SongButton extends Component<ButtonState>
 }
 
 //Functions
-function buildPath(route: String) {
-    return expressURL + route;
-}
-
 function ConcertPage() {
-
-    const mainList: string[] = ["/alarm.wav", "/bark.wav", "/reverb.wav", "/trap.mp3"];
-    const tagList: string[] = ["Fruit", "Nuts", "Spring"];
-    const boolList: boolean[] = new Array(tagList.length);
-
     const [searchText, setSearchText] = useState<string>('');
-    const [searchList, setSearchList] = useState<Array<result>>([{ title: 'defaultTitle', id: 1 }]);
-    const [activeIndex, setActiveIndex] = useState<number>(0);
+    const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
+    const [activeSelection, setActiveSelection] = useState<number>(-1);
+    const [tagList, setTagList] = useState<string[]>(["Tag"]);
+    const [activeTagList, setActiveTagList] = useState<boolean[]>([false, false]);
+    const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
 
-    const handleIndexChange = function (num: number) {
-        setActiveIndex(num);
-        console.log("Active index should be: ", num);
-    }
+    // Get tags useEffect hook
+    useEffect(() => {
+        const refreshTags = async function () {
+            const newTags: tagList = await getTags();
+            setTagList(newTags["tags"]);
+            setActiveTagList(newTags["activeList"]);
+        }
+        refreshTags();
+    }, []);
 
     // Search Text useEffect hook
     useEffect(() => {
-        const performSearch = async function () {
-            try {
-                //Get recording metadata according to search text
-                const response = await fetch(buildPath('/searchSongs?search=' + searchText), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-                console.log("Fetch requrest URL: ", buildPath('/searchSongs?search=' + searchText));
-                var res = JSON.parse(await response.text());
-                var sd = JSON.parse(JSON.stringify(res));
-                const searchResults = sd.searchResults;
-
-                //Save metadata to "result" interface array
-                var searchTemp: result[] = [];
-                for (var i = 0; i < searchResults.length; ++i) {
-                    searchTemp.push({ title: searchResults[i].Title, id: searchResults[i].ID });
-                }
-
-                //Save metadata to page for display
-                console.log("SearchResults: ", searchTemp);
-                handleIndexChange(0);
-                setSearchList(searchTemp);
-            }
-            catch (e) {
-                if (e instanceof Error) {
-                    alert(e.toString());
-                }
-                return;
-            }
-        };
-
-        console.log("Search Text: ", searchText);
-        performSearch();
+        const performSearch = async function (search: string) {
+            const newSearch: searchResult[] = await searchSongs(search);
+            setSearchList(newSearch);
+            setActiveSelection(-1);
+        }
+        performSearch(searchText);
     }, [searchText]);
+
+    // Get metadata useEffect hook
+    useEffect(() => {
+        const getSongCardData = async function (songId: number) {
+            const data: concertData = await getMetadata(songId);
+            setMetaData(data);
+        }
+        if (searchList[activeSelection]) {
+            getSongCardData(searchList[activeSelection].id);
+        }
+    }, [searchList, activeSelection]);
 
     return (
         <div className="container">
@@ -93,10 +86,11 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col"></div>
-                <div className="col-8">
+                <div className="col-10">
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
+                    <TagCard tagList={tagList} activeTags={activeTagList} />
                 </div>
                 <div className="col"></div>
             </div>
@@ -105,21 +99,17 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col"></div>
-                <div className="col-4 scroller">
+                <div className="col-5 scroller">
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                         {
                             searchList.map((key, i) => {
-                                return <SongButton songName={key.title} index={i} isActive={activeIndex == i} onClick={() => handleIndexChange(i)} />
-                            }
-                            )
+                                return <SongButton key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => setActiveSelection(i)} />
+                            })
                         }
                     </div>
                 </div>
-                <div className="col-4">
-                    <MusicCard songName={searchList[activeIndex].title} />
-                </div>
-                <div className="col-2">
-                    <TagCard tagList={tagList} activeTags={boolList} />
+                <div className="col-5">
+                    <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div>
                 <div className="col"></div>
             </div>

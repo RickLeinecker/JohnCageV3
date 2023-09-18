@@ -1,6 +1,5 @@
 import { Component } from "react";
 import { createRoot } from 'react-dom/client';
-import './Style/index.css';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
 import ListenPage from "./Pages/Listen";
@@ -8,9 +7,10 @@ import RecordPage from "./Pages/Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
-import AboutUsPage from "./Pages/AboutUs";
+import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import './Style/index.css';
 
 class Compiled extends Component {
   render() {
@@ -25,9 +25,9 @@ class Compiled extends Component {
             <Route path="/Concerts" element={<ConcertPage />} />
             <Route path="/Record" element={<RecordPage />} />
             <Route path="/Listen" element={<ListenPage />} />
-            <Route path="/Login" element={<LoginPage/>}></Route>
-            <Route path="/AboutUs" element={<AboutUsPage/>}></Route>
-            <Route path="/Register" element={<RegisterPage/>}></Route>
+            <Route path="/Login" element={<LoginPage />} />
+            <Route path="/About" element={<AboutPage />} />
+            <Route path="/Register" element={<RegisterPage />} />
           </Routes>
         </BrowserRouter>
       </div>
