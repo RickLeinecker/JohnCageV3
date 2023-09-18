@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Card } from "react-bootstrap";
 import io from 'socket.io-client';
-import { socketURL } from "../Variables/socketServer";
+import { socketURL } from '../Variables/socketServer';
+
 
 //Functions
 function Listen() {
