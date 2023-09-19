@@ -6,9 +6,23 @@ import AudioPlayer from "./AudioPlayer";
 
 type SongName = {
   songName: string;
+  tagList: string[];
 }
 
-function MusicCard({ songName }: SongName) {
+function TagString(tagList: string[]):string
+{
+  if (tagList.length == 0)
+    return "";
+
+  let tagString:string = tagList[0];
+  for (let i = 1; i < tagList.length; i++)
+  {
+    tagString = tagString.concat(",",tagList[i]);
+  }
+  return tagString;
+}
+
+function MusicCard({ songName , tagList }: SongName) {
   return (
     <React.Fragment>
       <div
@@ -19,7 +33,10 @@ function MusicCard({ songName }: SongName) {
           <div>
             <h5 className="card-title song-name">{songName}</h5>
             <h6 className="card-subtitle mb-2 text-muted">October 19th, 2022</h6>
-            <p className="text-muted">Tags: Fruit, Spring</p>
+            <p className="text-muted">Tags: {
+              TagString(tagList)
+              }
+              </p>
           </div>
 
           <div>

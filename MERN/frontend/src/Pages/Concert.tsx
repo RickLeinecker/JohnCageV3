@@ -43,8 +43,31 @@ function ConcertPage() {
     const tagList: string[] = ["Fruit", "Nuts", "Spring"];
     const boolList: boolean[] = new Array(tagList.length);
 
+    const searchResults =
+    [
+        {
+            id: 1,
+            maestro: "Paul",
+            performers: ["Kyle", "Paul", "Stephen", "Rayyan", "Himil"],
+            title: "Concert: One",
+            tags: ["Slow", "Quiet", "Loud"],
+            description: "High intensity pipe action yahoo.",
+            date: "2023-September-11-6-00-PM"
+        },
+        {
+            id: 2,
+            maestro: "Paul",
+            performers: ["Kyle", "Paul"],
+            title: "Concert: Two",
+            tags: ["Fast", "Hard"],
+            description: "High intensity Green Hills. Gotta go fast!",
+            date: "2023-September-13-6-00-PM"
+        }
+    ]
+
+
     const [searchText, setSearchText] = useState<string>('');
-    const [searchList, setSearchList] = useState<Array<result>>([{ title: "../assets/alarm.mp3", id: 1 }]);
+    const [searchList, setSearchList] = useState<Array<result>>(searchResults);
     const [activeIndex, setActiveIndex] = useState<number>(0);
 
     const handleIndexChange = function (num: number) {
@@ -87,26 +110,23 @@ function ConcertPage() {
     }, [searchText]);
 
     return (
-        <div className="container">
+        <div className="container" style ={{height:"100vh"}}>
             <div className="row">
                 <br />
             </div>
             <div className="row">
-                <div className="col"></div>
-                <div className="col-10">
+                <div className="col">
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
                     <TagCard tagList={tagList} activeTags={boolList}/>
                 </div>
-                <div className="col"></div>
             </div>
             <div className="row">
                 <br />
             </div>
             <div className="row">
-                <div className="col-1"></div>
-                <div className="col-5">
+                <div className="col">
                     <div className="scroller">
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                         {
@@ -119,10 +139,9 @@ function ConcertPage() {
                     </div>
                     
                 </div>
-                <div className="col-5">
-                    <MusicCard songName={searchList[activeIndex].title} />
+                <div className="col">
+                    <MusicCard songName={searchList[activeIndex].title} tagList={searchResults[activeIndex].tags} />
                 </div>
-                <div className="col"></div>
             </div>
             <div className="row">
                 <br />

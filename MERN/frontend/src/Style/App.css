@@ -73,3 +73,13 @@ body
   transition: all 0.4s ease-out;
   transition-delay: 0.2s;
 }
+
+html, body, #app, #app>div {
+  height: 100%;
+  width : 100%;
+}
+
+.blankBuffer
+{
+  height:25vh;
+}

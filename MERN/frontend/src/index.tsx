@@ -14,8 +14,12 @@ class Compiled extends Component {
     return (
       <div>
         <BrowserRouter>
+        <div className="row">
           <NavBar />
-          <br />
+          </div>
+          <div className="row">
+            <div className="col-2"></div>
+            <div className="col-8" style ={{backgroundColor: "white"}}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/Home" element={<HomePage />} />
@@ -23,6 +27,9 @@ class Compiled extends Component {
             <Route path="/Record" element={<RecordPage />} />
             <Route path="/Listen" element={<ListenPage />} />
           </Routes>
+          </div>
+          <div className="col-2"></div>
+          </div>
         </BrowserRouter>
       </div>
     );
