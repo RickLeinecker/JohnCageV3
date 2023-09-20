@@ -1,5 +1,5 @@
 import { buildPath } from "../Variables/expressServer";
-import concertData from "../Types/concert";
+import concertData from "../Types/concertData";
 
 const getMetadata = async function (id: number) {
     try {

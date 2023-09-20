@@ -16,8 +16,7 @@ class MySQLDatabase {
   private async connectToDatabase() {
     this.sequelize = new Sequelize(sequelizeConfig);
 
-    await this.sequelize
-      .authenticate()
+    await this.sequelize.authenticate()
       .then(() => {
         console_log("Sequelize: MySQL connection has been established.");
       })

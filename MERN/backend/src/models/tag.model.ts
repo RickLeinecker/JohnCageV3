@@ -9,15 +9,15 @@ class Tag extends Model {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    field: "ID"
+    field: "idTags"
   })
-  ID?: number;
+  idTags?: number;
 
   @Column({
-    type: DataType.STRING(255),
+    type: DataType.STRING(500),
     field: "Tag"
   })
-  Title?: string;
+  Tag?: string;
 }
 
 export default Tag;

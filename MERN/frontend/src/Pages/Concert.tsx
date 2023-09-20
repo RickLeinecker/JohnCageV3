@@ -14,7 +14,7 @@ import getMetadata from "../API/getMetadataAPI";
 
 // Types
 import tagList from "../Types/tagList";
-import concertData from "../Types/concert";
+import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
 
@@ -80,38 +80,36 @@ function ConcertPage() {
     }, [searchList, activeSelection]);
 
     return (
-        <div className="container">
+        <div className="container" style={{ height: "100vh" }}>
             <div className="row">
                 <br />
             </div>
             <div className="row">
-                <div className="col"></div>
-                <div className="col-10">
+                <div className="col">
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
                     <TagCard tagList={tagList} activeTags={activeTagList} />
                 </div>
-                <div className="col"></div>
             </div>
             <div className="row">
                 <br />
             </div>
             <div className="row">
-                <div className="col"></div>
-                <div className="col-5 scroller">
-                    <div className="d-grid" role="group" aria-label="Toolbar with button groups">
-                        {
-                            searchList.map((key, i) => {
-                                return <SongButton key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => setActiveSelection(i)} />
-                            })
-                        }
+                <div className="col">
+                    <div className="scroller">
+                        <div className="d-grid" role="group" aria-label="Toolbar with button groups">
+                            {
+                                searchList.map((key, i) => {
+                                    return <SongButton key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => setActiveSelection(i)} />
+                                })
+                            }
+                        </div>
                     </div>
                 </div>
-                <div className="col-5">
+                <div className="col">
                     <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div>
-                <div className="col"></div>
             </div>
             <div className="row">
                 <br />
