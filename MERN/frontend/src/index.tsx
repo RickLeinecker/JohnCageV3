@@ -17,18 +17,25 @@ class Compiled extends Component {
     return (
       <div>
         <BrowserRouter>
-          <NavBar />
-          <br />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/Home" element={<HomePage />} />
-            <Route path="/Concerts" element={<ConcertPage />} />
-            <Route path="/Record" element={<RecordPage />} />
-            <Route path="/Listen" element={<ListenPage />} />
-            <Route path="/Login" element={<LoginPage />} />
-            <Route path="/About" element={<AboutPage />} />
-            <Route path="/Register" element={<RegisterPage />} />
-          </Routes>
+          <div className="row">
+            <NavBar />
+          </div>
+          <div className="row">
+            <div className="col-2"></div>
+            <div className="col-8" style={{ backgroundColor: "white" }}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/Home" element={<HomePage />} />
+                <Route path="/Concerts" element={<ConcertPage />} />
+                <Route path="/Record" element={<RecordPage />} />
+                <Route path="/Listen" element={<ListenPage />} />
+                <Route path="/Login" element={<LoginPage />} />
+                <Route path="/About" element={<AboutPage />} />
+                <Route path="/Register" element={<RegisterPage />} />
+              </Routes>
+            </div>
+            <div className="col-2"></div>
+          </div>
         </BrowserRouter>
       </div>
     );

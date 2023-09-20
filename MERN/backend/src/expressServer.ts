@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors, { CorsOptions } from "cors";
 import Routes from "./routes/routes";
 import MySQLDatabase from "./database/mysql";
+import console_log from "./logging/console_log";
 
 class expressServer {
   public expressApp: Application = express();
@@ -25,7 +26,9 @@ class expressServer {
   private syncDatabase(): void {
     /*
     const db = new MySQLDatabase();
-    db.sequelize?.sync();
+    if (db.sequelize != undefined) {
+      db.sequelize.sync()
+    }
     */
   }
 }

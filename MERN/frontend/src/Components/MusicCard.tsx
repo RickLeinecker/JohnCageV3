@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../Style/button.css"
 import MusicPlayer from "./MusicPlayer";
-import concertData from "../Types/concert";
+import concertData from "../Types/concertData";
 
-// Backup { title, date, description, tags, maestro, performers }: concertData
 function MusicCard(thisConcert: concertData) {
+
+  const [data, setData] = useState<concertData>({
+    id: -1,
+    title: "Click a Concert to Get Started.",
+    date: "",
+    description: "",
+    tags: ["Sample"],
+    maestro: "",
+    performers: [""]
+  });
+
+  // Get metadata useEffect hook
+  useEffect(() => {
+    if (thisConcert["id"] != -1) {
+      setData(thisConcert);
+    }
+  }, [thisConcert]);
+
   return (
     <React.Fragment>
       <div
@@ -14,25 +31,25 @@ function MusicCard(thisConcert: concertData) {
         <div className="card-body" style={{ left: "25px", right: "25px" }}>
           <div>
             <h5 className="card-title song-name">
-              {thisConcert["title"]}
+              {data["title"]}
             </h5>
             <h6 className="card-subtitle mb-2 text-muted">
-              {thisConcert["date"]}
+              {data["date"]}
             </h6>
             <p className="text-muted">
               {"Tags: "}
               {
-                thisConcert["tags"].map((key, i) => {
+                data["tags"].map((key, i) => {
                   return <span key={i}>{key + " "}</span>
                 })
               }
             </p>
           </div>
           <div>
-            <MusicPlayer id={thisConcert["id"]} />
+            <MusicPlayer id={data["id"]} />
             <p>
               {"Description: "}
-              {thisConcert["description"]}
+              {data["description"]}
             </p>
             <button type="button" className="btn current">
               Edit

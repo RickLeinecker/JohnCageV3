@@ -5,26 +5,53 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { render } from "@testing-library/react";
 
-const menus = [0, 1, 2, 3, 4];
 
+const menus = [0,1,2,3,4];
 //Functions
+function buildPath(route: String) {
+    return 'http://localhost:5000/' + route;
+}
+
 function HomePage() {
+
+    const [resText, setResText] = useState<string>('');
+
+    // // Basic API test: If the page does not display hellow world as response text, API prob unconnected.
+    // useEffect(() => {
+    //     const helloWorld = async function () {
+    //         try {
+    //             const response = await fetch(buildPath(""), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+    //             setResText("API Response Text: " + await response.text());
+    //         }
+    //         catch (e) {
+    //             if (e instanceof Error) {
+    //                 alert(e.toString());
+    //             }
+    //             return;
+    //         }
+    //     };
+
+    //     helloWorld();
+    // }, []);
+
     const sectionsRef = useRef([]);
-    const renderedSections: boolean[] = [false, false, false, false, false];
-    let highestState: number = 0;
+    const renderedSections:boolean[] = [false,false,false,false,false];
+    let highestState:number = 0;
     const [visibleSection, setVisibleSection] = useState(menus[0]);
     const [displayedSections, setDisplayedSection] = useState(renderedSections);
 
-    const refCallback = useCallback((element: HTMLDivElement) => {
+    const refCallback = useCallback((element:HTMLDivElement) => {
         if (element) {
-            sectionsRef.current.push(element as never);
-            console.log("Sectionsref size " + sectionsRef.current.length)
+          sectionsRef.current.push(element as never);
+          console.log("Sectionsref size "+sectionsRef.current.length)
         }
-    }, []);
+      }, []);
 
-
-    function StateCheck(i: number): Boolean {
-        return (i <= visibleSection || displayedSections[i])
+    
+    function StateCheck(i:number):Boolean
+    {
+        // return (i === visibleSection || displayedSections[i])
+        return (i === visibleSection)
     }
 
 
@@ -34,35 +61,40 @@ function HomePage() {
         const options = {
             root: null,
             rootMargin: "0px",
-            threshold: 0.5
-        };
+            threshold: 0.9
+          };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
-                if (entry.isIntersecting && highestState != (renderedSections.length - 1)) {
+              if (entry.isIntersecting && highestState != (renderedSections.length - 1)) {
 
-                    let id: string = entry.target.getAttribute("id") as string;
-                    let idNum: number = parseInt(id);
+                let id:string = entry.target.getAttribute("id") as string;
+                let idNum:number = parseInt(id);
 
-                    if (idNum > highestState) {
-                        highestState = idNum;
+                // if (idNum > highestState)
+                // {
+                //     highestState = idNum;
 
-                        let newArray: boolean[] = displayedSections.map((c, i) => {
-                            if (i <= highestState && c === false) {
-                                return c = true;
-                            }
-                            else {
-                                return c;
-                            }
-                        })
+                //     let newArray:boolean[] = displayedSections.map((c,i)=>
+                //     {
+                //         if (i <= highestState && c === false)
+                //         {
+                //             return c = true;
+                //         }
+                //         else
+                //         {
+                //             return c;
+                //         }
+                //     })
 
 
-                        setVisibleSection(idNum);
-                        setDisplayedSection(newArray)
-                    }
-                }
+                //     setVisibleSection(idNum);
+                //     setDisplayedSection(newArray)
+                // }
+                setVisibleSection(idNum);
+              }
             });
-        }, options);
+          },options);
 
         // targetSections.forEach((section) => {
         //     observer.observe(section);
@@ -70,23 +102,23 @@ function HomePage() {
 
         sectionsRef.current.forEach((section) => {
             observer.observe(section);
-        });
+          });
 
-    }, [visibleSection, displayedSections]);
+        }, [visibleSection,displayedSections]);
 
     const [ref, inView] = useInView({
         threshold: 0.5
     });
 
     return (
-        <div className="container" style={{ padding: " 6% 12%", color: "white" }}>
-            <div className={"row " + (StateCheck(0) ? "animate" : "animate-on-scroll")} ref={refCallback} id="0">
+        <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
+            <div className={"row "+(StateCheck(0) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "0">
                 <div className="col">
-                    <img alt="" src={JohnCage} style={{ width: "300px", height: "300px" }}></img>
+                    <img src={JohnCage} style={{ width: "300px", height: "300px" }}></img>
                 </div>
                 <div className="col">
                     <div className="row">
-                        <h2>{inView ? "In View" : "Not in View"}</h2>
+                        <h2>John Cage Tribute</h2>
                     </div>
                     <br />
                     <div className="row">
@@ -98,8 +130,9 @@ function HomePage() {
                     </div>
                 </div>
             </div>
-            <div className="row"><br /></div>
-            <div className={"row " + (StateCheck(1) ? "animate" : "animate-on-scroll")} ref={refCallback} id="1">
+            <div className="row blankBuffer">
+            </div>
+            <div className={"row "+(StateCheck(1) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "1">
                 <h3>About John Cage</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -108,7 +141,9 @@ function HomePage() {
                 <br />
                 <b>In the following years, Cage turned to Zen Buddhism and other Eastern philosophies which lead to his conclusion that all activities that makes up the music must be seen as part of a single natural process.</b>
             </div>
-            <div className={"row " + (StateCheck(2) ? "animate" : "animate-on-scroll")} ref={refCallback} id="2">
+            <div className="row blankBuffer">
+            </div>
+            <div className={"row "+(StateCheck(2) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "2">
                 <h3>About John Cage</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -117,7 +152,9 @@ function HomePage() {
                 <br />
                 <b>In the following years, Cage turned to Zen Buddhism and other Eastern philosophies which lead to his conclusion that all activities that makes up the music must be seen as part of a single natural process.</b>
             </div>
-            <div className={"row " + (StateCheck(3) ? "animate" : "animate-on-scroll")} ref={refCallback} id="3">
+            <div className="row blankBuffer">
+            </div>
+            <div className={"row "+(StateCheck(3) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "3">
                 <h3>About John Cage</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -126,7 +163,9 @@ function HomePage() {
                 <br />
                 <b>In the following years, Cage turned to Zen Buddhism and other Eastern philosophies which lead to his conclusion that all activities that makes up the music must be seen as part of a single natural process.</b>
             </div>
-            <div className={"row " + (StateCheck(4) ? "animate" : "animate-on-scroll")} ref={refCallback} id="4">
+            <div className="row blankBuffer">
+            </div>
+            <div className={"row "+(StateCheck(4) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "4">
                 <h3>About John Cage</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>

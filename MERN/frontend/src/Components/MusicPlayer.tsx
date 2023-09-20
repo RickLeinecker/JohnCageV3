@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import useSound from "use-sound"; // for handling the sound
 import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai"; // icons for play and pause
 import { IconContext } from "react-icons";
 import { buildPath } from "../Variables/expressServer";
@@ -15,25 +14,16 @@ function MusicPlayer(songData: songData) {
   const audioElement = useRef<HTMLAudioElement>(null);
   const [source, setSource] = useState("/concerts/getSongFile?id=-1");
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(1);
-  const [play, { pause, duration, sound }] = useSound("", { volume });
-  const [currTime, setCurrTime] = useState({ min: "00", sec: "00" });
-  const [seconds, setSeconds] = useState();
-  const [time, setTime] = useState({ min: "00", sec: "00" });
-
-  function timeFormatter(timeNum: string): string {
-    if (parseInt(timeNum) < 10) {
-      return "0" + timeNum;
-    }
-    return timeNum;
-  };
+  const [trackVolume, setTrackVolume] = useState(1);
+  const [trackTime, setTrackTime] = useState({ min: "00", sec: "00" });
+  const [trackLength, setTrackLength] = useState({ min: "00", sec: "00" });
 
   //Update audio element src when song ID changes.
   useEffect(() => {
     const updateSong = (source: number) => {
       setSource(buildPath('/concerts/getSongFile?id=' + source));
       if (audioElement.current) {
-        audioElement.current.pause();
+        pause(audioElement.current);
         audioElement.current.load();
       }
     }
@@ -41,102 +31,126 @@ function MusicPlayer(songData: songData) {
     if (songData["id"] == -1) {
       setSource("");
       if (audioElement.current) {
-        audioElement.current.pause();
+        pause(audioElement.current);
       }
     }
     else {
       updateSong(songData["id"]);
-      console.log("Song changed: " + songData["id"]);
     }
+
   }, [songData]);
 
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (sound) {
-        setSeconds(sound.seek([])); // setting the seconds state with the current state
-        const min = Math.floor(sound.seek([]) / 60).toString();
-        const sec = Math.floor(sound.seek([]) % 60).toString();
-        setCurrTime({
-          min,
-          sec,
-        });
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [sound]);
-
-  useEffect(() => {
-    if (duration) {
-      const sec = duration / 1000;
-      const min = Math.floor(sec / 60);
-      const secRemain = Math.floor(sec % 60);
-      setTime({
-        min: min.toString(),
-        sec: secRemain.toString()
-      });
+  // Functions dependent on the audioElement reference or HTML audio element itself:
+  const seek = function (seconds: number) {
+    if (audioElement.current) {
+      audioElement.current.currentTime = seconds;
+      setTrackTime(getTrackTime(audioElement.current));
     }
-  }, [duration, isPlaying]);
+  }
 
-  const playButton = () => {
-    if (isPlaying) {
-      pause();
+  const pause = function (audio: HTMLAudioElement) {
+    if (audioElement.current) {
       setIsPlaying(false);
+      audio.pause();
     }
-    else {
-      play();
+  }
+
+  const play = function (audio: HTMLAudioElement) {
+    if (audioElement.current) {
       setIsPlaying(true);
+      audio.play();
+    }
+  }
+
+  const updateVolume = function (volume: number) {
+    if (audioElement.current) {
+      audioElement.current.volume = volume;
+      setTrackVolume(volume);
+    }
+  }
+
+  const updateTimeDisplay = function () {
+    if (audioElement.current) {
+      setTrackTime(getTrackTime(audioElement.current));
+    }
+  }
+
+  const handlePlayButton = () => {
+    if (audioElement.current) {
+      // This should be moved somewhere that will trigger once audio metadata loaded instead of when play pressed.
+      setTrackLength(getTrackDuration(audioElement.current));
+      //
+      if (isPlaying) {
+        pause(audioElement.current);
+      }
+      else {
+        play(audioElement.current);
+      }
     }
   };
 
+  const handleEnded = function () {
+    if (audioElement.current) {
+      pause(audioElement.current);
+    }
+  }
+
+  // Generic functions:
+  const getMinutesSeconds = function (seconds: number) {
+    let formattedMinutes = String(Math.floor(seconds / 60));
+    let formattedSeconds = String(Math.floor(seconds - (parseInt(formattedMinutes) * 60)));
+    if (parseInt(formattedSeconds) < 10) {
+      let zero = "0";
+      formattedSeconds = zero + formattedSeconds;
+    }
+    return ({ min: formattedMinutes, sec: formattedSeconds });
+  }
+
+  const getTrackTime = function (audio: HTMLAudioElement) {
+    return getMinutesSeconds(audio.currentTime);
+  }
+
+  const getTrackDuration = function (audio: HTMLAudioElement) {
+    return getMinutesSeconds(audio.duration);
+  }
+
+  // JSX
   return (
     <div className="musicPlayer">
       <div className="time">
         <p>
-          {timeFormatter(currTime.min)}:{timeFormatter(currTime.sec)}
+          {trackTime.min}:{trackTime.sec}
         </p>
         <p>
-          {timeFormatter(time.min)}:{timeFormatter(time.sec)}
+          {trackLength.min}:{trackLength.sec}
         </p>
       </div>
       <div>
         <input
           type="range"
           min="0"
-          //defaultValue="0"
-          max={duration ? duration / 1000 : 0}
-          value={seconds}
+          max={audioElement.current?.duration ? audioElement.current?.duration : 0}
+          value={audioElement.current?.currentTime}
           className="time"
-          onChange={(e) => {
-            sound.seek([e.target.value]);
-          }}
+          onChange={(e) => { seek(parseInt(e.target.value)); }}
         />
       </div>
       <div className="container">
         <div className="row">
           <div className="col">
 
-
-
-
-
-            <audio controls ref={audioElement} autoPlay={false}>
+            <audio controls hidden={true} onEnded={handleEnded} onTimeUpdate={updateTimeDisplay} ref={audioElement} autoPlay={false}>
               <source src={source} type='audio/mpeg' />
             </audio>
 
-
-
-
-
             {!isPlaying ? (
-              <button className="playButton centerButton" onClick={playButton}>
+              <button className="playButton centerButton" onClick={handlePlayButton}>
                 <IconContext.Provider value={{ size: "3em", color: "rgb(245, 200, 64)" }}>
                   <AiFillPlayCircle />
                 </IconContext.Provider>
               </button>
             ) : (
-              <button className="playButton centerButton" onClick={playButton}>
+              <button className="playButton centerButton" onClick={handlePlayButton}>
                 <IconContext.Provider value={{ size: "3em", color: "rgb(245, 200, 64)" }}>
                   <AiFillPauseCircle />
                 </IconContext.Provider>
@@ -149,14 +163,10 @@ function MusicPlayer(songData: songData) {
             <input
               type="range"
               min="0"
-              //defaultValue="50"
               max="100"
-              value={volume * 100}
+              value={trackVolume * 100}
               className="time"
-              onChange={(e) => {
-                console.log("target value is " + e.target.value);
-                setVolume(parseInt(e.target.value) / 100);
-              }}
+              onChange={(e) => { updateVolume(parseInt(e.target.value) / 100); }}
             />
           </div>
         </div>
