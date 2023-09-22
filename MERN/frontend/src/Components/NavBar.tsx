@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import { Link, useLocation, useMatch } from "react-router-dom"
-import PropTypes from 'prop-types'
+import { Nav, Container, Navbar } from "react-bootstrap";
+import { Link, useLocation, useMatch } from "react-router-dom";
+import PropTypes from 'prop-types';
+import '../Style/text.css';
+
 
 type NavButton = {
   buttonName: string;
@@ -22,48 +25,37 @@ class NavButtons extends Component<NavButton>{
 
 class NavBar extends Component {
 
-  buttonList: string[] = ["Home", "Concerts", "Record", "Listen"];
+  buttonList: string[] = ["Concerts", "Record", "Listen", "About"];
 
   render() {
-
     return (
-      <React.Fragment>
-        <nav
-          className="navbar navbar-expand-sm navbar-light"
-          style={{ backgroundColor: "#d3b035" }}
-        >
-          <div className="container-fluid">
-            <div className="row">
-              <h2>John Cage Tribute</h2>
-            </div>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+      <Navbar
+        className="navbar navbar-expand-sm navbar-light"
+        style={{ backgroundColor: "#d3b035" }}
+        expand="lg"
+      >
+        <Container>
+          <Navbar.Brand>
+            <h2>
+              <Link style={{ textDecoration: 'none' }} className="text" aria-current="page" to={"/"}>
+                {"John Cage Tribute"}
+              </Link>
+            </h2>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
             <br />
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
-            >
-              <ul className="nav navbar-nav ms-auto">
-                {
-                  this.buttonList.map((key, i) => {
-                    return <NavButtons key={i} buttonName={key} />
-                  }
-                  )
+            <Nav className="me-auto">
+              {
+                this.buttonList.map((key, i) => {
+                  return <NavButtons key={i} buttonName={key} />
                 }
-              </ul>
-            </div>
-          </div>
-        </nav>
-      </React.Fragment>
+                )
+              }
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     );
   }
 }

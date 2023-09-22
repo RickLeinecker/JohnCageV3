@@ -1,0 +1,50 @@
+name: johncagetribute CD
+
+defaults:
+  run:
+    working-directory: /
+
+# Runs on these events:
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_IP}}
+          username: ${{secrets.SSH_USERNAME}}
+          password: ${{secrets.SSH_PASSWORD}}
+
+          script: |
+            cd /var/www/johncagetribute
+
+            pm2 stop 0
+        
+            rm -rf JohnCageV3
+            git clone https://github.com/RickLeinecker/JohnCageV3.git
+            cd JohnCageV3
+
+            cd MERN
+            cd backend
+            npm install
+            npm run build
+
+            cd ..
+            cd frontend
+            npm install
+            npm run build
+
+            cd ..
+            cd backend
+            pm2 start 0
+         
+            pm2 save
+

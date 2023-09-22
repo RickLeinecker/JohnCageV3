@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Card, Button } from "react-bootstrap";
 import io from 'socket.io-client';
+import { socketURL } from '../Variables/socketServer';
 
 //Functions
 function Record() {
@@ -14,7 +15,7 @@ function Record() {
   //This is the desired behavior to set up the recording socket connection.
   //It actually triggers twice on page load but that can be fixed and it works anyway.
   useEffect(() => {
-    socket = io("http://localhost:5001");
+    socket = io(socketURL);
 
     socket.on('greet', (data: String) => {
       console.log('Record Page "receiveGreet" socket event:', data);
