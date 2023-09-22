@@ -63,11 +63,16 @@ module.exports = { expressServerInstance, socketApp };
 
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
+const myServer = http.createServer();
 import { WebSocketServer } from "ws";
 const webSocketPort = 8080;
 
+// const wss = new WebSocketServer({
+//   port: webSocketPort,
+// });
+
 const wss = new WebSocketServer({
-  port: webSocketPort,
+  noServer: true
 });
 
 wss.on('connection', function connection(ws) {
@@ -81,6 +86,16 @@ wss.on('connection', function connection(ws) {
   });
 
 });
+
+myServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
+
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    wss.emit('connection', ws, request);
+  });
+
+});
+
+myServer.listen(webSocketPort);
 
 
 
