@@ -48,6 +48,7 @@ class ConcertsController {
   }
 
   async retrieveConcertData(req: Request, res: Response) {
+
     const dummyResponse =
     {
       id: 1,
@@ -58,6 +59,7 @@ class ConcertsController {
       description: "High intensity pipe action yahoo.",
       date: "2023-September-11-6-00-PM"
     }
+
     const dummyResponse2 =
     {
       id: 2,
@@ -68,6 +70,7 @@ class ConcertsController {
       description: "Super Mario Game.",
       date: "Today"
     }
+
     const defaultResponse =
     {
       id: -1,
@@ -143,18 +146,18 @@ class ConcertsController {
     res.status(200).send({ searchResults: dummyResponse });
 
     /*
-      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-   
-      try {
-        const recordings = await recordingRepository.retrieveAll({ Title });
-        res.status(200).send(recordings);
-   
-      } catch (err) {
-        res.status(500).send({
-          message: "Some error occurred while retrieving recordings."
-        });
-      }
-       */
+    const Title = typeof req.query.Title === "string" ? req.query.Title : "";
+
+    try {
+      const recordings = await recordingRepository.retrieveAll({ Title });
+      res.status(200).send(recordings);
+
+    } catch (err) {
+      res.status(500).send({
+        message: "Some error occurred while retrieving recordings."
+      });
+    }
+    */
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
@@ -163,7 +166,7 @@ class ConcertsController {
         "Fast",
         "Slow"
       ];
-      
+
     res.status(200).send({ tags: dummyResponse });
 
     /*
@@ -178,7 +181,7 @@ class ConcertsController {
           message: "Some error occurred while retrieving recordings."
         });
       }
-       */
+      */
   }
 }
 

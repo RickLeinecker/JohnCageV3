@@ -17,12 +17,13 @@ expressServerInstance
     }
   });
 
-// Socket.io app depending on Express server
+// Socket.io app depends on Express server
 const http = require('http');
 const socketio = require("socket.io");
 const socketServer = http.createServer(expressServerInstance.expressApp);
 const socketApp = socketio(socketServer, { cors: { origin: "*" } });
 const socketPort = 5001;
+const fs = require("fs");
 
 socketApp.on('connect', (socket: any) => {
 
@@ -30,10 +31,14 @@ socketApp.on('connect', (socket: any) => {
 
   socket.emit('greet', { data: 'Greetings from socketServer' });
 
-  socket.on("recording", (chunk: any) => {
-
+  socket.on("recording", (response: any) => {
     console_log("Audio chunk recieved. Transmitting to frontend...");
-    socket.broadcast.emit('listening', chunk);
+    console_log(String(response.chunkId));
+    socket.broadcast.emit('listening', { chunk: response.chunk, chunkId: response.chunkId });
+
+    if (response.chunkId == 1) {
+      fs.writeFileSync("backendChunkWebm.webm", response.chunk);
+    }
   });
 
   socket.on('disconnect', () => {
@@ -53,6 +58,32 @@ socketServer
 
 // Export express app required for Jest unit testing.
 module.exports = { expressServerInstance, socketApp };
+
+
+
+
+// Basic WebSocket server ensures "ws" protocol or doesn't work.
+import { WebSocketServer } from "ws";
+const webSocketPort = 8080;
+
+const wss = new WebSocketServer({
+  port: webSocketPort,
+});
+
+wss.on('connection', function connection(ws) {
+
+  console_log("Web socket connection estasblished.");
+
+  ws.send('reply');
+
+  ws.on('message', function message(data) {
+    console_log(data.toString());
+  });
+
+});
+
+
+
 
 
 

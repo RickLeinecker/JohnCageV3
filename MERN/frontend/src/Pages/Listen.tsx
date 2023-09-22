@@ -3,14 +3,13 @@ import { Card } from "react-bootstrap";
 import io from 'socket.io-client';
 import { socketURL } from '../Variables/socketServer';
 
-
 //Functions
 function Listen() {
 
   var socket: any;
   var sourceBuffer: SourceBuffer;
   const audioElement = useRef<HTMLAudioElement>(null);
-
+  var audioChunks: any[] = [];
 
   //useEffect hook "runs" the inside every time a variable in the square brackets at the bottom
   //changes. Since that array of variables is empty, it will run only once, when the page loads.
@@ -21,11 +20,12 @@ function Listen() {
     mediaSource.addEventListener("sourceopen", sourceOpen);
 
     function sourceOpen() {
-      sourceBuffer = mediaSource.addSourceBuffer("audio/webm; codec=opus");// webm required for MediaSource compatibility.
+      sourceBuffer = mediaSource.addSourceBuffer("audio/webm; codecs=opus");// webm required for MediaSource compatibility.
       console.log("sourceOpen: ", mediaSource);
     };
 
     if (audioElement.current) {
+      // IMPORTANT: DO NOT DELETE
       audioElement.current.src = URL.createObjectURL(mediaSource);
     }
 
@@ -37,10 +37,24 @@ function Listen() {
       console.log('Listen Page "receiveGreet" socket event:', data);
     });
 
-    socket.on('listening', function (data: any) {
-      console.log(data);
-      if (audioElement.current) {
-        sourceBuffer.appendBuffer(data);
+    socket.on('listening', (response: any) => {
+      console.log("Chunk: ", response.chunk);
+      console.log("ChunkId: ", response.chunkId);
+
+      if (audioElement.current && response.chunkId == 1) {
+        // Blob test. Used for saving a playable webm file from identical audio data as backend for troubleshooting.
+        // Appears to break if the first chunk is not added first. Otherwise you can skip chunks.
+        audioChunks.push(response.chunk);
+        console.log("Audio Chunks: ", audioChunks);
+        const blob = new Blob(audioChunks, { type: 'audio/webm; codecs=opus' });
+        const audioUrl = URL.createObjectURL(blob);
+        audioElement.current.src = audioUrl;
+
+        // On Chrome or Brave, save as blob allows download on default HTML audio element.
+
+        // IMPORTANT: DO NOT DELETE
+        // Missing a chunk breaks playback with media source source buffer method. IMPORTANT. IF they are out of order that probably breaks it too.
+        // sourceBuffer.appendBuffer(response.chunk);
       }
     });
   }, []);
@@ -56,7 +70,7 @@ function Listen() {
         <Card.Title>Listen Page</Card.Title>
         <Card.Body>
           <Card.Title>Listen to Stream</Card.Title>
-          <audio preload='auto' ref={audioElement} controls={true} autoPlay={true}></audio>
+          <audio preload='auto' ref={audioElement} controls={true} autoPlay={false}></audio>
         </Card.Body>
       </Card>
     </div>
