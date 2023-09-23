@@ -4,7 +4,7 @@ import { buildPath } from "../Variables/expressServer";
 const getTags = async function () {
     try {
         const response = await fetch(buildPath('/concerts/getTags'), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        console.log("Fetch request URL: ", buildPath('api/concerts/getTags'));
+        console.log("Fetch request URL: ", buildPath('/concerts/getTags'));
 
         var res = JSON.parse(await response.text());
         var sd = JSON.parse(JSON.stringify(res));
