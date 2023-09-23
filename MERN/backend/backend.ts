@@ -17,6 +17,9 @@ expressServerInstance
     }
   });
 
+
+
+
 // Socket.io app depends on Express server
 const http = require('http');
 const socketio = require("socket.io");
@@ -37,7 +40,7 @@ socketApp.on('connect', (socket: any) => {
     socket.broadcast.emit('listening', { chunk: response.chunk, chunkId: response.chunkId });
 
     if (response.chunkId == 1) {
-      fs.writeFileSync("backendChunkWebm.webm", response.chunk);
+      //fs.writeFileSync("backendChunkWebm.webm", response.chunk);
     }
   });
 
@@ -63,7 +66,67 @@ module.exports = { expressServerInstance, socketApp };
 
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
-const myServer = http.createServer();
+const https = require('https');
+var myServer;
+
+if (process.env.NODE_ENV == "production") {
+  myServer = https.createServer({
+    key: "/var/www/johncagetribute/auth/server.key",
+    cert: "/var/www/johncagetribute/auth/server.cert"
+  });
+}
+else {
+  myServer = http.createServer({});
+}
+
+import { WebSocketServer } from "ws";
+const webSocketPort = 8080;
+const wss = new WebSocketServer({
+  noServer: true
+});
+
+wss.on('connection', function connection(ws) {
+
+  console_log("Web socket connection estasblished.");
+
+  ws.send('reply');
+
+  ws.on('message', function message(data) {
+    console_log(data.toString());
+  });
+
+});
+
+myServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
+
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    wss.emit('connection', ws, request);
+  });
+
+});
+
+myServer.listen(webSocketPort);
+
+
+
+/*
+Backup. Should be gone soon.
+
+
+
+const https = require('https');
+var myServer;
+
+if (process.env.NODE_ENV == "production") {
+  myServer = https.createServer({
+    key: "/var/www/johncagetribute/auth/server.key",
+    cert: "/var/www/johncagetribute/auth/server.cert"
+  });
+}
+else {
+  myServer = http.createServer({});
+}
+
 import { WebSocketServer } from "ws";
 const webSocketPort = 8080;
 
@@ -96,6 +159,7 @@ myServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
 });
 
 myServer.listen(webSocketPort);
+*/
 
 
 
