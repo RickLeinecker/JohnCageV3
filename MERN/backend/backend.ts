@@ -23,9 +23,9 @@ expressServerInstance
 // Socket.io app depends on Express server
 const http = require('http');
 const socketio = require("socket.io");
-const httpServer = http.createServer(expressServerInstance.expressApp);
+const socketServer = http.createServer(expressServerInstance.expressApp);
 
-// const socketApp = socketio(httpServer, { cors: { origin: "*" } });
+// const socketApp = socketio(socketServer, { cors: { origin: "*" } });
 // const socketPort = 5001;
 // const fs = require("fs");
 
@@ -50,7 +50,7 @@ const httpServer = http.createServer(expressServerInstance.expressApp);
 //   });
 // });
 
-// httpServer
+// socketServer
 //   .listen(socketPort, console_log("Socket app listening on port " + socketPort))
 //   .on("error", (err: any) => {
 //     if (err.code === "EADDRINUSE") {
@@ -67,20 +67,20 @@ const httpServer = http.createServer(expressServerInstance.expressApp);
 
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
-// const myServer = http.createServer();
+const httpServer = http.createServer();
 import { WebSocketServer } from "ws";
 const webSocketPort = 8080;
 const wss = new WebSocketServer({
   noServer: true
 });
 
-wss.on('connection', function connection(ws) {
-  console_log("Web socket connection established.");
-
-  ws.send('reply');
+wss.on('connection', function connection(ws, req) {
+  console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
   ws.on('message', function message(data) {
-    console_log(data.toString());
+    console_log("Received data: " + data.toString());
+
+    ws.send(data)
   });
 });
 
