@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import "../Style/button.css"
 import "../Style/App.css";
+import Tag from "../Types/Tag";
 
 type Tags = {
-  tagList: string[]
-  activeTags: boolean[]
+  tagList: Tag[];
 }
 
 type TagButtons = {
@@ -42,14 +42,14 @@ export class TagCard extends Component<Tags> {
   }
 
   handleClick = (index: number) => {
-    console.log("Setting tag at index: " + index + " to: " + this.props.activeTags[index]);
-    if (this.props.activeTags[index]) {
-      this.props.activeTags[index] = false
+    //console.log("Setting tag at index: " + index + " to: " + this.props.tagList[index].active);
+    if (this.props.tagList[index].active == true) {
+      this.props.tagList[index].active = false;
     }
     else {
-      this.props.activeTags[index] = true
+      this.props.tagList[index].active = true;
     }
-    console.log("Tag at index: " + index + " is now: " + this.props.activeTags[index]);
+    //console.log("Tag at index: " + index + " is now: " + this.props.tagList[index].active);
     this.setState({ activeIndex: index });
   }
 
@@ -63,7 +63,7 @@ export class TagCard extends Component<Tags> {
           <div className="btn-group-horizontal">
             {
               this.props.tagList.map((key, i) => {
-                return <TagButton key={i} index={i} tagName={key} isActive={this.props.activeTags[i]} toggleFunction={this.handleClick} />
+                return <TagButton key={i} index={i} tagName={key.tag} isActive={key.active} toggleFunction={this.handleClick} />
               })
             }
           </div>
