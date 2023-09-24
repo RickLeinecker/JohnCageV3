@@ -13,7 +13,7 @@ import getTags from "../API/getTagsAPI";
 import getMetadata from "../API/getMetadataAPI";
 
 // Types
-import tagList from "../Types/tagList";
+import Tag from "../Types/Tag";
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
@@ -44,16 +44,14 @@ function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
-    const [tagList, setTagList] = useState<string[]>(["Tag"]);
-    const [activeTagList, setActiveTagList] = useState<boolean[]>([false, false]);
+    const [tagList, setTagList] = useState<Tag[]>([]);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
 
     // Get tags useEffect hook
     useEffect(() => {
         const refreshTags = async function () {
-            const newTags: tagList = await getTags();
-            setTagList(newTags["tags"]);
-            setActiveTagList(newTags["activeList"]);
+            const newTags: Tag[] = await getTags();
+            setTagList(newTags);
         }
         refreshTags();
     }, []);
@@ -89,7 +87,7 @@ function ConcertPage() {
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
-                    <TagCard tagList={tagList} activeTags={activeTagList} />
+                    <TagCard tagList={tagList} />
                 </div>
             </div>
             <div className="row">

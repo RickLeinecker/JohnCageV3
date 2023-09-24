@@ -1,10 +1,16 @@
 import { Model, Table, Column, DataType } from "sequelize-typescript";
 
+type TagObject = {
+  id: number;
+  tag: string;
+}
+
 @Table({
   tableName: "Tags",
 })
 
 class Tag extends Model {
+
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -15,9 +21,9 @@ class Tag extends Model {
 
   @Column({
     type: DataType.STRING(500),
-    field: "Tag"
+    field: "Tags"
   })
-  Tag?: string;
+  Tags?: string;
 }
 
-export default Tag;
+export { TagObject, Tag }

@@ -5,6 +5,7 @@ import { Model, Table, Column, DataType } from "sequelize-typescript";
 })
 
 class Recording extends Model {
+  
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

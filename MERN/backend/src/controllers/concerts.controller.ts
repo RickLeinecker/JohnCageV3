@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import Recording from "../models/recording.model";
 import recordingRepository from "../repositories/recording.repository";
+import tagRepository from "../repositories/tag.repository";
 var ms = require('mediaserver');
+import console_log from "../logging/console_log";
+import { TagObject } from "../models/tag.model";
 
 class ConcertsController {
 
@@ -161,32 +164,17 @@ class ConcertsController {
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
-    const dummyResponse =
-      [
-        "Fast",
-        "Slow"
-      ];
+    let response: TagObject[] = [];
 
-    res.status(200).send({ tags: dummyResponse });
+    try {
+      response = await tagRepository.retrieveAll();
+    } catch (err) {
+      res.status(500).send({ message: "Some error occurred while retrieving tags." });
+    }
 
-    /*
-      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-   
-      try {
-        const recordings = await recordingRepository.retrieveAll({ Title });
-        res.status(200).send(recordings);
-   
-      } catch (err) {
-        res.status(500).send({
-          message: "Some error occurred while retrieving recordings."
-        });
-      }
-      */
+    console.log(response);
+    res.status(200).send({ tags: response });
   }
 }
 
 export default ConcertsController;
-
-
-// Backups
-// // var id: number = parseInt(req.params.id);
