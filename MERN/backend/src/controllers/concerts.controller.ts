@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import Recording from "../models/recording.model";
 import recordingRepository from "../repositories/recording.repository";
+import tagRepository from "../repositories/tag.repository";
 var ms = require('mediaserver');
+import console_log from "../logging/console_log";
+import { TagObject } from "../models/tag.model";
 
 class ConcertsController {
 
@@ -48,6 +51,7 @@ class ConcertsController {
   }
 
   async retrieveConcertData(req: Request, res: Response) {
+
     const dummyResponse =
     {
       id: 1,
@@ -58,6 +62,7 @@ class ConcertsController {
       description: "High intensity pipe action yahoo.",
       date: "2023-September-11-6-00-PM"
     }
+
     const dummyResponse2 =
     {
       id: 2,
@@ -68,6 +73,7 @@ class ConcertsController {
       description: "Super Mario Game.",
       date: "Today"
     }
+
     const defaultResponse =
     {
       id: -1,
@@ -143,47 +149,32 @@ class ConcertsController {
     res.status(200).send({ searchResults: dummyResponse });
 
     /*
-      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-   
-      try {
-        const recordings = await recordingRepository.retrieveAll({ Title });
-        res.status(200).send(recordings);
-   
-      } catch (err) {
-        res.status(500).send({
-          message: "Some error occurred while retrieving recordings."
-        });
-      }
-       */
+    const Title = typeof req.query.Title === "string" ? req.query.Title : "";
+
+    try {
+      const recordings = await recordingRepository.retrieveAll({ Title });
+      res.status(200).send(recordings);
+
+    } catch (err) {
+      res.status(500).send({
+        message: "Some error occurred while retrieving recordings."
+      });
+    }
+    */
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
-    const dummyResponse =
-      [
-        "Fast",
-        "Slow"
-      ];
-      
-    res.status(200).send({ tags: dummyResponse });
+    let response: TagObject[] = [];
 
-    /*
-      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-   
-      try {
-        const recordings = await recordingRepository.retrieveAll({ Title });
-        res.status(200).send(recordings);
-   
-      } catch (err) {
-        res.status(500).send({
-          message: "Some error occurred while retrieving recordings."
-        });
-      }
-       */
+    try {
+      response = await tagRepository.retrieveAll();
+    } catch (err) {
+      res.status(500).send({ message: "Some error occurred while retrieving tags." });
+    }
+
+    console.log(response);
+    res.status(200).send({ tags: response });
   }
 }
 
 export default ConcertsController;
-
-
-// Backups
-// // var id: number = parseInt(req.params.id);

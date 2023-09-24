@@ -1,6 +1,6 @@
-const isServerEnvironment = process.env.NODE_ENV !== 'production';
+const isServerEnvironment = process.env.NODE_ENV === 'production';
 
-const expressURL = isServerEnvironment ? 'http://localhost:5000/api' : 'https://johncagetribute.org/api';
+const expressURL = isServerEnvironment ? 'https://johncagetribute.org/api' : 'http://localhost:5000/api';
 
 const buildPath = function buildPath(route: String) {
     return expressURL + route;

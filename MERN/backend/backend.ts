@@ -17,32 +17,81 @@ expressServerInstance
     }
   });
 
-// Socket.io app depending on Express server
+
+
+
+// Socket.io app depends on Express server
 const http = require('http');
 const socketio = require("socket.io");
 const socketServer = http.createServer(expressServerInstance.expressApp);
-const socketApp = socketio(socketServer, { cors: { origin: "*" } });
-const socketPort = 5001;
 
-socketApp.on('connect', (socket: any) => {
+// const socketApp = socketio(socketServer, { cors: { origin: "*" } });
+// const socketPort = 5001;
+// const fs = require("fs");
 
-  console_log('Connected');
+// socketApp.on('connect', (socket: any) => {
 
-  socket.emit('greet', { data: 'Greetings from socketServer' });
+//   console_log('Connected');
 
-  socket.on("recording", (chunk: any) => {
+//   socket.emit('greet', { data: 'Greetings from socketServer' });
 
-    console_log("Audio chunk recieved. Transmitting to frontend...");
-    socket.broadcast.emit('listening', chunk);
-  });
+//   socket.on("recording", (response: any) => {
+//     console_log("Audio chunk recieved. Transmitting to frontend...");
+//     console_log(String(response.chunkId));
+//     socket.broadcast.emit('listening', { chunk: response.chunk, chunkId: response.chunkId });
 
-  socket.on('disconnect', () => {
-    console_log('Disconnected');
+//     if (response.chunkId == 1) {
+//       //fs.writeFileSync("backendChunkWebm.webm", response.chunk);
+//     }
+//   });
+
+//   socket.on('disconnect', () => {
+//     console_log('Disconnected');
+//   });
+// });
+
+// socketServer
+//   .listen(socketPort, console_log("Socket app listening on port " + socketPort))
+//   .on("error", (err: any) => {
+//     if (err.code === "EADDRINUSE") {
+//       console_log("Error: address already in use");
+//     } else {
+//       console_log(err);
+//     }
+//   });
+
+
+
+
+
+
+
+// Basic WebSocket server ensures "ws" protocol or doesn't work.
+const httpServer = http.createServer();
+import { WebSocketServer } from "ws";
+const webSocketPort = 8080;
+const wss = new WebSocketServer({
+  noServer: true
+});
+
+wss.on('connection', function connection(ws, req) {
+  console_log("Web socket connection established." + String(req.socket.remoteAddress));
+
+  ws.on('message', function message(data) {
+    console_log("Received data: " + data.toString());
+
+    ws.send(data)
   });
 });
 
-socketServer
-  .listen(socketPort, console_log("Socket app listening on port " + socketPort))
+httpServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    wss.emit('connection', ws, request);
+  });
+});
+
+httpServer
+  .listen(webSocketPort, console_log("Web socket listening on port " + webSocketPort))
   .on("error", (err: any) => {
     if (err.code === "EADDRINUSE") {
       console_log("Error: address already in use");
@@ -51,11 +100,64 @@ socketServer
     }
   });
 
+
 // Export express app required for Jest unit testing.
-module.exports = { expressServerInstance, socketApp };
+module.exports = { expressServerInstance };
 
 
 
+
+/*
+Backup. Should be gone soon.
+
+
+
+const https = require('https');
+var myServer;
+
+if (process.env.NODE_ENV == "production") {
+  myServer = https.createServer({
+    key: "/var/www/johncagetribute/auth/server.key",
+    cert: "/var/www/johncagetribute/auth/server.cert"
+  });
+}
+else {
+  myServer = http.createServer({});
+}
+
+import { WebSocketServer } from "ws";
+const webSocketPort = 8080;
+
+// const wss = new WebSocketServer({
+//   port: webSocketPort,
+// });
+
+const wss = new WebSocketServer({
+  noServer: true
+});
+
+wss.on('connection', function connection(ws) {
+
+  console_log("Web socket connection estasblished.");
+
+  ws.send('reply');
+
+  ws.on('message', function message(data) {
+    console_log(data.toString());
+  });
+
+});
+
+myServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
+
+  wss.handleUpgrade(request, socket, head, function done(ws) {
+    wss.emit('connection', ws, request);
+  });
+
+});
+
+myServer.listen(webSocketPort);
+*/
 
 
 

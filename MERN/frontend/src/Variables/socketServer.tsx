@@ -1,3 +1,3 @@
-const isServerEnvironment = process.env.NODE_ENV !== 'production';
+const isServerEnvironment = process.env.NODE_ENV === 'production';
 
-export const socketURL = isServerEnvironment ? 'http://localhost:5001' : 'https://johncagetribute.org';
+export const socketURL = isServerEnvironment ? 'https://johncagetribute.org' : 'http://localhost:5001';

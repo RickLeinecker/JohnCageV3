@@ -9,6 +9,7 @@ import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
 import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
+import SocketTest from "./Pages/SocketTest"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
 
@@ -32,6 +33,7 @@ class Compiled extends Component {
                 <Route path="/Login" element={<LoginPage />} />
                 <Route path="/About" element={<AboutPage />} />
                 <Route path="/Register" element={<RegisterPage />} />
+                <Route path="/WebSocket" element={<SocketTest />} />
               </Routes>
             </div>
             <div className="col-2"></div>

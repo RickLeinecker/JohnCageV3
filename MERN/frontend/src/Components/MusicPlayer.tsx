@@ -14,37 +14,44 @@ function MusicPlayer(songData: songData) {
   const audioElement = useRef<HTMLAudioElement>(null);
   const [source, setSource] = useState("/concerts/getSongFile?id=-1");
   const [isPlaying, setIsPlaying] = useState(false);
+  const [trackProgress, setTrackProgress] = useState(0);
+  const [trackDuration, setTrackDuration] = useState(1);
   const [trackVolume, setTrackVolume] = useState(1);
   const [trackTime, setTrackTime] = useState({ min: "00", sec: "00" });
   const [trackLength, setTrackLength] = useState({ min: "00", sec: "00" });
 
+  const updateSong = function (source: number) {
+
+    setSource(buildPath('/concerts/getSongFile?id=' + source));
+    console.log("Loaded")
+    if (audioElement.current) {
+      console.log("Loaded")
+      pause(audioElement.current);
+      audioElement.current.load();
+    }
+  }
+
   //Update audio element src when song ID changes.
   useEffect(() => {
-    const updateSong = (source: number) => {
-      setSource(buildPath('/concerts/getSongFile?id=' + source));
-      if (audioElement.current) {
-        pause(audioElement.current);
-        audioElement.current.load();
-      }
-    }
-
     if (songData["id"] == -1) {
       setSource("");
       if (audioElement.current) {
         pause(audioElement.current);
       }
+      console.log("Invalid Source.");
     }
     else {
       updateSong(songData["id"]);
+      console.log("Valid Source");
     }
-
-  }, [songData]);
+  }, [songData["id"]]);
 
   // Functions dependent on the audioElement reference or HTML audio element itself:
   const seek = function (seconds: number) {
     if (audioElement.current) {
       audioElement.current.currentTime = seconds;
       setTrackTime(getTrackTime(audioElement.current));
+      setTrackProgress(seconds / trackDuration);
     }
   }
 
@@ -72,13 +79,19 @@ function MusicPlayer(songData: songData) {
   const updateTimeDisplay = function () {
     if (audioElement.current) {
       setTrackTime(getTrackTime(audioElement.current));
+      setTrackProgress(audioElement.current.currentTime);
     }
+  }
+
+  const initializeMetaData = function (audio: HTMLAudioElement) {
+    setTrackLength(getTrackDuration(audio));
+    setTrackDuration(audio.duration);
   }
 
   const handlePlayButton = () => {
     if (audioElement.current) {
       // This should be moved somewhere that will trigger once audio metadata loaded instead of when play pressed.
-      setTrackLength(getTrackDuration(audioElement.current));
+      initializeMetaData(audioElement.current);
       //
       if (isPlaying) {
         pause(audioElement.current);
@@ -128,18 +141,20 @@ function MusicPlayer(songData: songData) {
       <div>
         <input
           type="range"
-          min="0"
-          max={audioElement.current?.duration ? audioElement.current?.duration : 0}
-          value={audioElement.current?.currentTime}
+          min={0}
+          max={1000}
+          value={(trackProgress / trackDuration) * 1000}
           className="time"
-          onChange={(e) => { seek(parseInt(e.target.value)); }}
+          onChange={(e) => {
+            seek((parseFloat(e.target.value) / 1000) * trackDuration);
+          }}
         />
       </div>
       <div className="container">
         <div className="row">
           <div className="col">
 
-            <audio controls hidden={true} onEnded={handleEnded} onTimeUpdate={updateTimeDisplay} ref={audioElement} autoPlay={false}>
+            <audio controls hidden={true} onLoadedMetadata={() => initializeMetaData} onEnded={handleEnded} onTimeUpdate={updateTimeDisplay} ref={audioElement} autoPlay={false}>
               <source src={source} type='audio/mpeg' />
             </audio>
 
@@ -162,8 +177,8 @@ function MusicPlayer(songData: songData) {
           <div className="col time">
             <input
               type="range"
-              min="0"
-              max="100"
+              min={0}
+              max={100}
               value={trackVolume * 100}
               className="time"
               onChange={(e) => { updateVolume(parseInt(e.target.value) / 100); }}
