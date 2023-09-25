@@ -97,7 +97,7 @@ class ConcertsController {
       res.status(200).send({ songData: dummyResponse2 });
     }
     else {
-      res.status(200).send({ songData: defaultResponse })
+      res.status(200).send({ songData: defaultResponse });
     }
 
     /*
