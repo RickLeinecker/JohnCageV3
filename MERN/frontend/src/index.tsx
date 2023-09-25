@@ -1,28 +1,43 @@
 import { Component } from "react";
 import { createRoot } from 'react-dom/client';
-import './Style/index.css';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
 import ListenPage from "./Pages/Listen";
 import RecordPage from "./Pages/Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import LoginPage from "./Pages/Login";
+import AboutPage from "./Pages/About";
+import RegisterPage from "./Pages/Register";
+import SocketTest from "./Pages/SocketTest"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import './Style/index.css';
 
 class Compiled extends Component {
   render() {
     return (
       <div>
         <BrowserRouter>
-          <NavBar />
-          <br />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/Home" element={<HomePage />} />
-            <Route path="/Concerts" element={<ConcertPage />} />
-            <Route path="/Record" element={<RecordPage />} />
-            <Route path="/Listen" element={<ListenPage />} />
-          </Routes>
+          <div className="row">
+            <NavBar />
+          </div>
+          <div className="row">
+            <div className="col-2"></div>
+            <div className="col-8" style={{ backgroundColor: "white" }}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/Home" element={<HomePage />} />
+                <Route path="/Concerts" element={<ConcertPage />} />
+                <Route path="/Record" element={<RecordPage />} />
+                <Route path="/Listen" element={<ListenPage />} />
+                <Route path="/Login" element={<LoginPage />} />
+                <Route path="/About" element={<AboutPage />} />
+                <Route path="/Register" element={<RegisterPage />} />
+                <Route path="/WebSocket" element={<SocketTest />} />
+              </Routes>
+            </div>
+            <div className="col-2"></div>
+          </div>
         </BrowserRouter>
       </div>
     );

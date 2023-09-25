@@ -1,12 +1,27 @@
-import React, { Component } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../Style/button.css"
-import ReactAudioPlayer from "react-audio-player";
+import MusicPlayer from "./MusicPlayer";
+import concertData from "../Types/concertData";
 
-type SongName = {
-  songName: string;
-}
+function MusicCard(thisConcert: concertData) {
 
-function MusicCard({ songName }: SongName) {
+  const [data, setData] = useState<concertData>({
+    id: -1,
+    title: "Click a Concert to Get Started.",
+    date: "",
+    description: "",
+    tags: ["Sample"],
+    maestro: "",
+    performers: [""]
+  });
+
+  // Get metadata useEffect hook
+  useEffect(() => {
+    if (thisConcert["id"] != -1) {
+      setData(thisConcert);
+    }
+  }, [thisConcert]);
+
   return (
     <React.Fragment>
       <div
@@ -15,12 +30,27 @@ function MusicCard({ songName }: SongName) {
       >
         <div className="card-body" style={{ left: "25px", right: "25px" }}>
           <div>
-            <h5 className="card-title song-name">{songName}</h5>
-            <h6 className="card-subtitle mb-2 text-muted">October 19th, 2022</h6>
-            <p className="text-muted">Tags: Fruit, Spring</p>
+            <h5 className="card-title song-name">
+              {data["title"]}
+            </h5>
+            <h6 className="card-subtitle mb-2 text-muted">
+              {data["date"]}
+            </h6>
+            <p className="text-muted">
+              {"Tags: "}
+              {
+                data["tags"].map((key, i) => {
+                  return <span key={i}>{key + " "}</span>
+                })
+              }
+            </p>
           </div>
-
-          <div style={{ position: "absolute", bottom: "15px" }}>
+          <div>
+            <MusicPlayer id={data["id"]} />
+            <p>
+              {"Description: "}
+              {data["description"]}
+            </p>
             <button type="button" className="btn current">
               Edit
             </button>
@@ -30,8 +60,6 @@ function MusicCard({ songName }: SongName) {
             <button type="button" className="btn btn-danger">
               Delete
             </button>
-            <br /><br />
-            <ReactAudioPlayer src={'http://localhost:5000/api/getSong?id=' + String(0)} controls />
           </div>
         </div>
       </div>

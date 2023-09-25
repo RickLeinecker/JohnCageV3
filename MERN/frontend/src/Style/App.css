@@ -43,10 +43,11 @@
 }
 
 .scroller {
-  height: 300px;
+  height: 100%;
   overflow: auto;
   background-color: #D9D9D9;
   padding :4px;
+  border-radius: 5px;
 }
 
 .item {
@@ -56,4 +57,29 @@
 body
 {
   background-color: #7D7A79;
+}
+
+.animate-on-scroll{
+  opacity:0;
+  transform:translateX(-300px);
+  transition: all 0.4s ease-out;
+  transition-delay: 0.2s;
+
+}
+
+.animate{
+  opacity: 1;
+  transform: translateX(0px);
+  transition: all 0.4s ease-out;
+  transition-delay: 0.2s;
+}
+
+html, body, #app, #app>div {
+  height: 100%;
+  width : 100%;
+}
+
+.blankBuffer
+{
+  height:25vh;
 }

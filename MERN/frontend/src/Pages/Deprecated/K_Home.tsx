@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Button, Card } from "react-bootstrap";
 import NavigationBar from "../../Components/Deprecated/K_NavigationBar"
 
-//Functions
 function buildPath(route: String) {
   return 'http://localhost:5000/' + route;
 }
@@ -31,12 +30,9 @@ function Home() {
 
   // This function is a working example of an AudioContext playing audio.
   // The white noise audio is created using random floats between -1 and 1.
-  // It is commented out because it can be loud if you aren't expecting it.
   // If we can find out how to convert the webm or other format, into this float format, 
-  // we might be able to use AudioContexts for playback on the client's device,
-  // at least on the web.
+  // we might be able to use AudioContexts for playback on the client's device.
   const whiteNoise = async function () {
-    /*
     const audioCtx = new window.AudioContext();
     const frameCount = audioCtx.sampleRate * 2.0;
     const myArrayBuffer = audioCtx.createBuffer(2, frameCount, audioCtx.sampleRate);
@@ -53,7 +49,6 @@ function Home() {
     source.buffer = myArrayBuffer;
     source.connect(audioCtx.destination);
     source.start();
-    */
   }
 
   return (
