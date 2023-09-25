@@ -78,7 +78,32 @@ wss.on('connection', function connection(ws, req) {
   console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
   ws.on('message', function message(data) {
-    console_log("Received data: " + data.toString());
+    var audioBuffer: Buffer = Buffer.from("");
+    console_log(audioBuffer);
+
+    console_log("Received data: ");
+    console_log(data);
+
+    audioBuffer = Buffer.concat([audioBuffer, <Buffer>data]);
+
+    console_log("Full Audio Buffer: ");
+    console_log(audioBuffer);
+
+    var dataView = new DataView(audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + audioBuffer.byteLength));
+
+    console_log("Dataview: ");
+    console_log(dataView);
+    console.log("Dataview Length: ");
+    console.log(dataView.byteLength);
+    console_log("Dataview 0th UInt8: ");
+    console_log(dataView.getUint8(0));
+    console.log("Dataview 0th UInt16: ");
+    console.log(dataView.getUint16(0, true));
+
+    // console_log(newdata.getFloat32(1));
+
+    // let newData: Buffer = Buffer.from(data);
+    // Buffer.concat([buff, data]);
 
     ws.send(data)
   });
