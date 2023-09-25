@@ -9,7 +9,7 @@ const isServerEnvironment = process.env.NODE_ENV === 'production';
 const models = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
-  database: "JCT",
+  database: "Example",
   username: "username",
   password: "!2#4%qwert",
   host: "localhost",
