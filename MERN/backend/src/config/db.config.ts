@@ -27,7 +27,7 @@ const developmentSequelizeConfig: SequelizeOptions = {
   define: {
     timestamps: false
   },
-  models: model
+  //models: model
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
@@ -48,7 +48,7 @@ const serverSequelizeConfig: SequelizeOptions = {
   define: {
     timestamps: false
   },
-  models: model
+  //models: model
 };
 
 const sequelizeConfig = isServerEnvironment ? serverSequelizeConfig : developmentSequelizeConfig;

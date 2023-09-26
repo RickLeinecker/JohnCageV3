@@ -5,6 +5,7 @@ import console_log from "../logging/console_log";
 // Database
 import { Sequelize } from "sequelize-typescript";
 import { sequelizeConfig } from "../config/db.config";
+import { initModels } from "../models/init-models";
 
 class MySQLDatabase {
   public sequelize: Sequelize | undefined;
@@ -15,6 +16,9 @@ class MySQLDatabase {
 
   private async connectToDatabase() {
     this.sequelize = new Sequelize(sequelizeConfig);
+
+    // Initialize models
+    initModels(this.sequelize);
 
     await this.sequelize.authenticate()
       .then(() => {
