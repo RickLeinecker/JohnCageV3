@@ -3,10 +3,11 @@ import { SequelizeOptions } from "sequelize-typescript";
 import Recording from "../models/recording.model";
 import User from "../models/user.model";
 import { Tag } from "../models/tag.model"
+import { initModels } from "../models/init-models";
 
 const isServerEnvironment = process.env.NODE_ENV === 'production';
 
-//const model = [Recording, User, Tag];
+//const models = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "JCT",
@@ -27,7 +28,7 @@ const developmentSequelizeConfig: SequelizeOptions = {
   define: {
     timestamps: false
   },
-  //models: model
+  //models: models
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
@@ -43,12 +44,12 @@ const serverSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    socketPath: "/var/run/mysqld/mysqld.sock"
+    //socketPath: "/var/run/mysqld/mysqld.sock"
   },
   define: {
     timestamps: false
   },
-  //models: model
+  //models: models
 };
 
 const sequelizeConfig = isServerEnvironment ? serverSequelizeConfig : developmentSequelizeConfig;
