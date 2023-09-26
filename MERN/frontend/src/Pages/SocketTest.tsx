@@ -11,8 +11,8 @@ function SocketTest() {
 
     useEffect(() => {
 
-        // What is this?
         ws = new WebSocket(websocketURL + ":8080");
+        ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
             console.log("Ehhlo")
@@ -20,27 +20,19 @@ function SocketTest() {
 
         ws.onmessage = (event: any) => {
             console.log("WebSocket message from Server: ", event.data);
-            // const array = new Float32Array(3);
-            // for (var i = 0; i < array.length; ++i) {
-            //     array[i] = i / 2;
-            // }
-            // ws.send(array);
-            // ws.send("Frontend");
+            let newarray = new Uint8Array(event.data);
+            console.log("WebSocket message as UInt8Array: ", newarray);
         }
-
-        // Causes error.
-        // ws.send("message");
-
+        
     }, []);
 
-    const send = function()
-    {
+    const send = function () {
         const array2 = new Uint8Array(3);
         console.log(array2);
         for (var i = 0; i < array2.length; ++i) {
-            array2[i] = 2;
-
+            array2[i] = counter;
         }
+        counter++;
 
         const array3 = new Uint16Array(3);
         console.log(array3);
@@ -57,7 +49,7 @@ function SocketTest() {
         ws.send(array2);
         counter++;
     }
-    
+
 
     return (
         <div className="WebSocket">

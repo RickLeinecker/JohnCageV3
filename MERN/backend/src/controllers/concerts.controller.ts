@@ -4,7 +4,7 @@ import recordingRepository from "../repositories/recording.repository";
 import tagRepository from "../repositories/tag.repository";
 var ms = require('mediaserver');
 import console_log from "../logging/console_log";
-import { TagObject } from "../models/tag.model";
+import { Tags, TagsAttributes } from "../models/Tags";
 
 class ConcertsController {
 
@@ -59,7 +59,7 @@ class ConcertsController {
       performers: ["Kyle", "Paul", "Stephen", "Rayyan", "Himil"],
       title: "Concert One",
       tags: ["Slow", "Quiet", "Loud"],
-      description: "High intensity pipe action yahoo.",
+      description: "High fun pipe action yahoo.",
       date: "2023-September-11-6-00-PM"
     }
 
@@ -148,7 +148,7 @@ class ConcertsController {
 
     res.status(200).send({ searchResults: dummyResponse });
 
-    
+
     /*
      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
  
@@ -165,7 +165,7 @@ class ConcertsController {
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
-    let response: TagObject[] = [];
+    let response: TagsAttributes[] = [];
 
     try {
       response = await tagRepository.retrieveAll();

@@ -74,41 +74,61 @@ const wss = new WebSocketServer({
   noServer: true
 });
 
+
+// Socket actions --------------------------------
 wss.on('connection', function connection(ws, req) {
   console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
+  var audioBuffer: Buffer = Buffer.from("");
+  var bytesProcessed = 0;
+  var bytesLefttoProcess = 0;
+  const byteAmount = 100000;
+  const maxBufferSize = 1000000;
+
   ws.on('message', function message(data) {
-    // var audioBuffer: Buffer = Buffer.from("");
-    // console_log(audioBuffer);
 
-    // console_log("Received data: ");
-    // console_log(data);
+    // Recieve audio data
+    console_log("Received data: ");
+    console_log(data);
 
-    // audioBuffer = Buffer.concat([audioBuffer, <Buffer>data]);
+    // Update buffer
+    audioBuffer = Buffer.concat([audioBuffer, <Buffer>data]);
+    bytesLefttoProcess = audioBuffer.length - bytesProcessed;
+    console_log("Full Audio Buffer: ");
+    console_log(audioBuffer);
 
-    // console_log("Full Audio Buffer: ");
-    // console_log(audioBuffer);
+    // Test writing to buffer.
+    // audioBuffer.writeUInt8(5, 0);
+    // console.log(audioBuffer);
 
-    // var dataView = new DataView(audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + audioBuffer.byteLength));
+    // Broadcast back the audio chunk.
+    // wss.clients.forEach(function each(client) {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send(data);
+    //   }
+    // });
 
-    // console_log("Dataview: ");
-    // console_log(dataView);
-    // console.log("Dataview Length: ");
-    // console.log(dataView.byteLength);
-    // console_log("Dataview 0th UInt8: ");
-    // console_log(dataView.getUint8(0));
-    // console.log("Dataview 0th UInt16: ");
-    // console.log(dataView.getUint16(0, true));
+    // If the buffer has enough unprocessed data, process it (for now just send it).
+    if (bytesLefttoProcess > byteAmount) {
+      let chunk = audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + bytesProcessed + byteAmount);
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(chunk, { binary: true });
+        }
+      });
+      bytesProcessed += byteAmount;
+    }
 
+    // Close the connection if the buffer gets really big, just to be safe. 
+    // This is probably not good enough for saving memory but it will remind the tester.
+    if (audioBuffer.length > maxBufferSize) {
+      ws.close();
+    }
 
-    //ws.send(data)
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });
   });
 });
+// Socket actions --------------------------------
+
 
 httpServer.on('upgrade', function upgrade(request: any, socket: any, head: any) {
   wss.handleUpgrade(request, socket, head, function done(ws) {
@@ -134,6 +154,35 @@ module.exports = { expressServerInstance };
 
 /*
 Backup. Should be gone soon.
+
+
+
+
+
+
+
+
+
+
+
+    // Dataview appears to not be modified when modifying the buffer it was made from.
+    var dataView = new DataView(audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + audioBuffer.byteLength));
+
+    console_log("Dataview: ");
+    console_log(dataView);
+    console.log("Dataview Length: ");
+    console.log(dataView.byteLength);
+    console_log("Dataview 0th UInt8: ");
+    console_log(dataView.getUint8(0));
+    console.log("Dataview 0th UInt16: ");
+    console.log(dataView.getUint16(0, true));
+
+
+
+
+
+
+
 
 
 

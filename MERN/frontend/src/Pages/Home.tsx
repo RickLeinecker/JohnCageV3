@@ -66,7 +66,7 @@ function HomePage() {
 
     return (
         <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
-            <div className="row animateIn intersect"  id = "0">
+            <div className="row"  id = "0">
                 <div className="col">
                     <img src={JohnCage} style={{ width: "300px", height: "300px" }}></img>
                 </div>
