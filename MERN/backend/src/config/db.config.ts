@@ -6,14 +6,15 @@ import { Tag } from "../models/tag.model"
 
 const isServerEnvironment = process.env.NODE_ENV === 'production';
 
-const models = [Recording, User, Tag];
+const model = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "JCT",
-  username: "username",
-  password: "!2#4%qwert",
+  username: "TheBeast",
+  password: "WeLoveJCT",
   host: "localhost",
   dialect: "mysql",
+  port: 3306,
   pool: {
     max: 5,
     min: 0,
@@ -21,12 +22,12 @@ const developmentSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
+    //socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
   },
   define: {
     timestamps: false
   },
-  models: models
+  //models: model
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
@@ -47,7 +48,7 @@ const serverSequelizeConfig: SequelizeOptions = {
   define: {
     timestamps: false
   },
-  models: models
+  //models: model
 };
 
 const sequelizeConfig = isServerEnvironment ? serverSequelizeConfig : developmentSequelizeConfig;

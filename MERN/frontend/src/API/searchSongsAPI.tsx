@@ -39,7 +39,7 @@ const searchSongs = async function (searchText: string) {
                 title: "",
                 id: -1,
                 tags: [],
-                maestro: "",
+                maestro: ""
             }
         ];
         console.log("Search Results: ", searchEmpty);

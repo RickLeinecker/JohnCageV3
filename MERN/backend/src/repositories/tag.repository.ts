@@ -22,6 +22,7 @@ class TagRepository implements ITagRepository {
         var tagList: TagObject[] = [];
 
         try {
+            /*
             // Get response
             const query = await Tag.findAll();
 
@@ -29,6 +30,8 @@ class TagRepository implements ITagRepository {
             for (let i = 0; i < query.length; ++i) {
                 tagList.push(query[i].dataValues);
             }
+            */
+
 
             // Return result
             return tagList;
