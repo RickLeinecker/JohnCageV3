@@ -59,7 +59,7 @@ body
   background-color: #7D7A79;
 }
 
-.animate-on-scroll{
+.animateOut{
   opacity:0;
   transform:translateX(-300px);
   transition: all 0.4s ease-out;
@@ -67,7 +67,7 @@ body
 
 }
 
-.animate{
+.animateIn{
   opacity: 1;
   transform: translateX(0px);
   transition: all 0.4s ease-out;
