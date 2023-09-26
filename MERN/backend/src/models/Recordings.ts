@@ -1,6 +1,5 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Admin, AdminId } from './Admin';
 import type { Groups, GroupsId } from './Groups';
 
 export interface RecordingsAttributes {
@@ -40,18 +39,6 @@ export class Recordings extends Model<RecordingsAttributes, RecordingsCreationAt
   getGroup!: Sequelize.BelongsToGetAssociationMixin<Groups>;
   setGroup!: Sequelize.BelongsToSetAssociationMixin<Groups, GroupsId>;
   createGroup!: Sequelize.BelongsToCreateAssociationMixin<Groups>;
-  // Recordings hasMany Admin via RecordingID
-  Admins!: Admin[];
-  getAdmins!: Sequelize.HasManyGetAssociationsMixin<Admin>;
-  setAdmins!: Sequelize.HasManySetAssociationsMixin<Admin, AdminId>;
-  addAdmin!: Sequelize.HasManyAddAssociationMixin<Admin, AdminId>;
-  addAdmins!: Sequelize.HasManyAddAssociationsMixin<Admin, AdminId>;
-  createAdmin!: Sequelize.HasManyCreateAssociationMixin<Admin>;
-  removeAdmin!: Sequelize.HasManyRemoveAssociationMixin<Admin, AdminId>;
-  removeAdmins!: Sequelize.HasManyRemoveAssociationsMixin<Admin, AdminId>;
-  hasAdmin!: Sequelize.HasManyHasAssociationMixin<Admin, AdminId>;
-  hasAdmins!: Sequelize.HasManyHasAssociationsMixin<Admin, AdminId>;
-  countAdmins!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Recordings {
     return Recordings.init({
