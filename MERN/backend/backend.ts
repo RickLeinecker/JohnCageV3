@@ -82,8 +82,8 @@ wss.on('connection', function connection(ws, req) {
   var audioBuffer: Buffer = Buffer.from("");
   var bytesProcessed = 0;
   var bytesLefttoProcess = 0;
-  const byteAmount = 10;
-  const maxBufferSize = 30;
+  const byteAmount = 5000;
+  const maxBufferSize = 100000;
 
   ws.on('message', function message(data) {
 
