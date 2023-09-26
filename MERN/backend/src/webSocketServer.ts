@@ -58,7 +58,7 @@ wss.on('connection', function connection(ws, req) {
         // Close the connection if the buffer gets really big, just to be safe. 
         // This is probably not good enough for saving memory but it will remind the tester.
         if (audioBuffer.length > maxBufferSize) {
-            ws.close();
+            //ws.close();
         }
     });
 });
