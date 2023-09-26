@@ -44,7 +44,7 @@ const serverSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    //socketPath: "/var/run/mysqld/mysqld.sock"
+    socketPath: "/var/run/mysqld/mysqld.sock"
   },
   define: {
     timestamps: false
