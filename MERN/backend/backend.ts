@@ -113,7 +113,7 @@ wss.on('connection', function connection(ws, req) {
       let chunk = audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + bytesProcessed + byteAmount);
       wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(chunk, { binary: true });
+          client.send(chunk.buffer, { binary: true });
         }
       });
       bytesProcessed += byteAmount;
