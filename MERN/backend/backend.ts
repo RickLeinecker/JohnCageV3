@@ -68,7 +68,7 @@ const socketServer = http.createServer(expressServerInstance.expressApp);
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
 const httpServer = http.createServer();
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 const webSocketPort = 8080;
 const wss = new WebSocketServer({
   noServer: true
@@ -78,9 +78,35 @@ wss.on('connection', function connection(ws, req) {
   console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
   ws.on('message', function message(data) {
-    console_log("Received data: " + data.toString());
+    // var audioBuffer: Buffer = Buffer.from("");
+    // console_log(audioBuffer);
 
-    ws.send(data)
+    // console_log("Received data: ");
+    // console_log(data);
+
+    // audioBuffer = Buffer.concat([audioBuffer, <Buffer>data]);
+
+    // console_log("Full Audio Buffer: ");
+    // console_log(audioBuffer);
+
+    // var dataView = new DataView(audioBuffer.buffer.slice(audioBuffer.byteOffset, audioBuffer.byteOffset + audioBuffer.byteLength));
+
+    // console_log("Dataview: ");
+    // console_log(dataView);
+    // console.log("Dataview Length: ");
+    // console.log(dataView.byteLength);
+    // console_log("Dataview 0th UInt8: ");
+    // console_log(dataView.getUint8(0));
+    // console.log("Dataview 0th UInt16: ");
+    // console.log(dataView.getUint16(0, true));
+
+
+    //ws.send(data)
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
   });
 });
 
@@ -99,7 +125,6 @@ httpServer
       console_log(err);
     }
   });
-
 
 // Export express app required for Jest unit testing.
 module.exports = { expressServerInstance };

@@ -97,7 +97,7 @@ class ConcertsController {
       res.status(200).send({ songData: dummyResponse2 });
     }
     else {
-      res.status(200).send({ songData: defaultResponse })
+      res.status(200).send({ songData: defaultResponse });
     }
 
     /*
@@ -148,19 +148,20 @@ class ConcertsController {
 
     res.status(200).send({ searchResults: dummyResponse });
 
+    
     /*
-    const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-
-    try {
-      const recordings = await recordingRepository.retrieveAll({ Title });
-      res.status(200).send(recordings);
-
-    } catch (err) {
-      res.status(500).send({
-        message: "Some error occurred while retrieving recordings."
-      });
-    }
-    */
+     const Title = typeof req.query.Title === "string" ? req.query.Title : "";
+ 
+     try {
+       const recordings = await recordingRepository.retrieveAll({ Title });
+       res.status(200).send(recordings);
+ 
+     } catch (err) {
+       res.status(500).send({
+         message: "Some error occurred while retrieving recordings."
+       });
+     }
+     */
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
