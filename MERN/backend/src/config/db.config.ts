@@ -6,7 +6,7 @@ import { Tag } from "../models/tag.model"
 
 const isServerEnvironment = process.env.NODE_ENV === 'production';
 
-const model = [Recording, User, Tag];
+//const model = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "JCT",
