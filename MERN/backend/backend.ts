@@ -4,7 +4,7 @@ import console_log from "./src/logging/console_log"
 // Express API server
 import expressServer from "./src/expressServer";
 const expressServerInstance: expressServer = new expressServer();
-const expressPort = 5003;
+const expressPort = 5000;
 
 expressServerInstance
   .expressApp
