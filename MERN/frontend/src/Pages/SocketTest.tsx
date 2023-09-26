@@ -46,7 +46,6 @@ function SocketTest() {
         console.log(array3);
         for (var i = 0; i < array3.length; ++i) {
             array3[i] = 3;
-
         }
         // var newdataview = new DataView(array.buffer);
         // console.log(newdataview);
