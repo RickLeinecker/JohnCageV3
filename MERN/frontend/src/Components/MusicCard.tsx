@@ -51,15 +51,8 @@ function MusicCard(thisConcert: concertData) {
               {"Description: "}
               {data["description"]}
             </p>
-            <button type="button" className="btn current">
-              Edit
-            </button>
-            <button type="button" className="btn current">
-              Download
-            </button>
-            <button type="button" className="btn btn-danger">
-              Delete
-            </button>
+
+            
           </div>
         </div>
       </div>
@@ -68,3 +61,19 @@ function MusicCard(thisConcert: concertData) {
 }
 
 export default MusicCard;
+
+
+/*
+   <button type="button" className="btn current">
+              Edit
+            </button>
+            <button type="button" className="btn current">
+              Download
+            </button>
+            <button type="button" className="btn btn-danger">
+              Delete
+            </button>
+
+*/
+
+

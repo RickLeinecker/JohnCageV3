@@ -2,7 +2,7 @@ import { Model, Table, Column, DataType } from "sequelize-typescript";
 
 type TagObject = {
   id: number;
-  tag: string;
+  tag: string | undefined;
 }
 
 @Table({
