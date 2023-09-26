@@ -46,6 +46,16 @@ export function initModels(sequelize: Sequelize) {
   Users.hasMany(Admin, { as: "Admins", foreignKey: "ReporterID"});
   Admin.belongsTo(Users, { as: "ReporterName_User", foreignKey: "ReporterName"});
   Users.hasMany(Admin, { as: "ReporterName_Admins", foreignKey: "ReporterName"});
+  Groups.belongsTo(Users, { as: "GroupLeader", foreignKey: "GroupLeaderID"});
+  Users.hasMany(Groups, { as: "Groups", foreignKey: "GroupLeaderID"});
+  Groups.belongsTo(Users, { as: "User1", foreignKey: "User1ID"});
+  Users.hasMany(Groups, { as: "User1_Groups", foreignKey: "User1ID"});
+  Groups.belongsTo(Users, { as: "User2", foreignKey: "User2ID"});
+  Users.hasMany(Groups, { as: "User2_Groups", foreignKey: "User2ID"});
+  Groups.belongsTo(Users, { as: "User3", foreignKey: "User3ID"});
+  Users.hasMany(Groups, { as: "User3_Groups", foreignKey: "User3ID"});
+  Groups.belongsTo(Users, { as: "User4", foreignKey: "User4ID"});
+  Users.hasMany(Groups, { as: "User4_Groups", foreignKey: "User4ID"});
 
   return {
     Admin: Admin,

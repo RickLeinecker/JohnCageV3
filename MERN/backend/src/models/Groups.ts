@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Recordings, RecordingsId } from './Recordings';
+import type { Users, UsersId } from './Users';
 
 export interface GroupsAttributes {
   GroupID: number;
@@ -28,18 +28,31 @@ export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> im
   User4ID?: number;
   GroupName?: string;
 
-  // Groups hasMany Recordings via GroupID
-  Recordings!: Recordings[];
-  getRecordings!: Sequelize.HasManyGetAssociationsMixin<Recordings>;
-  setRecordings!: Sequelize.HasManySetAssociationsMixin<Recordings, RecordingsId>;
-  addRecording!: Sequelize.HasManyAddAssociationMixin<Recordings, RecordingsId>;
-  addRecordings!: Sequelize.HasManyAddAssociationsMixin<Recordings, RecordingsId>;
-  createRecording!: Sequelize.HasManyCreateAssociationMixin<Recordings>;
-  removeRecording!: Sequelize.HasManyRemoveAssociationMixin<Recordings, RecordingsId>;
-  removeRecordings!: Sequelize.HasManyRemoveAssociationsMixin<Recordings, RecordingsId>;
-  hasRecording!: Sequelize.HasManyHasAssociationMixin<Recordings, RecordingsId>;
-  hasRecordings!: Sequelize.HasManyHasAssociationsMixin<Recordings, RecordingsId>;
-  countRecordings!: Sequelize.HasManyCountAssociationsMixin;
+  // Groups belongsTo Users via GroupLeaderID
+  GroupLeader!: Users;
+  getGroupLeader!: Sequelize.BelongsToGetAssociationMixin<Users>;
+  setGroupLeader!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
+  createGroupLeader!: Sequelize.BelongsToCreateAssociationMixin<Users>;
+  // Groups belongsTo Users via User1ID
+  User1!: Users;
+  getUser1!: Sequelize.BelongsToGetAssociationMixin<Users>;
+  setUser1!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
+  createUser1!: Sequelize.BelongsToCreateAssociationMixin<Users>;
+  // Groups belongsTo Users via User2ID
+  User2!: Users;
+  getUser2!: Sequelize.BelongsToGetAssociationMixin<Users>;
+  setUser2!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
+  createUser2!: Sequelize.BelongsToCreateAssociationMixin<Users>;
+  // Groups belongsTo Users via User3ID
+  User3!: Users;
+  getUser3!: Sequelize.BelongsToGetAssociationMixin<Users>;
+  setUser3!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
+  createUser3!: Sequelize.BelongsToCreateAssociationMixin<Users>;
+  // Groups belongsTo Users via User4ID
+  User4!: Users;
+  getUser4!: Sequelize.BelongsToGetAssociationMixin<Users>;
+  setUser4!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
+  createUser4!: Sequelize.BelongsToCreateAssociationMixin<Users>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof Groups {
     return Groups.init({
@@ -55,23 +68,43 @@ export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> im
     },
     GroupLeaderID: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'ID'
+      }
     },
     User1ID: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'ID'
+      }
     },
     User2ID: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'ID'
+      }
     },
     User3ID: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'ID'
+      }
     },
     User4ID: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'Users',
+        key: 'ID'
+      }
     },
     GroupName: {
       type: DataTypes.STRING(50),
@@ -88,6 +121,41 @@ export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> im
         using: "BTREE",
         fields: [
           { name: "GroupID" },
+        ]
+      },
+      {
+        name: "GroupLeaderID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "GroupLeaderID" },
+        ]
+      },
+      {
+        name: "User1ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "User1ID" },
+        ]
+      },
+      {
+        name: "User2ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "User2ID" },
+        ]
+      },
+      {
+        name: "User3ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "User3ID" },
+        ]
+      },
+      {
+        name: "User4ID_idx",
+        using: "BTREE",
+        fields: [
+          { name: "User4ID" },
         ]
       },
     ]
