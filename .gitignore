@@ -1,4 +1,5 @@
 node_modules/
 build/
 debug.log
-.DS_Store/
+error.log
+.DS_Store
