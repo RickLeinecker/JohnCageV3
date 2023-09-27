@@ -4,6 +4,7 @@ import JohnCage from "../Images/JohnCage.png"
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { render } from "@testing-library/react";
+import React from "react";
 
 
 //Functions
@@ -38,25 +39,51 @@ function HomePage() {
         const options = {
             root: null,
             rootMargin: "0px",
-            threshold: 0.5
+            threshold: 0.00
           };
 
           const items = document.querySelectorAll('.intersect'); 
 
+        //   const active = new IntersectionObserver((entries) => {
+        //     let iter:number = 0;
+        //     entries.forEach((entry) => {
+        //       if (entry.intersectionRatio > options.threshold) {
+        //         // Add 'active' class if observation target is inside viewport
+        //         console.log("In view Entry's "+iter+" intersection ratio is "+entry.intersectionRatio);
+        //         entry.target.classList.add('animateIn');
+        //         entry.target.classList.remove('animateOut');
+        //       } else {
+        //         // Remove 'active' class otherwise
+        //         console.log("Out view Entry's "+iter+" intersection ratio is "+entry.intersectionRatio);
+        //         entry.target.classList.add('animateOut');
+        //         entry.target.classList.remove('animateIn');
+        //       }
+        //     });
+        //   });
+
+        // items.forEach((el) => {
+        //     active.observe(el);
+        //     });
+            
             const active = function(entries:IntersectionObserverEntry[]){
+                let iter:number = 0;
             entries.forEach(entry => {
                 if(entry.isIntersecting)
                 {
+                    console.log("Element "+iter+" IS Intersecting");
                     entry.target.classList.add('animateIn');
                     entry.target.classList.remove('animateOut');
                 }
                 else
                 {
+                    console.log("Element "+iter+" is NOT Intersecting");
                     entry.target.classList.add('animateOut');
                     entry.target.classList.remove('animateIn');
                 }
+                iter++;
             });
             }
+
             const io2 = new IntersectionObserver(active, options);
             for(let i=0; i < items.length; i++){
                 io2.observe(items[i]);
