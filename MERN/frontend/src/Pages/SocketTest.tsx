@@ -27,7 +27,7 @@ function SocketTest() {
     }, []);
 
     const send = function () {
-        const array2 = new Uint8Array(3);
+        const array2 = new Uint8Array(4);
         // console.log(array2);
         for (var i = 0; i < array2.length; ++i) {
             array2[i] = counter;
