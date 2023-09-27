@@ -19,7 +19,20 @@ wss.on('connection', function connection(ws, req) {
     const outgoingChunkSize = 5000;
     const maxBufferSize = 100000;
 
+    var silenceBuffered = 0;
+
     ws.on('message', function message(data) {
+
+        if (!silenceBuffered) {
+            // var silenceBuffer: Buffer = Buffer.alloc(10000);
+            // silenceBuffer.fill()
+            // wss.clients.forEach(function each(client) {
+            //     if (client.readyState === WebSocket.OPEN) {
+            //         console.log(chunk);
+            //         client.send(chunk, { binary: true });
+            //     }
+            // });
+        }
 
         // Recieve audio data
         console_log("Received data: ");
@@ -58,7 +71,7 @@ wss.on('connection', function connection(ws, req) {
         // Close the connection if the buffer gets really big, just to be safe. 
         // This is probably not good enough for saving memory but it will remind the tester.
         if (audioBuffer.length > maxBufferSize) {
-            //ws.close();
+            ws.close();
         }
     });
 });
