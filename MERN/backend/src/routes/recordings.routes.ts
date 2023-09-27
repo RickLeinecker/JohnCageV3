@@ -11,6 +11,7 @@ class RecordingsRoutes {
   
     intializeRoutes() {
       this.router.get("/", this.controller.getRecordings);
+      this.router.get("/users", this.controller.getRecordingsUsers);
       this.router.get("/:group", this.controller.getRecordingsGroups);
     }
 }
