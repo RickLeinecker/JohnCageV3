@@ -23,19 +23,19 @@ function SocketTest() {
             let newarray = new Uint8Array(event.data);
             console.log("WebSocket message as UInt8Array: ", newarray);
         }
-        
+
     }, []);
 
     const send = function () {
         const array2 = new Uint8Array(3);
-        console.log(array2);
+        // console.log(array2);
         for (var i = 0; i < array2.length; ++i) {
             array2[i] = counter;
         }
         counter++;
 
         const array3 = new Uint16Array(3);
-        console.log(array3);
+        // console.log(array3);
         for (var i = 0; i < array3.length; ++i) {
             array3[i] = 3;
         }
@@ -45,7 +45,8 @@ function SocketTest() {
         // console.log(newdataview.getFloat32(4, true));
         // console.log(newdataview.getFloat32(8, true));
 
-        console.log("Sending Float Data to WebSocket server.");
+        console.log("Sending Data to WebSocket server.");
+        console.log(array2);
         ws.send(array2);
         counter++;
     }
