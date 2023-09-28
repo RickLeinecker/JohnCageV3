@@ -1,8 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import MeetOurTeam from '../Components/MeetOurTeam';
+import MeetOurTeam2 from '../Components/MeetOurTeam2';
+import MeetOurTeam3 from '../Components/MeetOurTeam3';
 import '../Style/AboutUs.css';
 
 function AboutPage(){
+    const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+
+    const goToTeam = (component: string) => {
+      setSelectedComponent(component);
+    };
     return(
        <div className='about'>
             <div className='about-layout'>
@@ -16,8 +23,15 @@ function AboutPage(){
                         an application that can be used by anyone to make their own unique piece of music. 
                     </p>
                 </div>
+                <div className='button-container'>
+                    <button onClick ={() =>goToTeam('MeetOurTeam')}>Show Version 1</button>
+                    <button onClick ={() =>goToTeam('MeetOurTeam2')}>Show Version 2</button>
+                    <button onClick ={() =>goToTeam('MeetOurTeam3')}>Show Version 3</button>
+                </div>
                 <div className='about-devs-container'>
-                    <MeetOurTeam/>
+                    {selectedComponent === 'MeetOurTeam' && <MeetOurTeam/>}
+                    {selectedComponent === 'MeetOurTeam2' && <MeetOurTeam2/>}
+                    {selectedComponent === 'MeetOurTeam3' && <MeetOurTeam3/>}
                 </div>
             </div>
        </div>
