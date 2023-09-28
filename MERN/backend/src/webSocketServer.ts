@@ -202,11 +202,11 @@ const mix = function (buffers: Buffer[]): Buffer {
         for (let j = 0; j < sampleCount; ++j) {
             let view = bufferViews.at(j);
             if (view != undefined) {
-                sampleSum += (32768 + view.getInt16(2 * i, false)) / sampleCount;
+                sampleSum += (32768 + view.getInt16(2 * i, true)) / sampleCount;
             }
         }
 
-        mixedAudio.writeInt16BE((sampleSum - 32768), 2 * i);
+        mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);
         // Test if returns undefined with too big number.
         // Test if casting number works.
         // Test if the number can be calculated based on the size of the sample to avoid too big.
