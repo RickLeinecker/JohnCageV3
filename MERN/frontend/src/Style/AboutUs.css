@@ -57,9 +57,21 @@
     width:30%;
 }
 .dev-image-container{
-    width: 100%;
-    height: 80%;
     border-radius: 20px;
+    height: 400px;
+    width: 100%;
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+    margin: auto;
+    padding: 0;
+}
+.team-pic{
+    border-radius: 20px;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
 }
 .dev-details-container{
     border-radius: 20px;
@@ -72,5 +84,7 @@
 .dev-role{
     font-size: 1.5rem;
 }
-
-
+.button-container{
+    display: flex;
+    justify-content: space-around;
+}
