@@ -2,7 +2,6 @@
 import console_log from "./logging/console_log"
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
-const fs = require("fs");
 const http = require('http');
 const httpServer = http.createServer();
 import WebSocket, { WebSocketServer } from "ws";
@@ -10,8 +9,6 @@ const wss = new WebSocketServer({ noServer: true });
 import { outgoingAudioChunkSize, maxAudioBufferSize } from "./socket/socket.config";
 import ConcertParticipant from "./socket/socket.participant";
 import console_err from "./logging/console_err";
-
-
 
 // Global list of connected performers.
 var performers: ConcertParticipant[] = [];
@@ -23,12 +20,10 @@ wss.on('connection', function connection(ws, req) {
 
     console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
-    let counter = 0;
-    testMixer();
+    test_testMixer();
 
     // Initialize new performer object.
-    // This id needs to be 100% unique later.
-    let performer = new ConcertParticipant(ws, ids);
+    let performer = new ConcertParticipant(ws, ids); // This id needs to be 100% unique later.
     performers.push(performer);
     ids++;
     console_log("New performer added to list: ");
@@ -76,14 +71,6 @@ wss.on('connection', function connection(ws, req) {
             let mixedBuffer: Buffer = mix(chunkBuffers);
             console_log("Audio mixed.");
 
-            // Trying to write raw data to file for analyzing in audacity.
-            if (counter % 4 == 3) {
-                var err_file = fs.createWriteStream(__dirname + '/mixedBytes', { flags: 'w' });
-                err_file.write(mixedBuffer);
-            }
-            counter++;
-            // ----------------------------------------------------------
-
             wss.clients.forEach(function each(client) {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(mixedBuffer, { binary: true });
@@ -104,7 +91,7 @@ wss.on('connection', function connection(ws, req) {
 
 });
 
-const printAllBuffers = function (performers: ConcertParticipant[]): void {
+const test_printAllBuffers = function (performers: ConcertParticipant[]): void {
     for (let i = 0; i < performers.length; ++i) {
         let performer = performers.at(i);
         if (performer != undefined) {
@@ -113,7 +100,7 @@ const printAllBuffers = function (performers: ConcertParticipant[]): void {
     }
 }
 
-const testMixer = function () {
+const test_testMixer = function (): void {
     // Test data
     let myarraybuffer: Int8Array = new Int8Array([-128, 0, 5, 40]);
     let mynicebuff: Buffer = Buffer.from(myarraybuffer);
@@ -182,9 +169,6 @@ const mix = function (buffers: Buffer[]): Buffer {
         }
     }
 
-    var err_file = fs.createWriteStream(__dirname + '/bufferBytes', { flags: 'w' });
-    err_file.write(buffers.at(0));
-
     // Create data views from buffers to do 16 bit calculations.
     let bufferViews: DataView[] = [];
     for (let i = 0; i < buffers.length; ++i) {
@@ -221,14 +205,15 @@ const mix = function (buffers: Buffer[]): Buffer {
 export { wss, httpServer };
 
 
-// This was my original way of adding the buffer. I am not sure if concat is memory safe (overlapping).
 
+// This was my original way of adding the buffer. I am not sure if concat is memory safe (overlapping).
+// I switched it trying to debug something that probably wasn't this.
 // I switched to using alloc(max size) in the Concert Participant constructor to avoid these potential problems.
 // Old way: performer.audioBuffer = Buffer.concat([performer.audioBuffer, <Buffer>data]);
 
 
 
-// Old broadcast without functions for validation, mixing.
+// Old audio broadcast without functions for validation, mixing.
 
 // // If the buffer has enough unprocessed data, process it (for now just send it).
 // if (performer.bytesLefttoProcess > outgoingAudioChunkSize) {
