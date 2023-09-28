@@ -1,69 +1,84 @@
 import { Op } from "sequelize";
-import User from "../models/user.model";
+import { Users } from "../models/Users";
 
-interface IUserRepository {
-  save(user: User): Promise<User>;
-  retrieveAll(searchParams: {UserName: string, IsAdmin: boolean, IsVerified: boolean}): Promise<User[]>;
-  retrieveById(userId: number): Promise<User | null>;
-  update(user: User): Promise<number>;
-  delete(userId: number): Promise<number>;
+interface IUsersRepository {
+  save(user: Users): Promise<Users>;
+  retrieveAll(searchParams: {userName: string, IsAdmin: boolean, IsVerified: boolean}): Promise<Users[]>;
+  retrieveById(usersId: number): Promise<Users | null>;
+  update(users: Users): Promise<number>;
+  delete(usersId: number): Promise<number>;
 }
 interface SearchCondition {
     [key: string]: any;
 }
 
-class UserRepository implements IUserRepository {
-  async save(user: User): Promise<User> {
+class UsersRepository implements IUsersRepository {
+  async save(users: Users): Promise<Users> {
     try {
-        return await User.create({
-          Role: user.Role,
-          FirstName: user.FirstName,
-          LastName: user.LastName,
-          Email: user.Email,
-          Password: user.Password,
-          Phone: user.Phone,
-          UserName: user.UserName,
-          IsAdmin: user.IsAdmin,
-          IsVerified: user.IsVerified
-        });
+        return await Users.create({
+          Role: users.Role,
+          FirstName: users.FirstName,
+          LastName: users.LastName,
+          Email: users.Email,
+          Password: users.Password,
+          Phone: users.Phone,
+          UserName: users.UserName,
+          IsAdmin: users.IsAdmin,
+          isVerified: users.isVerified
+        }, {fields: ['FirstName', 'LastName', 'Email', 'Password', 'Phone', 'UserName']}); // Restrict the user to only being allowed to set these fields.
       } catch (err) {
-        throw new Error("Failed to create User!");
+        throw new Error("Failed to create users!");
       }
   }
 
-  // async retrieveAll(searchParams: {UserName?: string, IsAdmin?: boolean, IsVerified: boolean}): Promise<User[]> {
-    async retrieveAll(searchParams: {UserName?: string, IsAdmin?: boolean, IsVerified?: boolean}): Promise<User[]> {
+  async retrieveAll(): Promise<Users[]> {
     try {
         let condition: SearchCondition = {};
     
-        // if (searchParams?.IsAdmin) condition.IsAdmin = true;
-
-        // if (searchParams?.IsVerified) condition.IsVerified = true;
-    
-        if (searchParams?.UserName)
-          condition.UserName = { [Op.like]: `%${searchParams.UserName}%` };
-    
-        return await User.findAll({ where: condition });
+        return await Users.findAll({
+          attributes: ['ID', 'UserName']
+        });
       } catch (error) {
         throw new Error("Failed to retrieve Users!");
       }
   }
 
-  async retrieveById(userId: number): Promise<User | null> {
+  // async retrieveAll(searchParams: {userName?: string, IsAdmin?: boolean, IsVerified: boolean}): Promise<users[]> {
+    // async retrieveAll(searchParams: {userName?: string, IsAdmin?: boolean, IsVerified?: boolean}): Promise<Users[]> {
+  //     async retrieveAll(): Promise<Users[]> {
+  //   try {
+  //       let condition: SearchCondition = {};
+    
+  //       // if (searchParams?.IsAdmin) condition.IsAdmin = true;
+
+  //       // if (searchParams?.IsVerified) condition.IsVerified = true;
+    
+  //       // if (searchParams?.userName)
+  //       //   condition.userName = { [Op.like]: `%${searchParams.userName}%` };
+
+  //       let {} = Users.getAttributes();
+    
+  //       return await Users.findAll();
+  //     } catch (error) {
+  //       throw new Error("Failed to retrieve Users!");
+  //     }
+  // }
+
+  async retrieveById(userId: number): Promise<Users | null> {
     try {
-        return await User.findByPk(userId);
+        return await Users.findByPk(userId);
       } catch (error) {
         throw new Error("Failed to retrieve User!");
       }
   }
 
-  async update(user: User): Promise<number> {
-    const { ID, Role, FirstName, Email, Password, Phone, UserName, IsAdmin, IsVerified} = user;
+  async update(user: Users): Promise<number> {
+    const { ID, Role, FirstName, Email, Password, Phone, UserName, IsAdmin, isVerified} = user;
 
     try {
-      const affectedRows = await User.update(
-        { ID, Role, FirstName, Email, Password, Phone, UserName, IsAdmin, IsVerified },
-        { where: { id: ID } }
+      const affectedRows = await Users.update(
+        { ID, Role, FirstName, Email, Password, Phone, UserName, IsAdmin, isVerified },
+        { where: { ID: ID } }
       );
   
       return affectedRows[0];
@@ -74,8 +89,8 @@ class UserRepository implements IUserRepository {
 
   async delete(userId: number): Promise<number> {
     try {
-        const affectedRows = await User.destroy({ where: { ID: userId } });
-    
+        const affectedRows = await Users.destroy({ where: { ID: userId } });
+
         return affectedRows;
       } catch (error) {
         throw new Error("Failed to delete User!");
@@ -83,4 +98,4 @@ class UserRepository implements IUserRepository {
   }
 }
 
-export default new UserRepository();
+export default new UsersRepository();

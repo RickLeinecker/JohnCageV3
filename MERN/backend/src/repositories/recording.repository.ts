@@ -1,11 +1,11 @@
 import { Op } from "sequelize";
-import Recording from "../models/recording.model";
+import { Recordings } from "../models/Recordings";
 
 interface IRecordingRepository {
-  save(recording: Recording): Promise<Recording>;
-  retrieveAll(searchParams: {Title: string}): Promise<Recording[]>;
-  retrieveById(recordingId: number): Promise<Recording | null>;
-  update(recording: Recording): Promise<number>;
+  save(recording: Recordings): Promise<Recordings>;
+  retrieveAll(searchParams: {Title: string}): Promise<Recordings[]>;
+  retrieveById(recordingId: number): Promise<Recordings | null>;
+  update(recording: Recordings): Promise<number>;
   delete(recordingId: number): Promise<number>;
 }
 
@@ -14,21 +14,26 @@ interface SearchCondition {
 }
 
 class RecordingRepository implements IRecordingRepository {
-  async save(recording: Recording): Promise<Recording> {
+  async save(recording: Recordings): Promise<Recordings> {
     try {
-        return await Recording.create({
+        return await Recordings.create({
           Title: recording.Title,
+          FilePath: recording.FilePath,
           GroupID: recording.GroupID,
           Tag1: recording.Tag1,
           Tag2: recording.Tag2,
           Tag3: recording.Tag3,
-        });
+          PicturePath: recording.PicturePath,
+          FileName: recording.FileName,
+          Description: recording.Description,
+          Date: recording.Date
+        }, {fields: ['Title', 'Tag1', 'Tag2', 'Tag3', 'Description']}); // Restrict the user model to set only these fields.
       } catch (err) {
         throw new Error("Failed to create Recording!");
       }
   }
 
-  async retrieveAll(searchParams: {Title?: string, Tag1?: string, Tag2?: string, Tag3?: string}): Promise<Recording[]> {
+  async retrieveAll(searchParams: {Title?: string, Tag1?: string, Tag2?: string, Tag3?: string}): Promise<Recordings[]> {
     try {
         let condition: SearchCondition = {};
 
@@ -44,27 +49,27 @@ class RecordingRepository implements IRecordingRepository {
         if(searchParams?.Tag3)
           condition.tag3 = { [Op.like]: `%${searchParams.Tag3}%` };
     
-        return await Recording.findAll({ where: condition});
+        return await Recordings.findAll({ where: condition});
       } catch (error) {
         throw new Error("Failed to retrieve Recording!");
       }
   }
 
-  async retrieveById(recordingId: number): Promise<Recording | null> {
+  async retrieveById(recordingId: number): Promise<Recordings | null> {
     try {
-        return await Recording.findByPk(recordingId);
+        return await Recordings.findByPk(recordingId);
       } catch (error) {
         throw new Error("Failed to retrieve Recording!");
       }
   }
 
-  async update(recording: Recording): Promise<number> {
-    const { id, Title, GroupID, Tag1, Tag2, Tag3 } = recording;
+  async update(recording: Recordings): Promise<number> {
+    const { ID, Title, GroupID, Tag1, Tag2, Tag3 } = recording;
 
     try {
-      const affectedRows = await Recording.update(
+      const affectedRows = await Recordings.update(
         { Title, GroupID, Tag1, Tag2, Tag3 },
-        { where: { id: id } }
+        { where: { ID: ID } }
       );
   
       return affectedRows[0];
@@ -75,7 +80,7 @@ class RecordingRepository implements IRecordingRepository {
 
   async delete(recordingId: number): Promise<number> {
     try {
-        const affectedRows = await Recording.destroy({ where: { id: recordingId } });
+        const affectedRows = await Recordings.destroy({ where: { ID: recordingId } });
     
         return affectedRows;
       } catch (error) {
