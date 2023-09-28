@@ -2,6 +2,7 @@
 import console_log from "./logging/console_log"
 
 // Basic WebSocket server ensures "ws" protocol or doesn't work.
+const fs = require("fs");
 const http = require('http');
 const httpServer = http.createServer();
 import WebSocket, { WebSocketServer } from "ws";
@@ -9,6 +10,7 @@ const wss = new WebSocketServer({ noServer: true });
 import { outgoingAudioChunkSize, maxAudioBufferSize } from "./socket/socket.config";
 import ConcertParticipant from "./socket/socket.participant";
 import console_err from "./logging/console_err";
+
 
 
 // Global list of connected performers.
@@ -21,6 +23,7 @@ wss.on('connection', function connection(ws, req) {
 
     console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
+    let counter = 0;
     testMixer();
 
     // Initialize new performer object.
@@ -45,12 +48,12 @@ wss.on('connection', function connection(ws, req) {
     });
 
     performer.socket.on('message', function message(data) {
-        // Receive audio data
+        // Receive audio data.
         console_log("Received message data: ");
         console_log(data);
         console_log("\n");
 
-        // Update buffer
+        // Write message contents into user's buffer.
         let thisBuffer = Buffer.from(<Buffer>data);
         let thisView = new DataView(thisBuffer.buffer.slice(thisBuffer.byteOffset, thisBuffer.byteOffset + thisBuffer.byteLength));
         for (let i = 0; i < thisView.byteLength; ++i) {
@@ -58,7 +61,7 @@ wss.on('connection', function connection(ws, req) {
             performer.bufferSize++;
             performer.bytesLefttoProcess++;
         }
-        console_log("Buffer bytes filled: ");
+        console_log("Total buffer bytes filled: ");
         console_log(performer.bufferSize);
         console_log("\n");
 
@@ -72,6 +75,14 @@ wss.on('connection', function connection(ws, req) {
 
             let mixedBuffer: Buffer = mix(chunkBuffers);
             console_log("Audio mixed.");
+
+            // Trying to write raw data to file for analyzing in audacity.
+            if (counter % 4 == 3) {
+                var err_file = fs.createWriteStream(__dirname + '/mixedBytes', { flags: 'w' });
+                err_file.write(mixedBuffer);
+            }
+            counter++;
+            // ----------------------------------------------------------
 
             wss.clients.forEach(function each(client) {
                 if (client.readyState === WebSocket.OPEN) {
@@ -170,6 +181,9 @@ const mix = function (buffers: Buffer[]): Buffer {
             return mixedAudio;
         }
     }
+
+    var err_file = fs.createWriteStream(__dirname + '/bufferBytes', { flags: 'w' });
+    err_file.write(buffers.at(0));
 
     // Create data views from buffers to do 16 bit calculations.
     let bufferViews: DataView[] = [];
