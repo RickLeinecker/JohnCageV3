@@ -15,10 +15,10 @@ class ConcertsController {
     }
 
     if (concertId == 1) {
-      ms.pipe(req, res, './music/bass.mp3');
+      ms.pipe(req, res, './music/Bass.mp3');
     }
     else if (concertId > 1) {
-      ms.pipe(req, res, './music/alarm.mp3');
+      ms.pipe(req, res, './music/Alarm.mp3');
     }
     else {
       res.status(200);
