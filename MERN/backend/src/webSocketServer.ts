@@ -8,7 +8,7 @@ import WebSocket, { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ noServer: true });
 import { outgoingAudioChunkSize, maxAudioBufferSize } from "./socket/socket.config";
 import ConcertParticipant from "./socket/socket.participant";
-
+import console_err from "./logging/console_err";
 
 // Global list of connected performers.
 var performers: ConcertParticipant[] = [];
@@ -20,11 +20,10 @@ wss.on('connection', function connection(ws, req) {
 
     console_log("Web socket connection established." + String(req.socket.remoteAddress));
 
-    test();
+    test_testMixer();
 
     // Initialize new performer object.
-    // This id needs to be 100% unique later.
-    let performer = new ConcertParticipant(ws, ids);
+    let performer = new ConcertParticipant(ws, ids); // This id needs to be 100% unique later.
     performers.push(performer);
     ids++;
     console_log("New performer added to list: ");
@@ -44,15 +43,23 @@ wss.on('connection', function connection(ws, req) {
     });
 
     performer.socket.on('message', function message(data) {
-        // Receive audio data
+        // Receive audio data.
         console_log("Received message data: ");
         console_log(data);
+        console_log("\n");
 
-        // Update buffer
-        performer.audioBuffer = Buffer.concat([performer.audioBuffer, <Buffer>data]);
-        performer.bytesLefttoProcess = performer.audioBuffer.length - performer.bytesProcessed;
-        console_log("Full audio buffer byte size: ");
-        console_log(performer.audioBuffer.byteLength);
+        // Write message contents into user's buffer.
+        let thisBuffer = Buffer.from(<Buffer>data);
+        let thisView = new DataView(thisBuffer.buffer.slice(thisBuffer.byteOffset, thisBuffer.byteOffset + thisBuffer.byteLength));
+        for (let i = 0; i < thisView.byteLength; ++i) {
+            performer.audioBuffer.writeUint8(thisView.getUint8(i), performer.bufferSize);
+            performer.bufferSize++;
+            performer.bytesLefttoProcess++;
+        }
+        console_log("Total buffer bytes filled: ");
+        console_log(performer.bufferSize);
+        console_log("\n");
+
 
         // If there is enough data in each participant's buffer, mix and send.
         if (validatePerformerBuffers(performers) === true) {
@@ -64,8 +71,6 @@ wss.on('connection', function connection(ws, req) {
             let mixedBuffer: Buffer = mix(chunkBuffers);
             console_log("Audio mixed.");
 
-            handlePerformers(performers);
-
             wss.clients.forEach(function each(client) {
                 if (client.readyState === WebSocket.OPEN) {
                     client.send(mixedBuffer, { binary: true });
@@ -73,18 +78,30 @@ wss.on('connection', function connection(ws, req) {
                     console_log(mixedBuffer);
                 }
             });
+
+            updatePerformers(performers);
+            console_log("\n");
         }
 
         // Close the connection if the buffer exceeds roughly 10 minutes.
-        if (performer.audioBuffer.length > maxAudioBufferSize) {
+        if (performer.bufferSize > maxAudioBufferSize) {
             performer.socket.close();
         }
     });
 
 });
 
+const test_printAllBuffers = function (performers: ConcertParticipant[]): void {
+    for (let i = 0; i < performers.length; ++i) {
+        let performer = performers.at(i);
+        if (performer != undefined) {
+            console.log("Performer " + i + ":", performer.audioBuffer);
+        }
+    }
+}
 
-const test = function () {
+const test_testMixer = function (): void {
+    // Test data
     let myarraybuffer: Int8Array = new Int8Array([-128, 0, 5, 40]);
     let mynicebuff: Buffer = Buffer.from(myarraybuffer);
     let myarraybuffer2: Int8Array = new Int8Array([127, 255, 5, 40]);
@@ -94,20 +111,22 @@ const test = function () {
     console.log(mynicebuff.byteLength);
     let mynicearray: Buffer[] = [mynicebuff, mynicebuff2];
 
+    // Mixer
     console.log(mix(mynicearray));
 }
 
-const handlePerformers = function (performers: ConcertParticipant[]): void {
+const updatePerformers = function (performers: ConcertParticipant[]): void {
     for (let i = 0; i < performers.length; ++i) {
         let performer = performers.at(i);
         if (performer != undefined) {
             performer.bytesProcessed += outgoingAudioChunkSize; // THIS IS NOT GOOD ENOUGH
+            performer.bytesLefttoProcess -= outgoingAudioChunkSize;
         }
     }
 }
 
 const gatherAudioBuffers = function (performers: ConcertParticipant[]): Buffer[] {
-    // Collect participant buffers and pass them to the mixer if they are of the required size.
+    // Collect participant buffers to pass them to the mixer if they are of the required size.
     let rawBuffers: Buffer[] = [];
     for (let i = 0; i < performers.length; ++i) {
         let performer = performers.at(i);
@@ -144,11 +163,13 @@ const mix = function (buffers: Buffer[]): Buffer {
         if (buffer == undefined || buffer.byteLength != outgoingAudioChunkSize) {
             console_log("Error: Buffer not correct size, or it doesn't exist: ");
             console_log(buffers.at(i));
+            console_err("Error: Buffer not correct size, or it doesn't exist: ");
+            console_err(buffers.at(i));
             return mixedAudio;
         }
     }
 
-    // Create data views from buffers to 16 bit calculations.
+    // Create data views from buffers to do 16 bit calculations.
     let bufferViews: DataView[] = [];
     for (let i = 0; i < buffers.length; ++i) {
         let buffer = buffers.at(i);
@@ -159,28 +180,40 @@ const mix = function (buffers: Buffer[]): Buffer {
     }
 
     // Mix samples: Add all samples together and divide by the number of samples.
+    let sampleCount = bufferViews.length;
     for (let i = 0; i < outgoingAudioChunkSize / 2; ++i) {
-        var sum = 0;
-        var samples = 0;
-        for (let j = 0; j < bufferViews.length; ++j) {
+        var sampleSum: number = 0;
+        for (let j = 0; j < sampleCount; ++j) {
             let view = bufferViews.at(j);
             if (view != undefined) {
-                samples++;
-                sum += 32768 + view.getInt16(2 * i, false);
+                sampleSum += (32768 + view.getInt16(2 * i, true)) / sampleCount;
             }
         }
 
-        mixedAudio.writeInt16BE((sum / samples) - 32768, 2 * i);
+        mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);
+        // Test if returns undefined with too big number.
+        // Test if casting number works.
+        // Test if the number can be calculated based on the size of the sample to avoid too big.
+        // Print number to ensure it is correct.
+        // Try printing typeof to confirm it is 16 bit as expected.
+        // Save data to file to check in hex editor.
     }
 
     return mixedAudio;
 }
 
-
 export { wss, httpServer };
 
 
 
+// This was my original way of adding the buffer. I am not sure if concat is memory safe (overlapping).
+// I switched it trying to debug something that probably wasn't this.
+// I switched to using alloc(max size) in the Concert Participant constructor to avoid these potential problems.
+// Old way: performer.audioBuffer = Buffer.concat([performer.audioBuffer, <Buffer>data]);
+
+
+
+// Old audio broadcast without functions for validation, mixing.
 
 // // If the buffer has enough unprocessed data, process it (for now just send it).
 // if (performer.bytesLefttoProcess > outgoingAudioChunkSize) {
@@ -196,21 +229,6 @@ export { wss, httpServer };
 //     performer.bytesProcessed += outgoingAudioChunkSize;
 // }
 
-
-
-
-
 // let mynicebuff: Buffer = Buffer.from([0x00, 0x10, 0x02, 0x02]);
 
 // console.log("Huh?", mynicebuff.buffer.byteLength);
-
-// Test writing to buffer.
-// audioBuffer.writeUInt8(5, 0);
-// console.log(audioBuffer);
-
-// Broadcast back the audio chunk.
-// wss.clients.forEach(function each(client) {
-//   if (client.readyState === WebSocket.OPEN) {
-//     client.send(data);
-//   }
-// });
