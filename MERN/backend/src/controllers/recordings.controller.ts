@@ -4,6 +4,7 @@ import {Tags} from '../models/Tags';
 import { Groups } from '../models/init-models';
 import { Users } from '../models/init-models';
 import {Recordings} from '../models/init-models';
+import recordingsRepository from '../repositories/recordings.repository';
 
 class RecordingsController {
     async getRecordings(req: Request, res: Response) {
@@ -17,6 +18,24 @@ class RecordingsController {
             where: {"GroupID": group}, include: ['Group'] });
         res.status(200).send(recordings);
     }
+
+    async search(req: Request, res: Response) {
+        const Title = typeof req.query.Title === "string" ? req.query.Title : "";
+        
+        const Tag1 = typeof req.query.Tag1 === "string" ? req.query.Tag1 : "";
+        const Tag2 = typeof req.query.Tag2 === "string" ? req.query.Tag2 : "";
+        const Tag3 = typeof req.query.Tag3 === "string" ? req.query.Tag3 : "";
+    
+        try {
+            const recordings = await recordingsRepository.retrieveAll({ Title, Tag1, Tag2, Tag3 });
+            res.status(200).send(recordings);
+    
+        } catch (err) {
+          res.status(500).send({
+            message: "Some error occurred while retrieving recordings."
+          });
+        }
+      }
 
     async getRecordingsUsers(req: Request, res: Response) {
         const recordings = await Recordings.findAll({
