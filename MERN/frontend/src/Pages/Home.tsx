@@ -1,5 +1,6 @@
 import "../Style/App.css";
 import "../Style/button.css"
+import "../Style/style.css"
 import JohnCage from "../Images/JohnCage.png"
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -95,7 +96,7 @@ function HomePage() {
         <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
             <div className="row animateIn intersect"  id = "0">
                 <div className="col">
-                    <img src={JohnCage} style={{ width: "300px", height: "300px" }}></img>
+                    <img src={JohnCage} className ="johnCageImage"></img>
                 </div>
                 <div className="col">
                     <div className="row">

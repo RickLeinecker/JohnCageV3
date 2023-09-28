@@ -45,6 +45,23 @@
   input[type="range"] {
     background-color: #27ae60;
   }
+
+
+  @media (min-width: 800px)
+  {
+    .johnCageImage{
+      width:300px;
+      height: 300px;
+    }
+  }
+
+  @media (min-width: 100px) and (max-width: 799px)
+  {
+    .johnCageImage{
+      width:25vh;
+      height: 25vh;
+    }
+  }
   
   @media (max-width: 900px) {
     .component {
