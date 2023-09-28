@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import Recording from "../models/recording.model";
+import { Recordings } from "../models/Recordings";
+import { Groups } from '../models/init-models';
 import recordingRepository from "../repositories/recording.repository";
 
 export default class RecordingController {
@@ -12,7 +13,7 @@ export default class RecordingController {
     }
 
     try {
-      const recording: Recording = req.body;
+      const recording: Recordings = req.body;
       const savedRecording = await recordingRepository.save(recording);
       res.status(201).send(savedRecording);
     } catch (err) {
@@ -27,6 +28,20 @@ export default class RecordingController {
 
     try {
       const recordings = await recordingRepository.retrieveAll({ Title });
+      res.status(200).send(recordings);
+    } catch (err) {
+      res.status(500).send({
+        message: "Some error occurred while retrieving recordings."
+      });
+    }
+  }
+
+  async getRecordingsGroups(req: Request, res: Response) {
+    const group = req.params.group;
+    try {
+      const recordings = await Recordings.findAll({
+        where: {"GroupID": group}, include: ['Group']
+      });
       res.status(200).send(recordings);
     } catch (err) {
       res.status(500).send({
@@ -54,8 +69,8 @@ export default class RecordingController {
   }
 
   async update(req: Request, res: Response) {
-    let recording: Recording = req.body;
-    recording.id = parseInt(req.params.id);
+    let recording: Recordings = req.body;
+    recording.ID = parseInt(req.params.id);
 
     try {
       const num = await recordingRepository.update(recording);
@@ -66,12 +81,12 @@ export default class RecordingController {
         });
       } else {
         res.send({
-          message: `Cannot update Recording with id=${recording.id}. Maybe Recording was not found or req.body is empty!`
+          message: `Cannot update Recording with id=${recording.ID}. Maybe Recording was not found or req.body is empty!`
         });
       }
     } catch (err) {
       res.status(500).send({
-        message: `Error updating Recording with id=${recording.id}.`
+        message: `Error updating Recording with id=${recording.ID}.`
       });
     }
   }
@@ -98,21 +113,21 @@ export default class RecordingController {
     }
   }
 
-  async search(req: Request, res: Response) {
-    const Title = typeof req.query.Title === "string" ? req.query.Title : "";
-    
-    const Tag1 = typeof req.query.Tag1 === "string" ? req.query.Tag1 : "";
-    const Tag2 = typeof req.query.Tag2 === "string" ? req.query.Tag2 : "";
-    const Tag3 = typeof req.query.Tag3 === "string" ? req.query.Tag3 : "";
+    async search(req: Request, res: Response) {
+      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
+      
+      const Tag1 = typeof req.query.Tag1 === "string" ? req.query.Tag1 : "";
+      const Tag2 = typeof req.query.Tag2 === "string" ? req.query.Tag2 : "";
+      const Tag3 = typeof req.query.Tag3 === "string" ? req.query.Tag3 : "";
 
-    try {
-      const recordings = await recordingRepository.retrieveAll({ Title, Tag1, Tag2, Tag3 });
-      res.status(200).send(recordings);
+      try {
+        const recordings = await recordingRepository.retrieveAll({ Title, Tag1, Tag2, Tag3 });
+        res.status(200).send(recordings);
 
-    } catch (err) {
-      res.status(500).send({
-        message: "Some error occurred while retrieving recordings."
-      });
+      } catch (err) {
+        res.status(500).send({
+          message: "Some error occurred while retrieving recordings."
+        });
+      }
     }
-  }
 }

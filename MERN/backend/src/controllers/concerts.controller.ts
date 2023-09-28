@@ -7,7 +7,6 @@ import console_log from "../logging/console_log";
 import { Tags, TagsAttributes } from "../models/Tags";
 
 class ConcertsController {
-
   async pipeConcertFile(req: Request, res: Response) {
 
     var concertId: number = parseInt(req.query.id as string);
