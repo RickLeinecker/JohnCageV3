@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import Recording from "../models/recording.model";
-import recordingRepository from "../repositories/recording.repository";
 import tagRepository from "../repositories/tag.repository";
-var ms = require('mediaserver');
+import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
-import { Tags, TagsAttributes } from "../models/Tags";
+import { tags, tagsAttributes, recordings } from "../models/init-models";
+var ms = require('mediaserver');
 
 class ConcertsController {
   async pipeConcertFile(req: Request, res: Response) {
@@ -164,7 +163,7 @@ class ConcertsController {
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
-    let response: TagsAttributes[] = [];
+    let response: tagsAttributes[] = [];
 
     try {
       response = await tagRepository.retrieveAll();

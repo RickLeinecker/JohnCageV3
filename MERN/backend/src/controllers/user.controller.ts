@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Users, UsersAttributes, UsersCreationAttributes } from "../models/Users";
+import { users, usersAttributes, usersCreationAttributes } from "../models/init-models";
 import userRepository from "../repositories/user.repository";
 import bcryptjs from 'bcryptjs';
 import logging from "../config/logging";
@@ -11,7 +11,7 @@ const NAMESPACE = "User";
 export default class UserController {
   async validateToken(req: Request, res: Response, next: NextFunction) {
     logging.info(NAMESPACE, "Token validated, user authorized");
-  
+
     return res.status(200).json({
       message: "Authorized"
     });
@@ -34,65 +34,62 @@ export default class UserController {
       return;
     }
 
-    if (!UserName)
-    {
+    if (!UserName) {
       res.status(400).send({
         message: "UserName can not be empty!"
       });
-      return; 
+      return;
     }
-    
-    if (!Password)
-    {
+
+    if (!Password) {
       res.status(400).send({
         message: "Password can not be empty!"
       });
       return;
     }
 
-    Users
-    .findOne({
-      where: {
-        UserName: req.body.UserName
-      }
-    })
-    .then(user => {
+    users
+      .findOne({
+        where: {
+          UserName: req.body.UserName
+        }
+      })
+      .then(user => {
         if (user) {
           res
-          .status(400)
-          .send(
-            { message: "Failed! Username is already in use!" }
-          );
+            .status(400)
+            .send(
+              { message: "Failed! Username is already in use!" }
+            );
           return;
         }
 
         // Check if there is an Email that already exists.
-        Users
-        .findOne({
-          where: {
-            Email: req.body.Email
-          }
-        })
-        .then(user => {
-          if (user) {
-            res
-            .status(400)
-            .send(
-              { message: "Failed! Email is already in use!" }
-            );
-            return;
-          }
-          next();
-        });
-    }).catch((error) => {
-      console.log(res.status(400).send("Failed to sign up"));
-      return;
-    });
+        users
+          .findOne({
+            where: {
+              Email: req.body.Email
+            }
+          })
+          .then(user => {
+            if (user) {
+              res
+                .status(400)
+                .send(
+                  { message: "Failed! Email is already in use!" }
+                );
+              return;
+            }
+            next();
+          });
+      }).catch((error) => {
+        console.log(res.status(400).send("Failed to sign up"));
+        return;
+      });
 
-  
+
     bcryptjs.hash(Password, 10, (hashError, hash) => {
-      if (hashError)
-      {
+      if (hashError) {
         return res.status(500).json({
           message: hashError.message,
           error: hashError
@@ -101,17 +98,17 @@ export default class UserController {
 
       console.log("HASH " + hash);
 
-  
+
       // TODO: Insert user into DB here.
       try {
         // let { FirstName, LastName, Email, Password, Phone, UserName } = req.body;
-        let user: Users = req.body;
+        let user: users = req.body;
 
         user.Password = hash;
 
-        const savedUser = userRepository.save(user);
-  
-        res.status(201).send(savedUser);
+        // const savedUser = userRepository.save(user);
+
+        // res.status(201).send(savedUser);
       } catch (err) {
         res.status(500).send({
           message: "Some error occurred while creating user."
@@ -123,29 +120,26 @@ export default class UserController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     let { username, password } = req.body;
-    await Users.findAll({
+    await users.findAll({
       where: {
         UserName: username
       }
     }).then((users) => {
       bcryptjs.compare(password, users[0].Password, (error, result) => {
-        if (error)
-        {
+        if (error) {
           return res.status(401).json({
             message: error.message,
             error
           });
         } else if (result) {
           signJWT(users[0], (_error, token) => {
-            if (_error)
-            {
+            if (_error) {
               return res.status(401).json({
                 message: "Unable to Sign JWT",
                 error: _error
               });
             }
-            else if(token)
-            {
+            else if (token) {
               return res.status(200).json({
                 message: "Auth Successful",
                 token,
@@ -211,7 +205,7 @@ export default class UserController {
   }
 
   async update(req: Request, res: Response) {
-    let user: Users = req.body;
+    let user: users = req.body;
     user.ID = parseInt(req.params.id);
 
     try {
@@ -255,27 +249,27 @@ export default class UserController {
     }
   }
 
-//   async findAllVerified(req: Request, res: Response) {
-//     try {
-//       const users = await userRepository.retrieveAll({ IsVerified: true });
+  //   async findAllVerified(req: Request, res: Response) {
+  //     try {
+  //       const users = await userRepository.retrieveAll({ IsVerified: true });
 
-//       res.status(200).send(users);
-//     } catch (err) {
-//       res.status(500).send({
-//         message: "Some error occurred while retrieving verified users."
-//       });
-//     }
-//   }
+  //       res.status(200).send(users);
+  //     } catch (err) {
+  //       res.status(500).send({
+  //         message: "Some error occurred while retrieving verified users."
+  //       });
+  //     }
+  //   }
 
-//   async findAllAdmins(req: Request, res: Response) {
-//     try {
-//       const users = await userRepository.retrieveAll({ IsAdmin: true });
+  //   async findAllAdmins(req: Request, res: Response) {
+  //     try {
+  //       const users = await userRepository.retrieveAll({ IsAdmin: true });
 
-//       res.status(200).send(users);
-//     } catch (err) {
-//       res.status(500).send({
-//         message: "Some error occurred while retrieving admins."
-//       });
-//     }
-//   }
+  //       res.status(200).send(users);
+  //     } catch (err) {
+  //       res.status(500).send({
+  //         message: "Some error occurred while retrieving admins."
+  //       });
+  //     }
+  //   }
 }

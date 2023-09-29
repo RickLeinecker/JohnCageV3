@@ -15,7 +15,7 @@ function SocketTest() {
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
-            console.log("Ehhlo")
+            console.log("Socket connection opened.")
         }
 
         ws.onmessage = (event: any) => {
@@ -27,30 +27,17 @@ function SocketTest() {
     }, []);
 
     const send = function () {
-        const array2 = new Uint8Array(4);
-        // console.log(array2);
-        for (var i = 0; i < array2.length; ++i) {
-            array2[i] = counter;
+        const array = new Uint8Array(4);
+        for (var i = 0; i < array.length; ++i) {
+            array[i] = counter;
         }
         counter++;
-
-        const array3 = new Uint16Array(3);
-        // console.log(array3);
-        for (var i = 0; i < array3.length; ++i) {
-            array3[i] = 3;
-        }
-        // var newdataview = new DataView(array.buffer);
-        // console.log(newdataview);
-        // console.log(newdataview.getFloat32(0, true));
-        // console.log(newdataview.getFloat32(4, true));
-        // console.log(newdataview.getFloat32(8, true));
 
         console.log("Sending Data to WebSocket server.");
-        console.log(array2);
-        ws.send(array2);
+        console.log(array);
+        ws.send(array);
         counter++;
     }
-
 
     return (
         <div className="WebSocket">

@@ -1,7 +1,7 @@
-type Tag = {
+type tag = {
     id: number;
     tag: string;
     active: boolean;
 }
 
-export default Tag;
+export default tag;

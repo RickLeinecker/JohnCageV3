@@ -15,7 +15,7 @@ class expressServer {
 
   private config(app: Application): void {
     const corsOptions: CorsOptions = {
-      origin: "*"// Fix using env variable.
+      origin: "*" // Fix using env variable.
     };
 
     app.use(cors(corsOptions));
@@ -24,14 +24,13 @@ class expressServer {
   }
 
   private syncDatabase(): void {
-    
-      const db = new MySQLDatabase();
-      if (db.sequelize != undefined) {
-        db.sequelize.sync();
-      }
-      
-  }
 
+    const db = new MySQLDatabase();
+    if (db.sequelize != undefined) {
+      db.sequelize.sync();
+    }
+
+  }
 }
 
 export default expressServer;
