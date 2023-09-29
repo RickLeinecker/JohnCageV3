@@ -1,102 +1,53 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Groups, GroupsId } from './Groups';
+import type { groups, groupsId } from './groups';
 
-export interface RecordingsAttributes {
+export interface recordingsAttributes {
   ID: number;
-  Title: string;
-  FilePath?: string;
   GroupID?: number;
-  Tag1?: string;
-  Tag2?: string;
-  Tag3?: string;
-  PicturePath?: string;
-  FileName: string;
-  Description?: string;
-  Date?: string;
+  RecordingFileName: string;
 }
 
-export type RecordingsPk = "ID";
-export type RecordingsId = Recordings[RecordingsPk];
-export type RecordingsOptionalAttributes = "ID" | "FilePath" | "GroupID" | "Tag1" | "Tag2" | "Tag3" | "PicturePath" | "Description" | "Date";
-export type RecordingsCreationAttributes = Optional<RecordingsAttributes, RecordingsOptionalAttributes>;
+export type recordingsPk = "ID";
+export type recordingsId = recordings[recordingsPk];
+export type recordingsOptionalAttributes = "ID" | "GroupID";
+export type recordingsCreationAttributes = Optional<recordingsAttributes, recordingsOptionalAttributes>;
 
-export class Recordings extends Model<RecordingsAttributes, RecordingsCreationAttributes> implements RecordingsAttributes {
+export class recordings extends Model<recordingsAttributes, recordingsCreationAttributes> implements recordingsAttributes {
   ID!: number;
-  Title!: string;
-  FilePath?: string;
   GroupID?: number;
-  Tag1?: string;
-  Tag2?: string;
-  Tag3?: string;
-  PicturePath?: string;
-  FileName!: string;
-  Description?: string;
-  Date?: string;
+  RecordingFileName!: string;
 
-  // Recordings belongsTo Groups via GroupID
-  Group!: Groups;
-  getGroup!: Sequelize.BelongsToGetAssociationMixin<Groups>;
-  setGroup!: Sequelize.BelongsToSetAssociationMixin<Groups, GroupsId>;
-  createGroup!: Sequelize.BelongsToCreateAssociationMixin<Groups>;
+  // recordings belongsTo groups via GroupID
+  Group!: groups;
+  getGroup!: Sequelize.BelongsToGetAssociationMixin<groups>;
+  setGroup!: Sequelize.BelongsToSetAssociationMixin<groups, groupsId>;
+  createGroup!: Sequelize.BelongsToCreateAssociationMixin<groups>;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Recordings {
-    return Recordings.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof recordings {
+    return recordings.init({
     ID: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    Title: {
-      type: DataTypes.STRING(255),
-      allowNull: false
-    },
-    FilePath: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      unique: "FilePath_UNIQUE"
-    },
     GroupID: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'Groups',
+        model: 'groups',
         key: 'GroupID'
       }
     },
-    Tag1: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    Tag2: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    Tag3: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    PicturePath: {
-      type: DataTypes.STRING(256),
-      allowNull: true
-    },
-    FileName: {
+    RecordingFileName: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique: "FileName_UNIQUE"
-    },
-    Description: {
-      type: DataTypes.STRING(140),
-      allowNull: true
-    },
-    Date: {
-      type: DataTypes.STRING(140),
-      allowNull: true
+      unique: "RecordingFileName_UNIQUE"
     }
   }, {
     sequelize,
-    tableName: 'Recordings',
+    tableName: 'recordings',
     timestamps: false,
     indexes: [
       {
@@ -108,19 +59,19 @@ export class Recordings extends Model<RecordingsAttributes, RecordingsCreationAt
         ]
       },
       {
-        name: "FileName_UNIQUE",
+        name: "ID_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "FileName" },
+          { name: "ID" },
         ]
       },
       {
-        name: "FilePath_UNIQUE",
+        name: "RecordingFileName_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "FilePath" },
+          { name: "RecordingFileName" },
         ]
       },
       {

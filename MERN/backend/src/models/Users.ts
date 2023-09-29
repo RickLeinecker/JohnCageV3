@@ -1,92 +1,54 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Groups, GroupsId } from './Groups';
+import type { groups, groupsId } from './groups';
 
-export interface UsersAttributes {
+export interface usersAttributes {
   ID: number;
   Role: string;
   DateCreated: Date;
   DateLastLoggedIn: Date;
-  FirstName: string;
-  LastName: string;
+  Name: string;
+  UserName: string;
   Email: string;
   Password: string;
-  Phone: string;
-  UserName: string;
+  Phone?: string;
   IsAdmin: number;
-  isVerified: number;
+  IsVerified: number;
 }
 
-export type UsersPk = "ID";
-export type UsersId = Users[UsersPk];
-export type UsersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "FirstName" | "LastName" | "Email" | "Password" | "IsAdmin" | "isVerified";
-export type UsersCreationAttributes = Optional<UsersAttributes, UsersOptionalAttributes>;
+export type usersPk = "ID";
+export type usersId = users[usersPk];
+export type usersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "Phone" | "IsAdmin" | "IsVerified";
+export type usersCreationAttributes = Optional<usersAttributes, usersOptionalAttributes>;
 
-export class Users extends Model<UsersAttributes, UsersCreationAttributes> implements UsersAttributes {
+export class users extends Model<usersAttributes, usersCreationAttributes> implements usersAttributes {
   ID!: number;
   Role!: string;
   DateCreated!: Date;
   DateLastLoggedIn!: Date;
-  FirstName!: string;
-  LastName!: string;
+  Name!: string;
+  UserName!: string;
   Email!: string;
   Password!: string;
-  Phone!: string;
-  UserName!: string;
+  Phone?: string;
   IsAdmin!: number;
-  isVerified!: number;
+  IsVerified!: number;
 
-  // Users hasMany Groups via User1ID
-  User1_Groups!: Groups[];
-  getUser1_Groups!: Sequelize.HasManyGetAssociationsMixin<Groups>;
-  setUser1_Groups!: Sequelize.HasManySetAssociationsMixin<Groups, GroupsId>;
-  addUser1_Group!: Sequelize.HasManyAddAssociationMixin<Groups, GroupsId>;
-  addUser1_Groups!: Sequelize.HasManyAddAssociationsMixin<Groups, GroupsId>;
-  createUser1_Group!: Sequelize.HasManyCreateAssociationMixin<Groups>;
-  removeUser1_Group!: Sequelize.HasManyRemoveAssociationMixin<Groups, GroupsId>;
-  removeUser1_Groups!: Sequelize.HasManyRemoveAssociationsMixin<Groups, GroupsId>;
-  hasUser1_Group!: Sequelize.HasManyHasAssociationMixin<Groups, GroupsId>;
-  hasUser1_Groups!: Sequelize.HasManyHasAssociationsMixin<Groups, GroupsId>;
-  countUser1_Groups!: Sequelize.HasManyCountAssociationsMixin;
-  // Users hasMany Groups via User2ID
-  User2_Groups!: Groups[];
-  getUser2_Groups!: Sequelize.HasManyGetAssociationsMixin<Groups>;
-  setUser2_Groups!: Sequelize.HasManySetAssociationsMixin<Groups, GroupsId>;
-  addUser2_Group!: Sequelize.HasManyAddAssociationMixin<Groups, GroupsId>;
-  addUser2_Groups!: Sequelize.HasManyAddAssociationsMixin<Groups, GroupsId>;
-  createUser2_Group!: Sequelize.HasManyCreateAssociationMixin<Groups>;
-  removeUser2_Group!: Sequelize.HasManyRemoveAssociationMixin<Groups, GroupsId>;
-  removeUser2_Groups!: Sequelize.HasManyRemoveAssociationsMixin<Groups, GroupsId>;
-  hasUser2_Group!: Sequelize.HasManyHasAssociationMixin<Groups, GroupsId>;
-  hasUser2_Groups!: Sequelize.HasManyHasAssociationsMixin<Groups, GroupsId>;
-  countUser2_Groups!: Sequelize.HasManyCountAssociationsMixin;
-  // Users hasMany Groups via User3ID
-  User3_Groups!: Groups[];
-  getUser3_Groups!: Sequelize.HasManyGetAssociationsMixin<Groups>;
-  setUser3_Groups!: Sequelize.HasManySetAssociationsMixin<Groups, GroupsId>;
-  addUser3_Group!: Sequelize.HasManyAddAssociationMixin<Groups, GroupsId>;
-  addUser3_Groups!: Sequelize.HasManyAddAssociationsMixin<Groups, GroupsId>;
-  createUser3_Group!: Sequelize.HasManyCreateAssociationMixin<Groups>;
-  removeUser3_Group!: Sequelize.HasManyRemoveAssociationMixin<Groups, GroupsId>;
-  removeUser3_Groups!: Sequelize.HasManyRemoveAssociationsMixin<Groups, GroupsId>;
-  hasUser3_Group!: Sequelize.HasManyHasAssociationMixin<Groups, GroupsId>;
-  hasUser3_Groups!: Sequelize.HasManyHasAssociationsMixin<Groups, GroupsId>;
-  countUser3_Groups!: Sequelize.HasManyCountAssociationsMixin;
-  // Users hasMany Groups via User4ID
-  User4_Groups!: Groups[];
-  getUser4_Groups!: Sequelize.HasManyGetAssociationsMixin<Groups>;
-  setUser4_Groups!: Sequelize.HasManySetAssociationsMixin<Groups, GroupsId>;
-  addUser4_Group!: Sequelize.HasManyAddAssociationMixin<Groups, GroupsId>;
-  addUser4_Groups!: Sequelize.HasManyAddAssociationsMixin<Groups, GroupsId>;
-  createUser4_Group!: Sequelize.HasManyCreateAssociationMixin<Groups>;
-  removeUser4_Group!: Sequelize.HasManyRemoveAssociationMixin<Groups, GroupsId>;
-  removeUser4_Groups!: Sequelize.HasManyRemoveAssociationsMixin<Groups, GroupsId>;
-  hasUser4_Group!: Sequelize.HasManyHasAssociationMixin<Groups, GroupsId>;
-  hasUser4_Groups!: Sequelize.HasManyHasAssociationsMixin<Groups, GroupsId>;
-  countUser4_Groups!: Sequelize.HasManyCountAssociationsMixin;
+  // users hasMany groups via GroupLeaderID
+  groups!: groups[];
+  getGroups!: Sequelize.HasManyGetAssociationsMixin<groups>;
+  setGroups!: Sequelize.HasManySetAssociationsMixin<groups, groupsId>;
+  addGroup!: Sequelize.HasManyAddAssociationMixin<groups, groupsId>;
+  addGroups!: Sequelize.HasManyAddAssociationsMixin<groups, groupsId>;
+  createGroup!: Sequelize.HasManyCreateAssociationMixin<groups>;
+  removeGroup!: Sequelize.HasManyRemoveAssociationMixin<groups, groupsId>;
+  removeGroups!: Sequelize.HasManyRemoveAssociationsMixin<groups, groupsId>;
+  hasGroup!: Sequelize.HasManyHasAssociationMixin<groups, groupsId>;
+  hasGroups!: Sequelize.HasManyHasAssociationsMixin<groups, groupsId>;
+  countGroups!: Sequelize.HasManyCountAssociationsMixin;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Users {
-    return Users.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof users {
+    return users.init({
     ID: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -108,49 +70,41 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
-    FirstName: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      defaultValue: ""
+    Name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
     },
-    LastName: {
+    UserName: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      defaultValue: ""
+      unique: "UserName_UNIQUE"
     },
     Email: {
       type: DataTypes.STRING(150),
       allowNull: false,
-      defaultValue: "",
       unique: "Email_UNIQUE"
     },
     Password: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      defaultValue: ""
+      type: DataTypes.STRING(69),
+      allowNull: false
     },
     Phone: {
       type: DataTypes.STRING(11),
-      allowNull: false
-    },
-    UserName: {
-      type: DataTypes.STRING(45),
-      allowNull: false,
-      unique: "UserName_UNIQUE"
+      allowNull: true
     },
     IsAdmin: {
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
     },
-    isVerified: {
+    IsVerified: {
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
     }
   }, {
     sequelize,
-    tableName: 'Users',
+    tableName: 'users',
     timestamps: false,
     indexes: [
       {
@@ -162,11 +116,11 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
         ]
       },
       {
-        name: "Email_UNIQUE",
+        name: "ID_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "Email" },
+          { name: "ID" },
         ]
       },
       {
@@ -178,11 +132,11 @@ export class Users extends Model<UsersAttributes, UsersCreationAttributes> imple
         ]
       },
       {
-        name: "ID_UNIQUE",
+        name: "Email_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "ID" },
+          { name: "Email" },
         ]
       },
     ]

@@ -1,37 +1,37 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 
-export interface TagsAttributes {
+export interface tagsAttributes {
   idTags: number;
-  Tags?: string;
+  Tag?: string;
 }
 
-export type TagsPk = "idTags";
-export type TagsId = Tags[TagsPk];
-export type TagsOptionalAttributes = "idTags" | "Tags";
-export type TagsCreationAttributes = Optional<TagsAttributes, TagsOptionalAttributes>;
+export type tagsPk = "idTags";
+export type tagsId = tags[tagsPk];
+export type tagsOptionalAttributes = "idTags" | "Tag";
+export type tagsCreationAttributes = Optional<tagsAttributes, tagsOptionalAttributes>;
 
-export class Tags extends Model<TagsAttributes, TagsCreationAttributes> implements TagsAttributes {
+export class tags extends Model<tagsAttributes, tagsCreationAttributes> implements tagsAttributes {
   idTags!: number;
-  Tags?: string;
+  Tag?: string;
 
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Tags {
-    return Tags.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof tags {
+    return tags.init({
     idTags: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       primaryKey: true
     },
-    Tags: {
-      type: DataTypes.STRING(500),
+    Tag: {
+      type: DataTypes.STRING(15),
       allowNull: true,
-      unique: "Tags_UNIQUE"
+      unique: "Tag_UNIQUE"
     }
   }, {
     sequelize,
-    tableName: 'Tags',
+    tableName: 'tags',
     timestamps: false,
     indexes: [
       {
@@ -43,11 +43,11 @@ export class Tags extends Model<TagsAttributes, TagsCreationAttributes> implemen
         ]
       },
       {
-        name: "Tags_UNIQUE",
+        name: "Tag_UNIQUE",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "Tags" },
+          { name: "Tag" },
         ]
       },
     ]

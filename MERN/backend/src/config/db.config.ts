@@ -1,8 +1,5 @@
 // Models
 import { SequelizeOptions } from "sequelize-typescript";
-import Recording from "../models/recording.model";
-import User from "../models/user.model";
-import { Tag } from "../models/tag.model"
 import { initModels } from "../models/init-models";
 
 const isServerEnvironment = process.env.NODE_ENV === 'production';
@@ -10,7 +7,7 @@ const isServerEnvironment = process.env.NODE_ENV === 'production';
 //const models = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
-  database: "JCT",
+  database: "jct3",
   username: "TheBeast",
   password: "WeLoveJCT",
   host: "127.0.0.1",
@@ -32,7 +29,7 @@ const developmentSequelizeConfig: SequelizeOptions = {
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
-  database: "JCT",
+  database: "jct3",
   username: "TheBeast",
   password: "WeLoveJCT",
   host: "localhost",
