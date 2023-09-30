@@ -47,6 +47,7 @@ const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: Web
         eventHeader = eventHeader.concat(nextCharacter);
     }
 
+    /* Waiting for Stephen to make progress before adding another thing,
     // If event name is formatted properly, signal reception.
     if (isTerminated && eventHeader != "") {
         console_log("Detected Event: ");
@@ -62,6 +63,7 @@ const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: Web
         console_log("No Event Detected.");
         console_log("\n");
     }
+    */
 }
 
 const defineMessage = function (ws: WebSocket, performer: ConcertParticipant, wss: WebSocketServer) {
