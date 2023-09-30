@@ -28,9 +28,12 @@ const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: Web
     console_log(data);
     console_log("\n");
 
+
     // Store message in Buffer and view through a DataView.
     let buffer: Buffer = Buffer.from(<Buffer>data);
     let thisView = new DataView(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength));
+
+    receiveAudio(performer, performers, buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength), wss);
 
     // Get the event header in the form of 1 byte characters until the NULL character (0).
     let eventHeader: string = "";
