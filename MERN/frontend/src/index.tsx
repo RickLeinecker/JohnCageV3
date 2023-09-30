@@ -9,6 +9,7 @@ import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
 import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
+import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
@@ -35,6 +36,7 @@ class Compiled extends Component {
                 <Route path="/About" element={<AboutPage />} />
                 <Route path="/Register" element={<RegisterPage />} />
                 <Route path="/WebSocket" element={<SocketTest />} />
+                <Route path="/Calendar" element={<CalendarPage />} />
                 <Route path="/WebSocketTest" element={<WebSocketTest />} />
               </Routes>
             </div>
