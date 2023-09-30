@@ -1,29 +1,29 @@
-import { Tags, TagsAttributes } from "../models/Tags";
+import { tags, tagsAttributes } from "../models/tags";
 import console_log from "../logging/console_log";
 
 interface ITagRepository {
-    retrieveAll(): Promise<TagsAttributes[]>;
+    retrieveAll(): Promise<tagsAttributes[]>;
 }
 
 class TagRepository implements ITagRepository {
 
-    async save(tag: Tags): Promise<Tags> {
+    async save(tag: tags): Promise<tags> {
         try {
-            return await Tags.create({
+            return await tags.create({
                 idTags: tag.idTags,
-                Tags: tag.Tags
+                Tag: tag.Tag
             });
         } catch (err) {
             throw new Error("Failed to create Tag!");
         }
     }
 
-    async retrieveAll(): Promise<TagsAttributes[]> {
-        var tagList: TagsAttributes[] = [];
+    async retrieveAll(): Promise<tagsAttributes[]> {
+        var tagList: tagsAttributes[] = [];
 
         try {
             // Get response
-            const query = await Tags.findAll();
+            const query = await tags.findAll();
 
             // Translate to basic object
             for (let i = 0; i < query.length; ++i) {

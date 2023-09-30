@@ -5,15 +5,12 @@ import "../Style/button.css"
 // Components
 import { Component, useEffect, useState } from "react";
 import MusicCard from "../Components/MusicCard";
-import { TagCard } from "../Components/TagCard";
 import { Form } from "react-bootstrap";
 
 // API functions
-import getTags from "../API/getTagsAPI";
 import getMetadata from "../API/getMetadataAPI";
 
 // Types
-import Tag from "../Types/Tag";
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
@@ -44,17 +41,7 @@ function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
-    const [tagList, setTagList] = useState<Tag[]>([]);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
-
-    // Get tags useEffect hook
-    useEffect(() => {
-        const refreshTags = async function () {
-            const newTags: Tag[] = await getTags();
-            setTagList(newTags);
-        }
-        refreshTags();
-    }, []);
 
     // Search Text useEffect hook
     useEffect(() => {
@@ -87,7 +74,6 @@ function ConcertPage() {
                     <Form.Group>
                         <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
                     </Form.Group>
-                    <TagCard tagList={tagList} />
                 </div>
             </div>
             <div className="row">
@@ -118,3 +104,71 @@ function ConcertPage() {
 
 export default ConcertPage;
 
+
+
+
+// Tag queue based search backup. No longer exposing specific tags to user.
+
+
+
+// const [tagList, setTagList] = useState<Tag[]>([]);
+// const [tagQueue, setTagQueue] = useState<Tag[]>([]);
+
+// const dequeue = function (tagL: Tag[], tagQ: Tag[]): Tag[] {
+//     if (tagQ.length > 0) {
+//         let dequeue = tagQ.shift()
+//         if (dequeue != undefined) {
+//             let newArr = [...tagL];
+//             newArr[tagL.indexOf(dequeue)].active = false;
+//             setTagList(newArr);
+//             // setData(newArr);
+//             // tagList[tagL.indexOf(dequeue)].active = false;
+//             // dequeue.active = false;
+//             return tagQ;
+//         }
+//     }
+
+//     return tagQ;
+// }
+
+// const enqueue = function (tagL: Tag[], tagQ: Tag[], tag: Tag): Tag[] {
+//     console.log(tag);
+
+//     if (tagQ.length < 3) {
+//         tag.active = true;
+//         console.log(tag);
+//         tagQ.push(tag);
+//         return tagQ;
+//     }
+//     else {
+//         dequeue(tagL, tagQ);
+//         enqueue(tagL, tagQ, tag);
+//         return tagQ;
+//     }
+
+//     return tagQ;
+// }
+
+// const tagQueueHandler = function (tagL: Tag[], tagQ: Tag[], tag: Tag) {
+//     console.log("TAGQUEUE")
+//     setTagQueue(enqueue(tagL, tagQ, tag));
+// }
+
+// // Get tags useEffect hook
+// useEffect(() => {
+//     const refreshTags = async function () {
+//         const newTags: Tag[] = await getTags();
+//         setTagList(newTags);
+//     }
+//     refreshTags();
+// }, []);
+
+// // Tag list useeffect hook.
+// useEffect(() => {
+//     console.log("CHANGING TAGLIST", tagList);
+// }, [tagList]);
+
+// const tagHandler = function (tags: Tag[]) {
+//     console.log(tags);
+//     setTagList(tags);
+// }

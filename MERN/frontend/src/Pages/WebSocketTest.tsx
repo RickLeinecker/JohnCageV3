@@ -7,11 +7,11 @@ var ws: WebSocket;
 var counter = 65;
 
 // Functions
-function SocketTest() {
+function WebSocketTest() {
 
     useEffect(() => {
 
-        ws = new WebSocket(websocketURL + ":8080/concert/performer");
+        ws = new WebSocket(websocketURL + ":8080/concert/audience");
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
@@ -26,18 +26,6 @@ function SocketTest() {
 
     }, []);
 
-    const send = function () {
-        const array = new Uint8Array([65, 66, 0, counter, counter, counter, counter]);
-        // for (var i = 0; i < array.length; ++i) {
-        //     //array[i] = counter;
-        // }
-        counter++;
-
-        console.log("Sending Data to WebSocket server.");
-        console.log(array);
-        ws.send(array);
-    }
-
     return (
         <div className="WebSocket">
             <Card
@@ -46,11 +34,11 @@ function SocketTest() {
                     alignItems: 'center',
                     justifyContent: 'center',
                 }}>
-                <Card.Title>WebSocket Page</Card.Title>
-                <Button onClick={send}>Send Binary Data</Button>
+                <Card.Title>WebSocketTest Page</Card.Title>
+                See console for listen.
             </Card>
         </div>
     );
 }
 
-export default SocketTest;
+export default WebSocketTest;
