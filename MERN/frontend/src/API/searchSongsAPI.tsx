@@ -21,7 +21,6 @@ const searchSongs = async function (searchText: string) {
                 tags: searchResults[i].tags,
                 maestro: ""
             });
-
         }
 
         console.log("Search Results: ", search);
