@@ -12,13 +12,11 @@ const wss = new WebSocketServer({ noServer: true });
 // Custom modules
 import routeConnection from "./socket/routers/connection.router";
 
-// Socket actions --------------------------------
+// Connection Steps: 
+// Authenticate or Reject.
+// Classify connection type and initialize.
 wss.on('connection', function connection(ws, req) {
-    // Connection Steps: 
-    // Authenticate or Reject.
-    // Classify connection type and initialize.
     console_log("Web socket connection established.");
-
     routeConnection(ws, req, wss);
 });
 
