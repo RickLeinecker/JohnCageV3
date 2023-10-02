@@ -106,20 +106,16 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col">
-                    <div className="scroller">
-                        <div className="d-grid" role="group" aria-label="Toolbar with button groups">
-                            {
-                                searchList.map((key, i) => {
-                                    return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => {onClickCompound(i,true)}} />
-                                })
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div className="col">
+                    {
+                        searchList.map((key, i) => {
+                            return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => {onClickCompound(i,true)}} />
+                        })
+                    }
                     <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
-                    <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div>
+                {/* <div className="col">
+                    <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
+                </div> */}
             </div>
             <div className="row">
                 <br />
