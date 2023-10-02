@@ -6,6 +6,7 @@ import "../Style/button.css"
 import { Component, useEffect, useState } from "react";
 import MusicCard from "../Components/MusicCard";
 import { Form } from "react-bootstrap";
+import Modal from "../Components/Modal";
 
 // API functions
 import getMetadata from "../API/getMetadataAPI";
@@ -14,6 +15,7 @@ import getMetadata from "../API/getMetadataAPI";
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
+
 
 //Interfaces/objects
 type ButtonState = {
@@ -36,12 +38,35 @@ class SongButton extends Component<ButtonState>
     }
 }
 
+class SongCard extends Component<ButtonState>
+{
+    handleClick = () => this.props.onClick(this.props.index)
+
+    render()
+    {
+        return <div className="card" style={{width: "18rem"}}>
+        <div className="card-body">
+          <h5 className="card-title">{this.props.songName}</h5>
+          <p className="card-text">Tags: Banana, Derpy</p>
+          <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
+        </div>
+      </div>
+    }
+}
+
 //Functions
 function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
     const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
+    const [isOpen,setIsOpen] = useState(false);
+
+    function onClickCompound(index:number, open:boolean)
+    {
+        setActiveSelection(index);
+        setIsOpen(open);
+    }
 
     // Search Text useEffect hook
     useEffect(() => {
@@ -85,13 +110,14 @@ function ConcertPage() {
                         <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                             {
                                 searchList.map((key, i) => {
-                                    return <SongButton key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => setActiveSelection(i)} />
+                                    return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => {onClickCompound(i,true)}} />
                                 })
                             }
                         </div>
                     </div>
                 </div>
                 <div className="col">
+                    <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
                     <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div>
             </div>
