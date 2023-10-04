@@ -7,46 +7,27 @@ var ms = require('mediaserver');
 
 class ConcertsController {
   async pipeConcertFile(req: Request, res: Response) {
+    // Todo: Add ability to query a recording by id and return the actual audio.
+    const recordingId: number = parseInt(req.query.id as string);
+    const recording = await recordings.findOne({
+        where: {
+            ID: recordingId
+        }
+    }).then((recording) => {
+        // Check if there is a recording.
+        if (!recording) {
+            return res.status(400).json({ results: "No Results. Try another recordingID" });
+        }
 
-    var concertId: number = parseInt(req.query.id as string);
-    if (!concertId) {
-      concertId = 0;
-    }
-
-    if (concertId == 1) {
-      ms.pipe(req, res, './music/Bass.mp3');
-    }
-    else if (concertId > 1) {
-      ms.pipe(req, res, './music/Alarm.mp3');
-    }
-    else {
-      res.status(200);
-    }
-
-    /*
-    try {
-      const recording = await recordingRepository.retrieveById(concertId);
-
-      if (recording) {
-        const controllerFolder = __dirname + "/";
-        const musicFolder = "music" + "/";
-        const Title = recording?.dataValues.Title;
-        const fileType = ".mp3";
-
-        const recordingLoc = controllerFolder + musicFolder + Title + fileType;
-        ms.pipe(req, res, recordingLoc);
-      }
-      else
-        res.status(404).send({
-          message: `Cannot find Recording with id=${concertId}.`
-        });
-    } catch (err) {
-      res.status(500).send({
-        message: `Error retrieving Recording with id=${concertId}.`
-      });
-    }
-    */
-  }
+        const filePath = './music/';
+        const fileName = recording.RecordingFileName;
+        const recordingFilePath = filePath + fileName;
+      
+        ms.pipe(req, res, recordingFilePath);
+    }).catch((err) => {
+      res.status(401).json({ success: false, message: err});
+  });
+}
 
   async retrieveConcertData(req: Request, res: Response) {
 
@@ -142,6 +123,8 @@ class ConcertsController {
         title: "Concert: Two",
         tags: ["Fast", "Hard"]
       }
+
+      // Todo: Add search string capabilities here
     ];
 
     res.status(200).send({ searchResults: dummyResponse });
