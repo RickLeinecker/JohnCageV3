@@ -1,4 +1,8 @@
 import React from 'react';
+import Rayyan_img from '../Images/Rayyan.png';
+import Kyle_img from '../Images/Kyle.png';
+import Paul_img from '../Images/Paul.png';
+import Himil_img from '../Images/Himil.jpg';
 import imageToUse from '../Images/JohnCage.png'
 import '../Style/AboutUs.css';
 
@@ -12,7 +16,7 @@ export default function MeetOurTeam(){
             <div className='team-container'>
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Kyle'></img>
+                        <img className='team-pic' src={Kyle_img} alt='Kyle'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Kyle Mason</h2>
@@ -32,7 +36,7 @@ export default function MeetOurTeam(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Rayyan'></img>
+                        <img className='team-pic' src={Rayyan_img} alt='Rayyan'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Rayyan Haque</h2>
@@ -42,7 +46,7 @@ export default function MeetOurTeam(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Himil'></img>
+                        <img className='team-pic' src={Himil_img} alt='Himil'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Himil Patel</h2>
@@ -62,7 +66,7 @@ export default function MeetOurTeam(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Paul'></img>
+                        <img className='team-pic' src={Paul_img} alt='Paul'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Paul</h2>

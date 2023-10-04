@@ -1,20 +1,14 @@
 // Models
 import { SequelizeOptions } from "sequelize-typescript";
-import Recording from "../models/recording.model";
-import User from "../models/user.model";
-import { Tag } from "../models/tag.model"
-
-const isServerEnvironment = process.env.NODE_ENV === 'production';
-
-const model = [Recording, User, Tag];
+import { isServerEnvironment } from "./env.config";
 
 const developmentSequelizeConfig: SequelizeOptions = {
-  database: "JCT",
-  username: "TheBeast",
-  password: "WeLoveJCT",
+  database: "jct3",
+  username: "username",
+  password: "!2#4%qwert",
   host: "localhost",
   dialect: "mysql",
-  port: 3306,
+  //port: 3306,
   pool: {
     max: 5,
     min: 0,
@@ -22,16 +16,15 @@ const developmentSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    //socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
+    socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
   },
   define: {
     timestamps: false
-  },
-  //models: model
+  }
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
-  database: "JCT",
+  database: "jct3",
   username: "TheBeast",
   password: "WeLoveJCT",
   host: "localhost",
@@ -47,8 +40,7 @@ const serverSequelizeConfig: SequelizeOptions = {
   },
   define: {
     timestamps: false
-  },
-  //models: model
+  }
 };
 
 const sequelizeConfig = isServerEnvironment ? serverSequelizeConfig : developmentSequelizeConfig;

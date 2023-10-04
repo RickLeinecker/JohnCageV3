@@ -1,20 +1,19 @@
 import "../Style/App.css";
 import "../Style/button.css"
+import "../Style/style.css"
 import JohnCage from "../Images/JohnCage.png"
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { render } from "@testing-library/react";
+import React from "react";
 
 
-const menus = [0,1,2,3,4];
 //Functions
 function buildPath(route: String) {
     return 'http://localhost:5000/' + route;
 }
 
 function HomePage() {
-
-    const [resText, setResText] = useState<string>('');
 
     // // Basic API test: If the page does not display hellow world as response text, API prob unconnected.
     // useEffect(() => {
@@ -34,87 +33,70 @@ function HomePage() {
     //     helloWorld();
     // }, []);
 
-    const sectionsRef = useRef([]);
-    const renderedSections:boolean[] = [false,false,false,false,false];
-    let highestState:number = 0;
-    const [visibleSection, setVisibleSection] = useState(menus[0]);
-    const [displayedSections, setDisplayedSection] = useState(renderedSections);
-
-    const refCallback = useCallback((element:HTMLDivElement) => {
-        if (element) {
-          sectionsRef.current.push(element as never);
-          console.log("Sectionsref size "+sectionsRef.current.length)
-        }
-      }, []);
-
-    
-    function StateCheck(i:number):Boolean
-    {
-        // return (i === visibleSection || displayedSections[i])
-        return (i === visibleSection)
-    }
 
 
     useEffect(() => {
-        // const targetSections = document.querySelectorAll("div");
 
         const options = {
             root: null,
             rootMargin: "0px",
-            threshold: 0.9
+            threshold: 0.00
           };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting && highestState != (renderedSections.length - 1)) {
+          const items = document.querySelectorAll('.intersect'); 
 
-                let id:string = entry.target.getAttribute("id") as string;
-                let idNum:number = parseInt(id);
-
-                // if (idNum > highestState)
-                // {
-                //     highestState = idNum;
-
-                //     let newArray:boolean[] = displayedSections.map((c,i)=>
-                //     {
-                //         if (i <= highestState && c === false)
-                //         {
-                //             return c = true;
-                //         }
-                //         else
-                //         {
-                //             return c;
-                //         }
-                //     })
-
-
-                //     setVisibleSection(idNum);
-                //     setDisplayedSection(newArray)
-                // }
-                setVisibleSection(idNum);
-              }
-            });
-          },options);
-
-        // targetSections.forEach((section) => {
-        //     observer.observe(section);
+        //   const active = new IntersectionObserver((entries) => {
+        //     let iter:number = 0;
+        //     entries.forEach((entry) => {
+        //       if (entry.intersectionRatio > options.threshold) {
+        //         // Add 'active' class if observation target is inside viewport
+        //         console.log("In view Entry's "+iter+" intersection ratio is "+entry.intersectionRatio);
+        //         entry.target.classList.add('animateIn');
+        //         entry.target.classList.remove('animateOut');
+        //       } else {
+        //         // Remove 'active' class otherwise
+        //         console.log("Out view Entry's "+iter+" intersection ratio is "+entry.intersectionRatio);
+        //         entry.target.classList.add('animateOut');
+        //         entry.target.classList.remove('animateIn');
+        //       }
+        //     });
         //   });
 
-        sectionsRef.current.forEach((section) => {
-            observer.observe(section);
-          });
+        // items.forEach((el) => {
+        //     active.observe(el);
+        //     });
+            
+            const active = function(entries:IntersectionObserverEntry[]){
+                let iter:number = 0;
+            entries.forEach(entry => {
+                if(entry.isIntersecting)
+                {
+                    console.log("Element "+iter+" IS Intersecting");
+                    entry.target.classList.add('animateIn');
+                    entry.target.classList.remove('animateOut');
+                }
+                else
+                {
+                    console.log("Element "+iter+" is NOT Intersecting");
+                    entry.target.classList.add('animateOut');
+                    entry.target.classList.remove('animateIn');
+                }
+                iter++;
+            });
+            }
 
-        }, [visibleSection,displayedSections]);
+            const io2 = new IntersectionObserver(active, options);
+            for(let i=0; i < items.length; i++){
+                io2.observe(items[i]);
+            }
 
-    const [ref, inView] = useInView({
-        threshold: 0.5
-    });
+        });
 
     return (
         <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
-            <div className={"row "+(StateCheck(0) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "0">
+            <div className="row intersect"  id = "0">
                 <div className="col">
-                    <img src={JohnCage} style={{ width: "300px", height: "300px" }}></img>
+                    <img src={JohnCage} className ="johnCageImage"></img>
                 </div>
                 <div className="col">
                     <div className="row">
@@ -132,8 +114,8 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className={"row "+(StateCheck(1) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "1">
-                <h3>About John Cage</h3>
+            <div className="row animateIn intersect"  id = "1">
+                <h3>About John Cage 1</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
                 <br />
@@ -143,8 +125,8 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className={"row "+(StateCheck(2) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "2">
-                <h3>About John Cage</h3>
+            <div className="row animateIn intersect"  id = "2">
+                <h3>About John Cage 2</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
                 <br />
@@ -154,8 +136,8 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className={"row "+(StateCheck(3) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "3">
-                <h3>About John Cage</h3>
+            <div className="row animateIn intersect"  id = "3">
+                <h3>About John Cage 3</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
                 <br />
@@ -165,8 +147,8 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className={"row "+(StateCheck(4) ? "animate" : "animate-on-scroll")} ref = {refCallback} id = "4">
-                <h3>About John Cage</h3>
+            <div className="row animateIn intersect"  id = "4">
+                <h3>About John Cage 4</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
                 <br />

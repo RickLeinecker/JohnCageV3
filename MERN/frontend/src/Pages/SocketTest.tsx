@@ -4,60 +4,39 @@ import { websocketURL } from '../Variables/websocketServer';
 
 var ws: WebSocket;
 
-var counter = 0;
+var counter = 65;
 
 // Functions
 function SocketTest() {
 
     useEffect(() => {
 
-        // What is this?
-        ws = new WebSocket(websocketURL + ":8080");
+        ws = new WebSocket(websocketURL + ":8080/concert/performer");
+        ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
-            console.log("Ehhlo")
+            console.log("Socket connection opened.")
         }
 
         ws.onmessage = (event: any) => {
             console.log("WebSocket message from Server: ", event.data);
-            // const array = new Float32Array(3);
-            // for (var i = 0; i < array.length; ++i) {
-            //     array[i] = i / 2;
-            // }
-            // ws.send(array);
-            // ws.send("Frontend");
+            let newarray = new Uint8Array(event.data);
+            console.log("WebSocket message as UInt8Array: ", newarray);
         }
-
-        // Causes error.
-        // ws.send("message");
 
     }, []);
 
-    const send = function()
-    {
-        const array2 = new Uint8Array(3);
-        console.log(array2);
-        for (var i = 0; i < array2.length; ++i) {
-            array2[i] = 2;
-
-        }
-
-        const array3 = new Uint16Array(3);
-        console.log(array3);
-        for (var i = 0; i < array3.length; ++i) {
-            array3[i] = 3;
-        }
-        // var newdataview = new DataView(array.buffer);
-        // console.log(newdataview);
-        // console.log(newdataview.getFloat32(0, true));
-        // console.log(newdataview.getFloat32(4, true));
-        // console.log(newdataview.getFloat32(8, true));
-
-        console.log("Sending Float Data to WebSocket server.");
-        ws.send(array2);
+    const send = function () {
+        const array = new Uint8Array([65, 66, 0, counter, counter, counter, counter]);
+        // for (var i = 0; i < array.length; ++i) {
+        //     //array[i] = counter;
+        // }
         counter++;
+
+        console.log("Sending Data to WebSocket server.");
+        console.log(array);
+        ws.send(array);
     }
-    
 
     return (
         <div className="WebSocket">

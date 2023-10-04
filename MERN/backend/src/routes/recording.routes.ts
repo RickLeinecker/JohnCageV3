@@ -16,6 +16,9 @@ class RecordingRoutes {
     // Retrieve all Recordings
     this.router.get("/", this.controller.findAll);
 
+    // Retrieve all groups
+    this.router.get("/:group", this.controller.getRecordingsGroups);
+
     // Search a Recording by Title, Tags
     this.router.get("/search", this.controller.search);
 

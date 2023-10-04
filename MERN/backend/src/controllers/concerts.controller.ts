@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import Recording from "../models/recording.model";
-import recordingRepository from "../repositories/recording.repository";
 import tagRepository from "../repositories/tag.repository";
-var ms = require('mediaserver');
+import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
-import { TagObject } from "../models/tag.model";
+import { tags, tagsAttributes, recordings } from "../models/init-models";
+var ms = require('mediaserver');
 
 class ConcertsController {
-
   async pipeConcertFile(req: Request, res: Response) {
 
     var concertId: number = parseInt(req.query.id as string);
@@ -16,10 +14,10 @@ class ConcertsController {
     }
 
     if (concertId == 1) {
-      ms.pipe(req, res, './music/bass.mp3');
+      ms.pipe(req, res, './music/Bass.mp3');
     }
     else if (concertId > 1) {
-      ms.pipe(req, res, './music/alarm.mp3');
+      ms.pipe(req, res, './music/Alarm.mp3');
     }
     else {
       res.status(200);
@@ -59,7 +57,7 @@ class ConcertsController {
       performers: ["Kyle", "Paul", "Stephen", "Rayyan", "Himil"],
       title: "Concert One",
       tags: ["Slow", "Quiet", "Loud"],
-      description: "High intensity pipe action yahoo.",
+      description: "High fun pipe action yahoo.",
       date: "2023-September-11-6-00-PM"
     }
 
@@ -148,7 +146,7 @@ class ConcertsController {
 
     res.status(200).send({ searchResults: dummyResponse });
 
-    
+
     /*
      const Title = typeof req.query.Title === "string" ? req.query.Title : "";
  
@@ -165,7 +163,7 @@ class ConcertsController {
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
-    let response: TagObject[] = [];
+    let response: tagsAttributes[] = [];
 
     try {
       response = await tagRepository.retrieveAll();
