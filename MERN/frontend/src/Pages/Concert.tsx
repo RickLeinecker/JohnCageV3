@@ -16,10 +16,14 @@ import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
 
+// Just there
+import React from "react";
+
 
 //Interfaces/objects
 type ButtonState = {
     songName: string;
+    tagList: string[];
     index: number;
     isActive: boolean;
     onClick: Function;
@@ -47,7 +51,9 @@ class SongCard extends Component<ButtonState>
         return <div className="card" style={{width: "18rem"}}>
         <div className="card-body">
           <h5 className="card-title">{this.props.songName}</h5>
-          <p className="card-text">Tags: Banana, Derpy</p>
+          <p className="card-text">Tags: {
+            this.props.tagList
+          }</p>
           <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
         </div>
       </div>
@@ -108,7 +114,7 @@ function ConcertPage() {
                 <div className="col">
                     {
                         searchList.map((key, i) => {
-                            return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} onClick={() => {onClickCompound(i,true)}} />
+                            return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} tagList={key.tags} onClick={() => {onClickCompound(i,true)}} />
                         })
                     }
                     <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
