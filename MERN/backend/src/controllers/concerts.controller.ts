@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import tagRepository from "../repositories/tag.repository";
 import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
-import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
+import { tags, tagsAttributes, recordings, groups} from "../models/init-models";
 var ms = require('mediaserver');
+const { Op } = require("sequelize");
 
 class ConcertsController {
   async findAndPipeAudio(req: Request, res: Response) {
@@ -72,39 +73,31 @@ class ConcertsController {
   }
 
   async searchConcerts(req: Request, res: Response) {
-    const dummyResponse = [
-      {
-        id: 1,
-        maestro: "Paul",
-        title: "Concert: One",
-        tags: ["Slow", "Quiet", "Loud"]
-      },
-      {
-        id: 2,
-        maestro: "Paul",
-        title: "Concert: Two",
-        tags: ["Fast", "Hard"]
+    const searchString = typeof req.query.search === "string" ? req.query.search : "";
+
+    // Find all groups based on the 'search' filter.
+    const allTheGroups = await groups.findAll({
+      attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags'],
+      where: {
+        [Op.or]:
+        [
+            {
+                // Find any song title that has 'search' as a substring.
+                Title: {
+                    [Op.like]: `%${searchString}%`
+                }
+            },
+            {
+                // Find any song with tags that have 'search' string query as a substring.
+                Tags: {
+                    [Op.like]: `%${searchString}%`
+                }
+            }
+        ]
       }
+    });
 
-      // Todo: Add search string capabilities here
-    ];
-
-    res.status(200).send({ searchResults: dummyResponse });
-
-
-    /*
-     const Title = typeof req.query.Title === "string" ? req.query.Title : "";
- 
-     try {
-       const recordings = await recordingRepository.retrieveAll({ Title });
-       res.status(200).send(recordings);
- 
-     } catch (err) {
-       res.status(500).send({
-         message: "Some error occurred while retrieving recordings."
-       });
-     }
-     */
+    res.status(200).send({ searchResults: allTheGroups });
   }
 
   async retrieveRandomTags(req: Request, res: Response) {
