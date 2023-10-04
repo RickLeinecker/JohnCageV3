@@ -15,7 +15,7 @@ const getTags = async function () {
         //console.log("Tag Results: ", tags);
         var newTags: tag[] = [];
         for (var i = 0; i < tags.length && i < 10; ++i) {
-            newTags.push({ id: tags[i].idTags, tag: tags[i].Tags, active: false })
+            newTags.push({ id: tags[i].idTags, tag: tags[i].Tag, active: false })
         }
 
         console.log("New tags", newTags);
