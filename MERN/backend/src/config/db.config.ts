@@ -4,11 +4,11 @@ import { isServerEnvironment } from "./env.config";
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "jct3",
-  username: "username",
-  password: "!2#4%qwert",
+  username: "TheBeast",
+  password: "WeLoveJCT",
   host: "localhost",
   dialect: "mysql",
-  //port: 3306,
+  port: 3306,
   pool: {
     max: 5,
     min: 0,
@@ -16,7 +16,7 @@ const developmentSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
+    //socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
   },
   define: {
     timestamps: false
