@@ -11,6 +11,18 @@ class expressServer {
     this.config(this.expressApp);
     this.syncDatabase();
     new Routes(this.expressApp);
+    this.expressApp.use((req, res, next) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+      );
+      res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, DELETE, OPTIONS'
+      );
+      next();
+    });
   }
 
   private config(app: Application): void {
