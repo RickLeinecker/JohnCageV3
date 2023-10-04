@@ -14,6 +14,7 @@ import getMetadata from "../API/getMetadataAPI";
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
+import getTags from "../API/getTagsAPI";
 
 //Interfaces/objects
 type ButtonState = {
@@ -42,6 +43,11 @@ function ConcertPage() {
     const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
+
+    // Search Text useEffect hook
+    useEffect(() => {
+        getTags();
+    }, []);
 
     // Search Text useEffect hook
     useEffect(() => {
