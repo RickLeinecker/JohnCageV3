@@ -1,13 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
-import console_log from "../../logging/console_log";
-import ConcertParticipant from "../types/socket.participant";
-import { outgoingAudioChunkSize, maxAudioBufferSize } from "../socket.config";
-import defaultMix from "../mixers/default.mix";
-import Concert from "../types/socket.concert";
+import console_log from "../../../logging/console_log";
+import ConcertParticipant from "../../types/socket.participant";
+import { outgoingAudioChunkSize, maxAudioBufferSize } from "../../socket.config";
+import defaultMix from "../../mixers/default.mix";
+import Concert from "../../types/socket.concert";
+import { maxCustomHeaderSize } from "../../socket.config";
+
+import { receiveAudio } from "./events/receive.event";
 
 var ids: number = 0;
 var currentConcert: Concert = { performers: [], sockets: [] };
-const maxCustomHeaderSize: number = 16;
 
 // Should we store all variables in the router so we can pass them to whatever custom "events" easily?
 // Ex., the performers
@@ -163,18 +165,4 @@ const validatePerformerBuffers = function (performers: ConcertParticipant[]): bo
     return true;
 }
 
-const receiveAudio = function (performer: ConcertParticipant, rawAudio: ArrayBuffer) {
-    // Write message contents into user's buffer.
-    let thisView = new DataView(rawAudio);
-    for (let i = 0; i < thisView.byteLength; ++i) {
-        performer.audioBuffer.writeUint8(thisView.getUint8(i), performer.bufferSize);
-        performer.bytesLefttoProcess++;
-        performer.bufferSize++;
-    }
-
-    console_log("Total buffer bytes filled: ");
-    console_log(performer.bufferSize);
-    console_log("\n");
-}
-
-export { addPerformer };
+export { addPerformer, updatePerformers, gatherAudioBuffers, validatePerformerBuffers };

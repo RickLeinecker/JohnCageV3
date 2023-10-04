@@ -10,7 +10,7 @@ function MusicCard(thisConcert: concertData) {
     title: "Click a Concert to Get Started.",
     date: "",
     description: "",
-    tags: ["Sample"],
+    tags: "Sample Tags",
     maestro: "",
     performers: [""]
   });
@@ -37,11 +37,16 @@ function MusicCard(thisConcert: concertData) {
               {data["date"]}
             </h6>
             <p className="text-muted">
-              {"Tags: "}
+              {"Performers: "}
               {
-                data["tags"].map((key, i) => {
-                  return <span key={i}>{key + " "}</span>
+                data["performers"].map((key, i) => {
+                  return key + " ";
                 })
+
+              }
+              {"\nTags: "}
+              {
+                data["tags"]
               }
             </p>
           </div>
@@ -52,7 +57,7 @@ function MusicCard(thisConcert: concertData) {
               {data["description"]}
             </p>
 
-            
+
           </div>
         </div>
       </div>
