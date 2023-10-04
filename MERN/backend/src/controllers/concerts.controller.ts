@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import tagRepository from "../repositories/tag.repository";
 import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
-import { tags, tagsAttributes, recordings } from "../models/init-models";
+import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
 var ms = require('mediaserver');
 
 class ConcertsController {
-  async pipeConcertFile(req: Request, res: Response) {
+  async findAndPipeAudio(req: Request, res: Response) {
     // Todo: Add ability to query a recording by id and return the actual audio.
     const recordingId: number = parseInt(req.query.id as string);
     const recording = await recordings.findOne({
@@ -29,84 +29,46 @@ class ConcertsController {
   });
 }
 
-  async retrieveConcertData(req: Request, res: Response) {
+  async findOne(req: Request, res: Response) {
+    const recordingId: number = parseInt(req.query.id as string);
+    const recording = await recordings.findOne({
+      where: {
+          ID: recordingId
+      },
+    }).then((recording) => {
+      // Check if there is a group.
+      if (!recording) {
+        return res.status(400).json({ results: "No Results. Try another Recording ID" });
+      };
 
-    const dummyResponse =
-    {
-      id: 1,
-      maestro: "Paul",
-      performers: ["Kyle", "Paul", "Stephen", "Rayyan", "Himil"],
-      title: "Concert One",
-      tags: ["Slow", "Quiet", "Loud"],
-      description: "High fun pipe action yahoo.",
-      date: "2023-September-11-6-00-PM"
-    }
+      // Print this recordings info.
+      console.log(recording?.ID);
+      console.log(recording?.GroupID);
+      console.log(recording?.RecordingFileName);
 
-    const dummyResponse2 =
-    {
-      id: 2,
-      maestro: "Mario",
-      performers: ["Kyle", "Paul", "Stephen", "Rayyan", "Himil"],
-      title: "Concert Two",
-      tags: ["Slow", "Quiet", "Loud"],
-      description: "Super Mario Game.",
-      date: "Today"
-    }
+      const group = groups.findOne({
+        attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
+        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+        where: {
+          GroupID: recording?.GroupID
+        }
+      }).then((group) => {
+        // Check if there is a group.
+        if (!group) {
+          return res.status(400).json({ results: "No Results. Try another GroupID" });
+        }
 
-    const defaultResponse =
-    {
-      id: -1,
-      maestro: "",
-      performers: [],
-      title: "",
-      tags: [],
-      description: "",
-      date: ""
-    }
-
-    var concertId: number = parseInt(req.query.id as string);
-    if (!concertId) {
-      concertId = 0;
-    }
-
-    if (concertId == 1) {
-      res.status(200).send({ songData: dummyResponse });
-    }
-    else if (concertId > 1) {
-      res.status(200).send({ songData: dummyResponse2 });
-    }
-    else {
-      res.status(200).send({ songData: defaultResponse });
-    }
-
-    /*
-    var concertId: number = parseInt(req.query.id as string);
-    if (!concertId) {
-      concertId = 0;
-    }
-
-    try {
-      const recording = await recordingRepository.retrieveById(concertId);
-
-      if (recording) {
-        const controllerFolder = __dirname + "/";
-        const musicFolder = "music" + "/";
-        const Title = recording?.dataValues.Title;
-        const fileType = ".mp3";
-        const recordingLoc = controllerFolder + musicFolder + Title + fileType;
-
-
-      }
-      else
-        res.status(404).send({
-          message: `Cannot find Recording with id=${concertId}.`
+        // response contains the group that is mapped to this specific recording via the GroupID.
+        res.status(200).json({
+          group
         });
-    } catch (err) {
-      res.status(500).send({
-        message: `Error retrieving Recording with id=${concertId}.`
+  
+      }).catch((err) => {
+        res.status(500).send({
+          message: "Some error occurred while retrieving a group."
+        });
       });
-    }
-    */
+    });
   }
 
   async searchConcerts(req: Request, res: Response) {
