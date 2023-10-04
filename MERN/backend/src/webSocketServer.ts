@@ -10,7 +10,7 @@ import WebSocket, { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ noServer: true });
 
 // Custom modules
-import routeConnection from "./socket/routers/connection.router";
+import routeConnection from "./socket/connection.router";
 
 // Connection Steps: 
 // Authenticate or Reject.
