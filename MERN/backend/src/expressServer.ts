@@ -25,10 +25,10 @@ class expressServer {
 
   private syncDatabase(): void {
 
-    const db = new MySQLDatabase();
-    if (db.sequelize != undefined) {
-      db.sequelize.sync();
-    }
+    // const db = new MySQLDatabase();
+    // if (db.sequelize != undefined) {
+    //   db.sequelize.sync();
+    // }
 
   }
 }

@@ -29,6 +29,35 @@ type ButtonState = {
     onClick: Function;
 }
 
+var Results: searchResult[] = [{
+    id: 0,
+    title: "Test",
+    tags: ["Pie", "Cookies"],
+    maestro: "Kyle"
+},
+{
+    id: 1,
+    title: "Example",
+    tags: ["Pie", "Cookies"],
+    maestro: "Kyle"
+}
+];
+
+function TagsString(tags:string[]):string
+{
+    if (tags.length < 1)
+        return ""
+    let tagString:string = tags[0];
+
+    for (let i = 1; i < tags.length; i++)
+    {
+        tagString += ", "+tags[i];
+    }
+
+    return tagString;
+
+}
+
 class SongButton extends Component<ButtonState>
 {
     nameOfClass: string = "btn "
@@ -52,7 +81,7 @@ class SongCard extends Component<ButtonState>
         <div className="card-body">
           <h5 className="card-title">{this.props.songName}</h5>
           <p className="card-text">Tags: {
-            this.props.tagList
+            TagsString(this.props.tagList)
           }</p>
           <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
         </div>
@@ -63,7 +92,7 @@ class SongCard extends Component<ButtonState>
 //Functions
 function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
-    const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: [], maestro: "", }]);
+    const [searchList, setSearchList] = useState<Array<searchResult>>(Results);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
     const [isOpen,setIsOpen] = useState(false);
@@ -75,14 +104,14 @@ function ConcertPage() {
     }
 
     // Search Text useEffect hook
-    useEffect(() => {
-        const performSearch = async function (search: string) {
-            const newSearch: searchResult[] = await searchSongs(search);
-            setSearchList(newSearch);
-            setActiveSelection(-1);
-        }
-        performSearch(searchText);
-    }, [searchText]);
+    // useEffect(() => {
+    //     const performSearch = async function (search: string) {
+    //         const newSearch: searchResult[] = await searchSongs(search);
+    //         setSearchList(newSearch);
+    //         setActiveSelection(-1);
+    //     }
+    //     performSearch(searchText);
+    // }, [searchText]);
 
     // Get metadata useEffect hook
     useEffect(() => {
