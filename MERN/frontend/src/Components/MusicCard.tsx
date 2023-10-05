@@ -20,6 +20,8 @@ function MusicCard(thisConcert: concertData) {
     if (thisConcert["id"] != -1) {
       setData(thisConcert);
     }
+    else
+      console.log("Concert is empteh");
   }, [thisConcert]);
 
   return (
