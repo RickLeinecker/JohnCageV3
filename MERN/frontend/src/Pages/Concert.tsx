@@ -40,6 +40,18 @@ var Results: searchResult[] = [{
     title: "Example",
     tags: ["Pie", "Cookies"],
     maestro: "Kyle"
+},
+{
+    id: 2,
+    title: "Example but better",
+    tags: ["Pie", "Cake"],
+    maestro: "Kyle"
+},
+{
+    id: 3,
+    title: "Daniel",
+    tags: ["Bakery", "Memes"],
+    maestro: "Kyle"
 }
 ];
 
@@ -79,12 +91,13 @@ class SongCard extends Component<ButtonState>
     {
         return <div className="card" style={{width: "18rem"}}>
         <div className="card-body">
-          <h5 className="card-title">{this.props.songName}</h5>
-          <p className="card-text">Tags: {
+          <h5 className="card-title" style = {{textAlign:"center"}}>{this.props.songName}</h5>
+          <p className="card-text" style = {{textAlign:"center"}}>Tags: {
             TagsString(this.props.tagList)
           }</p>
-          <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
         </div>
+        <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
+        <br/>
       </div>
     }
 }
@@ -140,14 +153,14 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
-                <div className="col">
+                
                     {
                         searchList.map((key, i) => {
-                            return <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} tagList={key.tags} onClick={() => {onClickCompound(i,true)}} />
+                            return <div className="col"><SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} tagList={key.tags} onClick={() => {onClickCompound(i,true)}} /></div>
                         })
                     }
                     <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
-                </div>
+                
                 {/* <div className="col">
                     <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div> */}
