@@ -10,12 +10,11 @@ import Modal from "../Components/Modal";
 
 // API functions
 import getMetadata from "../API/getMetadataAPI";
+import searchSongs from "../API/searchSongsAPI";
 
 // Types
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
-import searchSongs from "../API/searchSongsAPI";
-import getTags from "../API/getTagsAPI";
 
 // Just there
 import React from "react";
@@ -33,38 +32,38 @@ type ButtonState = {
 var Results: searchResult[] = [{
     id: 0,
     title: "Test",
-    tags: ["Pie", "Cookies"],
+    tags: "Pie Cookies",
     maestro: "Kyle"
 },
 {
     id: 1,
     title: "Example",
-    tags: ["Pie", "Cookies"],
+    tags: "Pie Cookies",
     maestro: "Kyle"
 },
 {
     id: 2,
     title: "Example but better",
-    tags: ["Pie", "Cake"],
+    tags: "Pie Cake",
     maestro: "Kyle"
 },
 {
     id: 3,
     title: "Daniel",
-    tags: ["Bakery", "Memes"],
+    tags: "Bakery Memes",
     maestro: "Kyle"
 }
 ];
 
-function TagsString(tags:string[]):string
-{
+function TagsString(tags: string): string {
+    return tags;
+
     if (tags.length < 1)
         return ""
-    let tagString:string = tags[0];
+    let tagString: string = tags[0];
 
-    for (let i = 1; i < tags.length; i++)
-    {
-        tagString += ", "+tags[i];
+    for (let i = 1; i < tags.length; i++) {
+        tagString += ", " + tags[i];
     }
 
     return tagString;
@@ -88,18 +87,23 @@ class SongCard extends Component<ButtonState>
 {
     handleClick = () => this.props.onClick(this.props.index)
 
-    render()
-    {
-        return <div className="card" style={{width: "18rem"}}>
-        <div className="card-body">
-          <h5 className="card-title" style = {{textAlign:"center"}}>{this.props.songName}</h5>
-          <p className="card-text" style = {{textAlign:"center"}}>Tags: {
-            TagsString(this.props.tagList)
-          }</p>
-        </div>
-        <a onClick={this.handleClick} className="btn btn-primary">Play Concert</a>
-        <br/>
-      </div>
+    render() {
+        return (
+            <a onClick={this.handleClick} className="btn btn-primary">
+                <div className="card" style={{ width: "18rem" }}>
+                    <div className="card-body">
+                        <h5 className="card-title" style={{ textAlign: "center" }}>
+                            {this.props.songName}
+                        </h5>
+                        <p className="card-text" style={{ textAlign: "center" }}>
+                            {TagsString(this.props.songTags)}
+                        </p>
+                    </div>
+                    <br />
+                </div>
+            </a>
+
+        )
     }
 }
 
@@ -110,7 +114,7 @@ function ConcertPage() {
     const [activeSelection, setActiveSelection] = useState<number>(-1);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: "", maestro: "", performers: [""] });
     const [page, setPage] = useState<number>(0);
-    const [isOpen,setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     // Pagination
     const nextPage = function () {
@@ -123,23 +127,11 @@ function ConcertPage() {
             setPage(page - 1);
         }
     }
-      
-       function onClickCompound(index:number, open:boolean)
-    {
+
+    function onClickCompound(index: number, open: boolean) {
         setActiveSelection(index);
         setIsOpen(open);
     }
-
-    
-       // Search Text useEffect hook
-    // useEffect(() => {
-    //     const performSearch = async function (search: string) {
-    //         const newSearch: searchResult[] = await searchSongs(search);
-    //         setSearchList(newSearch);
-    //         setActiveSelection(-1);
-    //     }
-    //     performSearch(searchText);
-    // }, [searchText]);
 
     // Search Text useEffect hook
     useEffect(() => {
@@ -171,7 +163,7 @@ function ConcertPage() {
             <div className="row">
                 <div className="col">
                     <Form.Group>
-                        <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search performance by name" />
+                        <Form.Control type='searchtext' value={searchText} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSearchText(e.target.value)} placeholder="Search past concerts by tag or title" />
                     </Form.Group>
                 </div>
             </div>
@@ -179,39 +171,48 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
-
                 <div className="col">
                     <div className="scroller">
                         <div className="d-grid" role="group" aria-label="Toolbar with button groups">
-                            {
-                                      {
-                        searchList.map((key, i) => {
-                            return <div className="col"><SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} tagList={key.tags} onClick={() => {onClickCompound(i,true)}} /></div>
-                        })
-                              }
-                                  <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
-                              }
-
                             <div>
                                 <Button onClick={prevPage}>Previous</Button>
                                 <Button onClick={nextPage}>Next</Button>
+                                <br />
+                                <br />
                             </div>
+                            {
+                                searchList.map((key, i) => {
+                                    return (
+                                        <div className="col">
+                                            <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} songTags={key.tags} onClick={() => { onClickCompound(i, true) }} />
+                                            <br />
+                                            <br />
+                                        </div>
+                                    )
+                                })
+                            }
+                            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData}></Modal>
                         </div>
                     </div>
                 </div>
-                <div className="col">
-                    <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
-                </div> */}
+
             </div>
             <div className="row">
                 <br />
             </div>
-        </div>
+        </div >
     );
 }
 
 export default ConcertPage;
 
+
+
+/*
+ <div className="col">
+                    <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
+                </div>
+*/
 
 
 
