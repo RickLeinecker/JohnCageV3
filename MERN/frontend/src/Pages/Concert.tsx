@@ -5,7 +5,7 @@ import "../Style/button.css"
 // Components
 import { Component, useEffect, useState } from "react";
 import MusicCard from "../Components/MusicCard";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import Modal from "../Components/Modal";
 
 // API functions
@@ -15,6 +15,7 @@ import getMetadata from "../API/getMetadataAPI";
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
 import searchSongs from "../API/searchSongsAPI";
+import getTags from "../API/getTagsAPI";
 
 // Just there
 import React from "react";
@@ -23,7 +24,7 @@ import React from "react";
 //Interfaces/objects
 type ButtonState = {
     songName: string;
-    tagList: string[];
+    songTags: string;
     index: number;
     isActive: boolean;
     onClick: Function;
@@ -78,7 +79,7 @@ class SongButton extends Component<ButtonState>
         return <button type="button" className=
             {this.nameOfClass + (this.props.isActive ? 'current' : 'inactive')}
             onClick={this.handleClick}>
-            {this.props.songName}
+            {this.props.songName + " - - " + this.props.songTags}
         </button>;;
     }
 }
@@ -105,18 +106,32 @@ class SongCard extends Component<ButtonState>
 //Functions
 function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
-    const [searchList, setSearchList] = useState<Array<searchResult>>(Results);
+    const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: "", maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
-    const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: [""], maestro: "", performers: [""] });
+    const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: "", maestro: "", performers: [""] });
+    const [page, setPage] = useState<number>(0);
     const [isOpen,setIsOpen] = useState(false);
 
-    function onClickCompound(index:number, open:boolean)
+    // Pagination
+    const nextPage = function () {
+        if (searchList.length > 0) {
+            setPage(page + 1);
+        }
+    }
+    const prevPage = function () {
+        if (page > 0) {
+            setPage(page - 1);
+        }
+    }
+      
+       function onClickCompound(index:number, open:boolean)
     {
         setActiveSelection(index);
         setIsOpen(open);
     }
 
-    // Search Text useEffect hook
+    
+       // Search Text useEffect hook
     // useEffect(() => {
     //     const performSearch = async function (search: string) {
     //         const newSearch: searchResult[] = await searchSongs(search);
@@ -125,6 +140,17 @@ function ConcertPage() {
     //     }
     //     performSearch(searchText);
     // }, [searchText]);
+
+    // Search Text useEffect hook
+    useEffect(() => {
+        const performSearch = async function (search: string, page: number) {
+            const newSearch: searchResult[] = await searchSongs(search, page);
+            setSearchList(newSearch);
+            setActiveSelection(-1);
+        }
+        performSearch(searchText, page);
+    }, [searchText, page]);
+
 
     // Get metadata useEffect hook
     useEffect(() => {
@@ -153,15 +179,27 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
-                
-                    {
+
+                <div className="col">
+                    <div className="scroller">
+                        <div className="d-grid" role="group" aria-label="Toolbar with button groups">
+                            {
+                                      {
                         searchList.map((key, i) => {
                             return <div className="col"><SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} tagList={key.tags} onClick={() => {onClickCompound(i,true)}} /></div>
                         })
-                    }
-                    <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
-                
-                {/* <div className="col">
+                              }
+                                  <Modal isOpen ={isOpen} onClose={() =>setIsOpen(false)} songData={metaData}></Modal>
+                              }
+
+                            <div>
+                                <Button onClick={prevPage}>Previous</Button>
+                                <Button onClick={nextPage}>Next</Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col">
                     <MusicCard id={metaData["id"]} title={metaData["title"]} date={metaData["date"]} description={metaData["description"]} tags={metaData["tags"]} maestro={metaData["maestro"]} performers={metaData["performers"]} />
                 </div> */}
             </div>

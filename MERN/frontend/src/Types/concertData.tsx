@@ -3,7 +3,7 @@ type concertData = {
     title: string;
     date: string;
     description: string;
-    tags: string[];
+    tags: string;
     maestro: string;
     performers: string[];
 }

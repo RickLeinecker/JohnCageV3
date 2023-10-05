@@ -1,13 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
-import console_log from "../../logging/console_log";
-import ConcertParticipant from "../types/socket.participant";
-import { outgoingAudioChunkSize, maxAudioBufferSize } from "../socket.config";
-import defaultMix from "../mixers/default.mix";
-import Concert from "../types/socket.concert";
+import console_log from "../../../logging/console_log";
+import ConcertParticipant from "../../types/socket.participant";
+import { outgoingAudioChunkSize, maxAudioBufferSize } from "../../socket.config";
+import defaultMix from "../../mixers/default.mix";
+import Concert from "../../types/socket.concert";
+import { maxCustomHeaderSize } from "../../socket.config";
+
+import { receiveAudio } from "./events/receive.event";
 
 var ids: number = 0;
 var currentConcert: Concert = { performers: [], sockets: [] };
-const maxHeaderSize: number = 16;
 
 // Should we store all variables in the router so we can pass them to whatever custom "events" easily?
 // Ex., the performers
@@ -28,19 +30,16 @@ const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: Web
     console_log(data);
     console_log("\n");
 
-
     // Store message in Buffer and view through a DataView.
     let buffer: Buffer = Buffer.from(<Buffer>data);
     let thisView = new DataView(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength));
-
-    receiveAudio(performer, performers, buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength), wss);
 
     // Get the event header in the form of 1 byte characters until the NULL character (0).
     let eventHeader: string = "";
     let isTerminated: boolean = false;
     let nextCharacter: string = String.fromCharCode(thisView.getUint8(0));
     let headerEnd: number = 0;
-    for (let i = 0; i < maxHeaderSize && i < thisView.byteLength; ++i) {
+    for (let i = 0; i < maxCustomHeaderSize && i < thisView.byteLength; ++i) {
         nextCharacter = String.fromCharCode(thisView.getUint8(i));
         if (nextCharacter == String.fromCharCode(0)) {
             headerEnd = i;
@@ -49,6 +48,15 @@ const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: Web
         }
         eventHeader = eventHeader.concat(nextCharacter);
     }
+
+    console_log("Detected header: ");
+    console_log(eventHeader);
+    console_log("\n");
+
+    if (headerEnd + 1 < buffer.byteLength) {
+        receiveAudio(performer, buffer.buffer.slice(buffer.byteOffset + headerEnd + 1, buffer.byteOffset + buffer.byteLength));
+    }
+
 
     /* Waiting for Stephen to make progress before adding another thing,
     // If event name is formatted properly, signal reception.
@@ -108,8 +116,9 @@ const defineClose = function (ws: WebSocket, performer: ConcertParticipant) {
     ws.on('close', function message(data) {
         for (let i = 0; i < currentConcert.performers.length; ++i) {
             if (currentConcert.performers.at(i) === performer) {
-                ws.close();
+                currentConcert.sockets.splice(i, 1);
                 currentConcert.performers.splice(i, 1);
+                ws.close();
                 console_log("Performer removed. Current performers: ");
                 console_log(currentConcert.performers);
             }
@@ -156,18 +165,4 @@ const validatePerformerBuffers = function (performers: ConcertParticipant[]): bo
     return true;
 }
 
-const receiveAudio = function (performer: ConcertParticipant, performers: ConcertParticipant[], rawAudio: ArrayBuffer, wss: WebSocketServer) {
-    // Write message contents into user's buffer.
-    let thisView = new DataView(rawAudio);
-    for (let i = 0; i < thisView.byteLength; ++i) {
-        performer.audioBuffer.writeUint8(thisView.getUint8(i), performer.bufferSize);
-        performer.bufferSize++;
-        performer.bytesLefttoProcess++;
-    }
-
-    console_log("Total buffer bytes filled: ");
-    console_log(performer.bufferSize);
-    console_log("\n");
-}
-
-export { addPerformer };
+export { addPerformer, updatePerformers, gatherAudioBuffers, validatePerformerBuffers };
