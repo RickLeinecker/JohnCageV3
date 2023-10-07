@@ -11,25 +11,27 @@ function SocketTest() {
 
     const [messageTest, setMessageText] = useState<string>('');
     const [connectionText, setConnectionText] = useState<string>('');
+    const [extra, setExtra] = useState<number>(0);
+
 
     useEffect(() => {
-        ws = new WebSocket(websocketURL + ":8080/concert/performer");
-        ws.binaryType = "arraybuffer";
+        // ws = new WebSocket(websocketURL + ":8080/concert/performer");
+        // ws.binaryType = "arraybuffer";
 
-        ws.onopen = () => {
-            console.log("Socket connection opened.")
-        }
+        // ws.onopen = () => {
+        //     console.log("Socket connection opened.")
+        // }
 
-        ws.onmessage = (event: any) => {
-            console.log("WebSocket message from Server: ", event.data);
-            let newarray = new Uint8Array(event.data);
-            console.log("WebSocket message as UInt8Array: ", newarray);
-        }
+        // ws.onmessage = (event: any) => {
+        //     console.log("WebSocket message from Server: ", event.data);
+        //     let newarray = new Uint8Array(event.data);
+        //     console.log("WebSocket message as UInt8Array: ", newarray);
+        // }
     }, []);
 
     // Sends example binary data for testing mixer and streaming.
     const sendData = function () {
-        const array = new Uint8Array([65, 66, 0, counter, counter, counter, counter]);
+        const array = new Uint8Array([0, 0, counter + extra, 0, counter + extra]);
         counter++;
 
         console.log("Sending Data to WebSocket server.");
@@ -76,6 +78,10 @@ function SocketTest() {
         }
     }
 
+    const setst = function () {
+        setExtra(4);
+    }
+
     return (
         <div className="WebSocket">
             <Card
@@ -96,6 +102,7 @@ function SocketTest() {
                     <Form.Control value={messageTest} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setMessageText(e.target.value)} placeholder="Message" />
                 </Form.Group>
                 <Button onClick={sendMessage}>Send Message</Button>
+                <Button onClick={setst}>ChangeRawData</Button>
                 <br />
             </Card>
         </div>

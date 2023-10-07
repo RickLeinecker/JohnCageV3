@@ -20,9 +20,8 @@ function MusicPlayer(songData: songData) {
   const [trackTime, setTrackTime] = useState({ min: "00", sec: "00" });
   const [trackLength, setTrackLength] = useState({ min: "00", sec: "00" });
 
-  const updateSong = function (source: number) {
-
-    setSource(buildPath('/concerts/getSongFile?id=' + source));
+  const updateSong = function (songId: number) {
+    setSource(buildPath('/concerts/getSongFile?id=' + songId));
     console.log("Loaded")
     if (audioElement.current) {
       console.log("Loaded")

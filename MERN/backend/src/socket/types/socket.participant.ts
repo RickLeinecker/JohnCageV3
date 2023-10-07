@@ -1,6 +1,11 @@
 import WebSocket from "ws";
 import { maxAudioBufferSize } from "../socket.config";
 
+type Performer = {
+    data: ConcertParticipant;
+    socket: WebSocket;
+}
+
 class ConcertParticipant {
     id: number = -1;
     bytesProcessed: number = 0;
@@ -14,5 +19,5 @@ class ConcertParticipant {
     }
 }
 
-export default ConcertParticipant;
+export { Performer, ConcertParticipant };
 
