@@ -36,6 +36,7 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
             if (view != undefined) {
                 sampleSum += (32768 + view.getInt16(2 * i, true)) / sampleCount;
             }
+            console.log(sampleSum);
         }
 
         mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);

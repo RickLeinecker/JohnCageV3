@@ -30,7 +30,7 @@ const MODAL: React.CSSProperties = {
 }
 
 export default function Modal({ isOpen, onClose, songData }: ModalData) {
-    if (!isOpen) return null
+    if (!isOpen) return null;
 
     return ReactDOM.createPortal(
         <>
