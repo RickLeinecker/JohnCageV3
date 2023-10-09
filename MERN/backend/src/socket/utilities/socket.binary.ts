@@ -1,6 +1,9 @@
 import { CustomHeader } from "../types/socket.header";
 import console_log from "../../logging/console_log";
 import { maxCustomHeaderSize } from "../socket.config";
+import { Concert } from "../types/socket.concert";
+import WebSocket from "ws";
+import { Performer } from "../types/socket.participant";
 
 const retrieveHeader = function (data: Buffer): CustomHeader {
     // Store message in Buffer and view through a DataView.
@@ -34,4 +37,38 @@ const retrieveMessageContents = function (message: Buffer, headerEnd: number): A
     return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
 }
 
-export { retrieveMessageContents, retrieveHeader };
+const signalJoin = function (currentConcert: Concert, name: string): void {
+    let utf8Encode = new TextEncoder();
+    broadcastMessage(currentConcert, utf8Encode.encode("participantAdded:" + name));
+}
+
+const broadcastMessage = function (currentConcert: Concert, message: Uint8Array): void {
+    // Send to performers
+    let performers = currentConcert.performers;
+    for (let i = 0; i < performers.length; ++i) {
+        let performerSocket: WebSocket | undefined = performers.at(i)?.socket;
+        if (performerSocket) {
+            performerSocket.send(message);
+        }
+    }
+
+    // Send to waiting performers
+    let waitList: WebSocket[] = currentConcert.waitingPerformers;
+    for (let i = 0; i < waitList.length; ++i) {
+        let waiterSocket: WebSocket | undefined = waitList.at(i);
+        if (waiterSocket) {
+            waiterSocket.send(message);
+        }
+    }
+
+    // Send to Maestro
+    let maestro: Performer | undefined = currentConcert.maestro;
+    if (maestro) {
+        let maestroSocket = maestro.socket;
+        if (maestroSocket) {
+            maestroSocket.send(message);
+        }
+    }
+}
+
+export { retrieveMessageContents, retrieveHeader, broadcastMessage, signalJoin };

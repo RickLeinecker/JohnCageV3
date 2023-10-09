@@ -51,9 +51,9 @@ class ConcertsController {
       };
 
       // Print this recordings info.
-      console.log(recording?.ID);
-      console.log(recording?.GroupID);
-      console.log(recording?.RecordingFileName);
+      // console.log(recording?.ID);
+      // console.log(recording?.GroupID);
+      // console.log(recording?.RecordingFileName);
 
       const group = groups.findOne({
         attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
@@ -112,7 +112,7 @@ class ConcertsController {
       }
     });
 
-    console.log(allTheGroups);
+    //console.log(allTheGroups);
 
     res.status(200).send({ searchResults: allTheGroups });
   }
@@ -126,7 +126,7 @@ class ConcertsController {
       res.status(500).send({ message: "Some error occurred while retrieving tags." });
     }
 
-    console.log(response);
+    //console.log(response);
     res.status(200).send({ tags: response });
   }
 }

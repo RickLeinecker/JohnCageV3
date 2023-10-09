@@ -73,8 +73,12 @@ function SocketTest() {
 
         ws.onmessage = (event: any) => {
             console.log("WebSocket message from Server: ", event.data);
+
             let newarray = new Uint8Array(event.data);
             console.log("WebSocket message as UInt8Array: ", newarray);
+
+            var enc = new TextDecoder("utf-8");
+            console.log("WebSocket message as string: ", enc.decode(newarray));
         }
     }
 

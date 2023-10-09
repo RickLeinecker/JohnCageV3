@@ -34,18 +34,14 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
         for (let j = 0; j < sampleCount; ++j) {
             let view = bufferViews.at(j);
             if (view != undefined) {
+                // MUST BE LITTLE ENDIAN (true)
                 sampleSum += (32768 + view.getInt16(2 * i, true)) / sampleCount;
             }
             console.log(sampleSum);
         }
 
+        // MUST BE LITTLE ENDIAN
         mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);
-        // Test if returns undefined with too big number.
-        // Test if casting number works.
-        // Test if the number can be calculated based on the size of the sample to avoid too big.
-        // Print number to ensure it is correct.
-        // Try printing typeof to confirm it is 16 bit as expected.
-        // Save data to file to check in hex editor.
     }
 
     return mixedAudio;

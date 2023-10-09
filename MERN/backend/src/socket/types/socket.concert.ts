@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { ConcertParticipant, Performer } from "./socket.participant";
+import { Performer } from "./socket.participant";
 
 type Concert = {
     performers: Performer[];

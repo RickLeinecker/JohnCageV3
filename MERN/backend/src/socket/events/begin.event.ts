@@ -1,6 +1,5 @@
-import WebSocket, { WebSocketServer } from "ws";
+import WebSocket from "ws";
 import { addPerformer } from "../handlers/performer.handler";
-import { ConcertParticipant } from "../types/socket.participant";
 import { Concert } from "../types/socket.concert";
 
 const beginConcert = function (currentConcert: Concert): void {
@@ -11,7 +10,7 @@ const beginConcert = function (currentConcert: Concert): void {
         let socket: WebSocket | undefined = waitingSockets.pop();
         if (socket) {
             addPerformer(socket, currentConcert);
-            // Send signal to frontend to signify beginning.
+            // TODO: Send signal to frontend to signify beginning.
         }
     }
 

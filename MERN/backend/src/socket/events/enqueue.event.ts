@@ -7,7 +7,7 @@ const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert) {
     currentConcert.waitingPerformers.push(ws);
 
     console_log("New performer added to concert line: ");
-    console_log(currentConcert.waitingPerformers);
+    // console_log(currentConcert.waitingPerformers);
     console_log("\n");
 }
 
