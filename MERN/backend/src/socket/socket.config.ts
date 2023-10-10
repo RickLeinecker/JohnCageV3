@@ -7,4 +7,7 @@ const maxAudioBufferSize = 40000000;
 // const outgoingAudioChunkSize = 6;
 // const maxAudioBufferSize = 50;
 
-export { outgoingAudioChunkSize, maxAudioBufferSize };
+// Maximum size to check for custom headers in binary "message" socket events.
+const maxCustomHeaderSize = 64;
+
+export { outgoingAudioChunkSize, maxAudioBufferSize, maxCustomHeaderSize };

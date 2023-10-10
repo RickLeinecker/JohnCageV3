@@ -1,9 +1,11 @@
 import { WebSocket } from "ws";
-import ConcertParticipant from "./socket.participant"
+import { ConcertParticipant, Performer } from "./socket.participant";
 
 type Concert = {
-    performers: ConcertParticipant[];
-    sockets: WebSocket[];
+    performers: Performer[];
+    maestro: Performer | undefined;
+    waitingPerformers: WebSocket[];
+    active: boolean;
 }
 
-export default Concert;
+export { Concert };

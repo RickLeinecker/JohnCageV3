@@ -1,34 +1,40 @@
 import { Request, Response } from "express";
 import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
+ Demetri-New
 import tagRepository from "../repositories/tag.repository";
 import { tags, tagsAttributes, recordings, groups} from "../models/init-models";
+ main
 var ms = require('mediaserver');
 const { Op } = require("sequelize");
 
 class ConcertsController {
   async findAndPipeAudio(req: Request, res: Response) {
     // Todo: Add ability to query a recording by id and return the actual audio.
-    const recordingId: number = parseInt(req.query.id as string);
-    const recording = await recordings.findOne({
-        where: {
-            ID: recordingId
-        }
-    }).then((recording) => {
-        // Check if there is a recording.
-        if (!recording) {
-            return res.status(400).json({ results: "No Results. Try another recordingID" });
-        }
+    let recordingId: number = parseInt(req.query.id as string);
+    if (!recordingId) {
+      recordingId = -1;
+    }
 
-        const filePath = './music/';
-        const fileName = recording.RecordingFileName;
-        const recordingFilePath = filePath + fileName;
-      
-        ms.pipe(req, res, recordingFilePath);
+    const recording = await recordings.findOne({
+      where: {
+        ID: recordingId
+      }
+    }).then((recording) => {
+      // Check if there is a recording.
+      if (!recording) {
+        return res.status(400).json({ results: "No Results. Try another recordingID" });
+      }
+
+      const filePath = './music/';
+      const fileName = recording.RecordingFileName;
+      const recordingFilePath = filePath + fileName;
+
+      ms.pipe(req, res, recordingFilePath);
     }).catch((err) => {
-      res.status(401).json({ success: false, message: err});
-  });
-}
+      res.status(401).json({ success: false, message: err });
+    });
+  }
 
   // @route /api/concerts/groups
   // @desc  returns a list of all the groups
@@ -91,10 +97,14 @@ class ConcertsController {
   }
 
   async findOne(req: Request, res: Response) {
-    const recordingId: number = parseInt(req.query.id as string);
+    let recordingId: number = parseInt(req.query.id as string);
+    if (!recordingId) {
+      recordingId = -1;
+    }
+
     const recording = await recordings.findOne({
       where: {
-          ID: recordingId
+        ID: recordingId
       },
     }).then((recording) => {
       // Check if there is a group.
@@ -104,7 +114,7 @@ class ConcertsController {
 
       const group = groups.findOne({
         attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
-        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+          'GroupName', 'Title', 'Tags', 'Description', 'Date'],
         where: {
           GroupID: recording?.GroupID
         }
@@ -118,7 +128,7 @@ class ConcertsController {
         res.status(200).json({
           group
         });
-  
+
       }).catch((err) => {
         res.status(500).send({
           message: "Some error occurred while retrieving a group."
@@ -128,29 +138,38 @@ class ConcertsController {
   }
 
   async searchConcerts(req: Request, res: Response) {
+    const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
+    let page: number = parseInt(req.query.page as string);
+    if (!page) {
+      page = 0;
+    }
 
     // Find all groups based on the 'search' filter.
     const allTheGroups = await groups.findAll({
+      limit: pageLength,
+      offset: pageLength * page,
       attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags'],
       where: {
         [Op.or]:
-        [
+          [
             {
-                // Find any song title that has 'search' as a substring.
-                Title: {
-                    [Op.like]: `%${searchString}%`
-                }
+              // Find any song title that has 'search' as a substring.
+              Title: {
+                [Op.like]: `%${searchString}%`
+              }
             },
             {
-                // Find any song with tags that have 'search' string query as a substring.
-                Tags: {
-                    [Op.like]: `%${searchString}%`
-                }
+              // Find any song with tags that have 'search' string query as a substring.
+              Tags: {
+                [Op.like]: `%${searchString}%`
+              }
             }
-        ]
+          ]
       }
     });
+
+    console.log(allTheGroups);
 
     res.status(200).send({ searchResults: allTheGroups });
   }
