@@ -1,5 +1,6 @@
 import { Router } from "express";
 import UserController from "../controllers/user.controller";
+import { Middleware } from "../middleware/middleware.index";
 
 class UserRoutes {
   router = Router();
@@ -11,26 +12,59 @@ class UserRoutes {
 
   intializeRoutes() {
 
-    this.router.get('/validate', this.controller.validateToken);
-    this.router.post('/register', this.controller.register);
-    this.router.post('/login', this.controller.login);
-    this.router.get('/findAll', this.controller.getAllUsers);
+    this.router.get(
+      // Route
+      '/validate',
 
+      // Express Middleware
+      [
+        Middleware.verifyToken.extractJWT
+      ],
 
-    // Create a new User
-    // this.router.post("/", this.controller.create);
+      // User class (controller) method
+      this.controller.validateToken
+    );
+
+    this.router.post(
+      // Route
+      '/register',
+
+      // Express Middleware
+      [
+        Middleware.verifyRegister.checkDuplicateUsernameOrEmail
+      ],
+
+      this.controller.register,
+    );
+
+    this.router.post(
+      '/login',
+      this.controller.login
+    );
 
     // Retrieve all Users
-    // this.router.get("/", this.controller.findAll);
+    this.router.get(
+      '/findAll',
+      this.controller.getAllUsers
+    );
 
     // Retrieve a single User with id
-    this.router.get("/:id", this.controller.findOne);
+    this.router.get(
+      "/:id",
+      this.controller.findOne
+    );
 
     // Update a User with id
-    this.router.put("/:id", this.controller.update);
+    this.router.put(
+      "/:id",
+      this.controller.update
+    );
 
     // Delete a User with id
-    this.router.delete("/:id", this.controller.delete);
+    this.router.delete(
+      "/:id",
+      this.controller.delete
+    );
   }
 }
 
