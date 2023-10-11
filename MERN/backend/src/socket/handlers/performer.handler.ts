@@ -6,9 +6,9 @@ import { maxAudioBufferSize } from "../socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";
-import { CustomHeader } from "../types/socket.header";
-import { ConcertParticipant, Performer } from "../types/socket.participant";
-import { Concert } from "../types/socket.concert";
+import { CustomHeader } from "../socket.types";
+import { ConcertParticipant, Performer } from  "../socket.types";
+import { Concert } from "../socket.types";
 
 // Functions
 import concertTick from "../events/tick.event";
@@ -17,9 +17,9 @@ import { receiveAudio } from "../events/receive.event";
 
 var ids: number = 0;
 
-const addPerformer = function (ws: WebSocket, currentConcert: Concert) {
+const addPerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
     // Initialize new performer object.
-    let performer: Performer = { data: new ConcertParticipant(ids++), socket: ws }; // This id needs to be 100% unique later.
+    let performer: Performer = { data: new ConcertParticipant(ids++), socket: ws, nickname: name }; // This id needs to be 100% unique later.
     currentConcert.performers.push(performer);
 
     definePerformerClose(performer, currentConcert);

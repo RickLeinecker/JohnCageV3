@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import tagRepository from "../repositories/tag.repository";
 import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
+import tagRepository from "../repositories/tag.repository";
 import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
 var ms = require('mediaserver');
 const { Op } = require("sequelize");
@@ -34,6 +34,66 @@ class ConcertsController {
     });
   }
 
+  // @route /api/concerts/groups
+  // @desc  returns a list of all the groups
+  async findAllGroups(req: Request, res: Response) {
+    const allGroups: groups[] = await groups.findAll({ attributes: ['DateCreated'] });
+    console.log("All groups:", JSON.stringify(allGroups, null, 2));
+
+    res.status(200).json({
+      groups: allGroups
+    });
+  }
+
+  // Todo: Filter by date range
+  async filterConcertsByDateRange(req: Request, res: Response) {
+    // Todo: Get start date from request
+    // const startDate = new Date(req.query.startDate as string);
+    // console.log(startDate);
+
+    // // Todo: Get end date from request
+    // const endDate = new Date(req.query.endDate as string);
+    // console.log(endDate);
+
+    // {
+    //   "startDate": "2023-09-29T03:43:28.000Z",
+    //   "endDate": "2023-10-04T03:46:27.000Z"
+    // }
+
+    const startDate = new Date(req.body.startDate);
+    const endDate = new Date(req.body.endDate);
+    // console.log(startDate);
+    // console.log(endDate);
+
+    // let toTimestamp = (startDate: string) => {
+    //   (startDate);
+    // }
+
+    // toTimestamp(req.body.startDate);
+
+    Date.parse(req.body.startDate);
+    console.log(req.body.startDate);
+    console.log(Date.parse(req.body.startDate));
+    const groupsInDateRange = await groups.findAll({
+      where: {
+        DateCreated: {
+          $lt: new Date(),
+          $gt: Date.parse(req.body.startDate)
+        }
+      }
+      // DateCreated < [timestamp] AND DateCreated > [timestamp]
+
+      //     // where: {
+      //     //   Date: {
+      //     //     from: {
+      //     //       $between: [startDate, endDate]
+      //     //     }
+      //     //   }
+      //     // }
+    });
+    console.log("All groups in date range:", JSON.stringify(groupsInDateRange, null, 2));
+  }
+
   async findOne(req: Request, res: Response) {
     let recordingId: number = parseInt(req.query.id as string);
     if (!recordingId) {
@@ -49,11 +109,6 @@ class ConcertsController {
       if (!recording) {
         return res.status(400).json({ results: "No Results. Try another Recording ID" });
       };
-
-      // Print this recordings info.
-      // console.log(recording?.ID);
-      // console.log(recording?.GroupID);
-      // console.log(recording?.RecordingFileName);
 
       const group = groups.findOne({
         attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',

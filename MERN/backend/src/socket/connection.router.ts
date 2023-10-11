@@ -3,7 +3,7 @@ import console_log from "../logging/console_log";
 
 // Types/Classes
 import { WebSocket, WebSocketServer } from "ws";
-import { Concert } from "./types/socket.concert";
+import { Concert } from "./socket.types";
 import { IncomingMessage } from "http";
 
 // Functions
@@ -22,7 +22,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
         signalJoin(currentConcert, argument[1]);
 
-        addMaestro(ws, wss, currentConcert);
+        addMaestro(ws, currentConcert, argument[1]);
         console_log("performer/maestro connected.");
     }
     else if (route.includes("/concert/performer")) {
@@ -31,7 +31,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
         signalJoin(currentConcert, argument[1]);
 
-        enqueuePerformer(ws, currentConcert);
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("performer connected.");
     }
     else if (route.includes("/concert/listener")) {
@@ -40,7 +40,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
         signalJoin(currentConcert, argument[1]);
 
-        enqueuePerformer(ws, currentConcert);
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("listener connected.");
     }
     else {
@@ -50,7 +50,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
         signalJoin(currentConcert, argument[1]);
 
-        enqueuePerformer(ws, currentConcert);
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("anonymous connected.");
     }
 }

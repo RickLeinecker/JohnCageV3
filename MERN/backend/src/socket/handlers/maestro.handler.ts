@@ -6,10 +6,7 @@ import { maxAudioBufferSize } from "../socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";
-import { ConcertParticipant } from "../types/socket.participant";
-import { Concert } from "../types/socket.concert";
-import { CustomHeader } from "../types/socket.header";
-import { Performer } from "../types/socket.participant";
+import { CustomHeader, Performer, Concert, ConcertParticipant } from "../socket.types";
 
 // Functions
 import beginConcert from "../events/begin.event";
@@ -17,10 +14,10 @@ import concertTick from "../events/tick.event";
 import { receiveAudio } from "../events/receive.event";
 import { retrieveMessageContents, retrieveHeader } from "../utilities/socket.binary";
 
-const addMaestro = function (ws: WebSocket, wss: WebSocketServer, currentConcert: Concert) {
+const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string) {
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
 
-    let maestro: Performer = { data: new ConcertParticipant(-1), socket: ws }; // This id needs to be 100% unique later.
+    let maestro: Performer = { data: new ConcertParticipant(-1), socket: ws, nickname: name }; // This id needs to be 100% unique later.
     //defineClose(ws, maestro);
     defineMaestroMessage(ws, currentConcert);
     defineMaestroClose(ws, currentConcert);
