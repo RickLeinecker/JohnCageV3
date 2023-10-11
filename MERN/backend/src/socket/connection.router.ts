@@ -1,37 +1,56 @@
-import { IncomingMessage } from "http";
-import { WebSocket, WebSocketServer } from "ws";
-import { addPerformer } from "./handlers/performer.handler";
-import { addMaestro } from "./handlers/maestro.handler";
+// Debug
 import console_log from "../logging/console_log";
-import { Concert } from "./types/socket.concert";
-import { ConcertParticipant } from "./types/socket.participant";
+
+// Types/Classes
+import { WebSocket, WebSocketServer } from "ws";
+import { Concert } from "./socket.types";
+import { IncomingMessage } from "http";
+
+// Functions
 import enqueuePerformer from "./events/enqueue.event";
+import { addMaestro } from "./handlers/maestro.handler";
+import { signalJoin } from "./utilities/socket.binary";
 
 var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false };
 
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
     let route = String(req.url);
+
     if (route.includes("/concert/performer/maestro")) { // Needs to be altered to authenticate a passcode.
         // Authenticate
-        addMaestro(ws, wss, currentConcert);
+
+        let argument = route.split("=");
+        signalJoin(currentConcert, argument[1]);
+
+        addMaestro(ws, currentConcert, argument[1]);
         console_log("performer/maestro connected.");
     }
     else if (route.includes("/concert/performer")) {
         // Authenticate
-        enqueuePerformer(ws, currentConcert);
-        //addPerformer(ws, currentConcert, wss);
+
+        let argument = route.split("=");
+        signalJoin(currentConcert, argument[1]);
+
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("performer connected.");
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate
-        enqueuePerformer(ws, currentConcert);
-        //addPerformer(ws, currentConcert, wss);
+
+        let argument = route.split("=");
+        signalJoin(currentConcert, argument[1]);
+
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("listener connected.");
     }
     else {
+        // This else may be removed once raoutes are confirmed working on the mobile frontend.
         // Authenticate
-        enqueuePerformer(ws, currentConcert);
-        //addPerformer(ws, currentConcert, wss);
+
+        let argument = route.split("=");
+        signalJoin(currentConcert, argument[1]);
+
+        enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("anonymous connected.");
     }
 }

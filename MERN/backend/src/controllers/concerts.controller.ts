@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
- Demetri-New
 import tagRepository from "../repositories/tag.repository";
-import { tags, tagsAttributes, recordings, groups} from "../models/init-models";
- main
+import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
 var ms = require('mediaserver');
 const { Op } = require("sequelize");
 
@@ -39,7 +37,7 @@ class ConcertsController {
   // @route /api/concerts/groups
   // @desc  returns a list of all the groups
   async findAllGroups(req: Request, res: Response) {
-    const allGroups: groups[] = await groups.findAll({attributes: ['DateCreated']});
+    const allGroups: groups[] = await groups.findAll({ attributes: ['DateCreated'] });
     console.log("All groups:", JSON.stringify(allGroups, null, 2));
 
     res.status(200).json({
@@ -47,51 +45,51 @@ class ConcertsController {
     });
   }
 
-    // Todo: Filter by date range
-    async filterConcertsByDateRange(req: Request, res: Response) {
-      // Todo: Get start date from request
-      // const startDate = new Date(req.query.startDate as string);
-      // console.log(startDate);
-  
-      // // Todo: Get end date from request
-      // const endDate = new Date(req.query.endDate as string);
-      // console.log(endDate);
-      
-      // {
-      //   "startDate": "2023-09-29T03:43:28.000Z",
-      //   "endDate": "2023-10-04T03:46:27.000Z"
-      // }
+  // Todo: Filter by date range
+  async filterConcertsByDateRange(req: Request, res: Response) {
+    // Todo: Get start date from request
+    // const startDate = new Date(req.query.startDate as string);
+    // console.log(startDate);
 
-      const startDate = new Date(req.body.startDate);
-      const endDate = new Date(req.body.endDate);
-      // console.log(startDate);
-      // console.log(endDate);
+    // // Todo: Get end date from request
+    // const endDate = new Date(req.query.endDate as string);
+    // console.log(endDate);
 
-      // let toTimestamp = (startDate: string) => {
-      //   (startDate);
-      // }
+    // {
+    //   "startDate": "2023-09-29T03:43:28.000Z",
+    //   "endDate": "2023-10-04T03:46:27.000Z"
+    // }
 
-      // toTimestamp(req.body.startDate);
+    const startDate = new Date(req.body.startDate);
+    const endDate = new Date(req.body.endDate);
+    // console.log(startDate);
+    // console.log(endDate);
 
-      Date.parse(req.body.startDate);
-      console.log(req.body.startDate);
-      console.log(Date.parse(req.body.startDate));
-      const groupsInDateRange = await groups.findAll({
-        where: {
-          DateCreated: {
-            $lt: new Date(),
-            $gt: Date.parse(req.body.startDate)
-          }
+    // let toTimestamp = (startDate: string) => {
+    //   (startDate);
+    // }
+
+    // toTimestamp(req.body.startDate);
+
+    Date.parse(req.body.startDate);
+    console.log(req.body.startDate);
+    console.log(Date.parse(req.body.startDate));
+    const groupsInDateRange = await groups.findAll({
+      where: {
+        DateCreated: {
+          $lt: new Date(),
+          $gt: Date.parse(req.body.startDate)
         }
-        // DateCreated < [timestamp] AND DateCreated > [timestamp]
+      }
+      // DateCreated < [timestamp] AND DateCreated > [timestamp]
 
-    //     // where: {
-    //     //   Date: {
-    //     //     from: {
-    //     //       $between: [startDate, endDate]
-    //     //     }
-    //     //   }
-    //     // }
+      //     // where: {
+      //     //   Date: {
+      //     //     from: {
+      //     //       $between: [startDate, endDate]
+      //     //     }
+      //     //   }
+      //     // }
     });
     console.log("All groups in date range:", JSON.stringify(groupsInDateRange, null, 2));
   }
@@ -169,7 +167,7 @@ class ConcertsController {
       }
     });
 
-    console.log(allTheGroups);
+    //console.log(allTheGroups);
 
     res.status(200).send({ searchResults: allTheGroups });
   }
@@ -183,7 +181,7 @@ class ConcertsController {
       res.status(500).send({ message: "Some error occurred while retrieving tags." });
     }
 
-    console.log(response);
+    //console.log(response);
     res.status(200).send({ tags: response });
   }
 }

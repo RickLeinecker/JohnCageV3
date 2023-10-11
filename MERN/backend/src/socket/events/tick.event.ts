@@ -1,10 +1,8 @@
 import WebSocket, { WebSocketServer } from "ws";
 import console_log from "../../logging/console_log";
 import defaultMix from "../mixers/default.mix";
-import { Concert } from "../types/socket.concert";
-import { ConcertParticipant } from "../types/socket.participant";
+import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../socket.types";
 import { outgoingAudioChunkSize } from "../socket.config";
-import { Performer } from "../types/socket.participant";
 import { addPerformer } from "../handlers/performer.handler";
 
 const updatePerformers = function (currentConcert: Concert): void {
@@ -111,11 +109,11 @@ const concertTick = function (currentConcert: Concert) {
         // Add any waiting participants to the concert.
         // Doing this in tick is supposed to guaruntee a small amout of synchronization.
         if (currentConcert.waitingPerformers.length > 0) {
-            let waitingPerformers: WebSocket[] = currentConcert.waitingPerformers;
+            let waitingPerformers: waitingPerformer[] = currentConcert.waitingPerformers;
             for (let i = 0; i < waitingPerformers.length; ++i) {
-                let socket: WebSocket | undefined = waitingPerformers.pop();
-                if (socket) {
-                    addPerformer(socket, currentConcert);
+                let waiter: waitingPerformer | undefined = waitingPerformers.pop();
+                if (waiter) {
+                    addPerformer(waiter.socket, currentConcert, waiter.nickname);
                 }
             }
         }

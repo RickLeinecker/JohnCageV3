@@ -1,6 +1,7 @@
-import { CustomHeader } from "../types/socket.header";
 import console_log from "../../logging/console_log";
 import { maxCustomHeaderSize } from "../socket.config";
+import { Concert, waitingPerformer, Performer, CustomHeader } from "../socket.types";
+import WebSocket from "ws";
 
 const retrieveHeader = function (data: Buffer): CustomHeader {
     // Store message in Buffer and view through a DataView.
@@ -34,4 +35,48 @@ const retrieveMessageContents = function (message: Buffer, headerEnd: number): A
     return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
 }
 
-export { retrieveMessageContents, retrieveHeader };
+const signalJoin = function (currentConcert: Concert, name: string): void {
+    let utf8Encode = new TextEncoder();
+    broadcastMessage(currentConcert, utf8Encode.encode("participantAdded:" + name));
+}
+
+const broadcastMessage = function (currentConcert: Concert, message: Uint8Array): void {
+
+    broadcastPerformers(currentConcert.performers, message);
+
+    broadcastWaiting(currentConcert.waitingPerformers, message);
+
+    broadcastMaestro(currentConcert.maestro, message);
+}
+
+const broadcastPerformers = function (performers: Performer[], message: Uint8Array): void {
+    // Send to performers
+    for (let i = 0; i < performers.length; ++i) {
+        let performerSocket: WebSocket | undefined = performers.at(i)?.socket;
+        if (performerSocket) {
+            performerSocket.send(message);
+        }
+    }
+}
+
+const broadcastWaiting = function (waitList: waitingPerformer[], message: Uint8Array): void {
+    // Send to waiting performers
+    for (let i = 0; i < waitList.length; ++i) {
+        let waiter: waitingPerformer | undefined = waitList.at(i);
+        if (waiter) {
+            waiter.socket.send(message);
+        }
+    }
+}
+
+const broadcastMaestro = function (maestro: Performer | undefined, message: Uint8Array): void {
+    // Send to Maestro
+    if (maestro) {
+        let maestroSocket = maestro.socket;
+        if (maestroSocket) {
+            maestroSocket.send(message);
+        }
+    }
+}
+
+export { retrieveMessageContents, retrieveHeader, broadcastMessage, signalJoin };

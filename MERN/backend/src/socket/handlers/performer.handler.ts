@@ -1,29 +1,35 @@
-import WebSocket, { WebSocketServer } from "ws";
+// Debug
 import console_log from "../../logging/console_log";
-import { ConcertParticipant, Performer } from "../types/socket.participant";
+
+// Globals
 import { maxAudioBufferSize } from "../socket.config";
-import { Concert } from "../types/socket.concert";
-import { receiveAudio } from "../events/receive.event";
-import { CustomHeader } from "../types/socket.header";
-import { retrieveHeader, retrieveMessageContents } from "../utilities/socket.binary";
+
+// Types/Classes
+import WebSocket, { WebSocketServer } from "ws";
+import { CustomHeader } from "../socket.types";
+import { ConcertParticipant, Performer } from  "../socket.types";
+import { Concert } from "../socket.types";
+
+// Functions
 import concertTick from "../events/tick.event";
+import { retrieveHeader, retrieveMessageContents } from "../utilities/socket.binary";
+import { receiveAudio } from "../events/receive.event";
 
 var ids: number = 0;
 
-const addPerformer = function (ws: WebSocket, currentConcert: Concert) {
+const addPerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
     // Initialize new performer object.
-    let performer: Performer = { data: new ConcertParticipant(ids++), socket: ws }; // This id needs to be 100% unique later.
+    let performer: Performer = { data: new ConcertParticipant(ids++), socket: ws, nickname: name }; // This id needs to be 100% unique later.
     currentConcert.performers.push(performer);
 
-    defineClose(performer, currentConcert);
-    defineMessage(performer, currentConcert);
+    definePerformerClose(performer, currentConcert);
+    definePerformerMessage(performer, currentConcert);
 
     console_log("New performer added to list: ");
     console_log(currentConcert.performers);
 }
 
-
-const defineMessage = function (performer: Performer, currentConcert: Concert) {
+const definePerformerMessage = function (performer: Performer, currentConcert: Concert) {
     // Handle messages, including audio data.
     performer.socket.on('message', function message(data) {
 
@@ -73,13 +79,13 @@ const defineMessage = function (performer: Performer, currentConcert: Concert) {
     });
 }
 
-const defineClose = function (performer: Performer, currentConcert: Concert) {
+const definePerformerClose = function (performer: Performer, currentConcert: Concert) {
     // Identify performer socket and close connection.
     performer.socket.on('close', function message(data) {
         for (let i = 0; i < currentConcert.performers.length; ++i) {
             if (currentConcert.performers.at(i) === performer) {
-                currentConcert.performers.splice(i, 1);
                 performer.socket.close();
+                currentConcert.performers.splice(i, 1);
                 console_log("Performer removed. Current performers: "); // CHECK IF DUPLICATE WITH SOCKET ONCLOSE CODE.
                 console_log(currentConcert.performers);
             }
@@ -97,7 +103,7 @@ export { addPerformer };
 
 
 
-
+// Backup
 
 // const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: WebSocketServer, performer: Performer, performers: Performer[]) {
 //     console_log("Received message data: ");

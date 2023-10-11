@@ -1,5 +1,4 @@
-import { ConcertParticipant } from "../types/socket.participant";
-import { Performer } from "../types/socket.participant";
+import { Concert, Performer, ConcertParticipant } from "../socket.types";
 import console_log from "../../logging/console_log";
 
 const receiveAudio = function (performer: Performer, rawAudio: ArrayBuffer) {

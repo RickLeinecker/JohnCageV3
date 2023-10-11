@@ -1,13 +1,14 @@
 import { WebSocket } from "ws";
 import console_log from "../../logging/console_log";
-import { Concert } from "../types/socket.concert";
+import { Concert, waitingPerformer } from "../socket.types";
 
-const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert) {
+const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
     // Add performer to line before they are added to the concert.
-    currentConcert.waitingPerformers.push(ws);
+    let waiting: waitingPerformer = { socket: ws, nickname: name }
+    currentConcert.waitingPerformers.push(waiting);
 
     console_log("New performer added to concert line: ");
-    console_log(currentConcert.waitingPerformers);
+    console_log(waiting);
     console_log("\n");
 }
 
