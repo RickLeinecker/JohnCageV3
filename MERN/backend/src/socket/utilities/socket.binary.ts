@@ -35,18 +35,18 @@ const retrieveMessageContents = function (message: Buffer, headerEnd: number): A
     return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
 }
 
-const signalJoin = function (currentConcert: Concert, name: string): void {
-    let utf8Encode = new TextEncoder();
-    broadcastMessage(currentConcert, utf8Encode.encode("participantAdded:" + name));
-}
+const broadcastMessage = function (currentConcert: Concert, message: Uint8Array, perf: boolean, waiters: boolean, maestro: boolean): void {
+    if (perf) {
+        broadcastPerformers(currentConcert.performers, message);
+    }
 
-const broadcastMessage = function (currentConcert: Concert, message: Uint8Array): void {
+    if (waiters) {
+        broadcastWaiting(currentConcert.waitingPerformers, message);
+    }
 
-    broadcastPerformers(currentConcert.performers, message);
-
-    broadcastWaiting(currentConcert.waitingPerformers, message);
-
-    broadcastMaestro(currentConcert.maestro, message);
+    if (maestro) {
+        broadcastMaestro(currentConcert.maestro, message);
+    }
 }
 
 const broadcastPerformers = function (performers: Performer[], message: Uint8Array): void {
@@ -79,4 +79,4 @@ const broadcastMaestro = function (maestro: Performer | undefined, message: Uint
     }
 }
 
-export { retrieveMessageContents, retrieveHeader, broadcastMessage, signalJoin };
+export { retrieveMessageContents, retrieveHeader, broadcastMessage };

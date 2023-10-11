@@ -1,6 +1,6 @@
 import WebSocket from "ws";
-import { addPerformer } from "../handlers/performer.handler";
-import { Concert, waitingPerformer } from "../socket.types";
+import { addPerformer } from "../../handlers/performer.handler";
+import { Concert, waitingPerformer } from "../../socket.types";
 
 const beginConcert = function (currentConcert: Concert): void {
     let waitingPerformers = currentConcert.waitingPerformers;

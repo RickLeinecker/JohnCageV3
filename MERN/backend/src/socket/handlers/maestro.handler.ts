@@ -9,10 +9,11 @@ import WebSocket, { WebSocketServer } from "ws";
 import { CustomHeader, Performer, Concert, ConcertParticipant } from "../socket.types";
 
 // Functions
-import beginConcert from "../events/begin.event";
-import concertTick from "../events/tick.event";
-import { receiveAudio } from "../events/receive.event";
+import beginConcert from "../events/internal/begin.event";
+import concertTick from "../events/internal/tick.event";
+import { receiveAudio } from "../events/internal/receive.event";
 import { retrieveMessageContents, retrieveHeader } from "../utilities/socket.binary";
+import { broadcastStart } from "../events/outgoing/start.broadcast";
 
 const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string) {
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
@@ -55,8 +56,9 @@ const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
                 }
             }
         }
-        else if (header == "Start") {
+        else if (header == "start") {
             beginConcert(currentConcert);
+            broadcastStart(currentConcert);
         }
         else {
             console_log("No Event Matches the Given Header: ");
