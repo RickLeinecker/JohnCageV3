@@ -51,7 +51,9 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
 
         // enqueuePerformer(ws, currentConcert, argument[1]);
         // broadcastNames(currentConcert);
-        // console_log("anonymous connected.");
+        console_log("Anonymous connected.");
+        console_log("Closing anonymous connection.");
+        ws.close();
     }
 }
 

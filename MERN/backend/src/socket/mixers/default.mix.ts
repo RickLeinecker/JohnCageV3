@@ -37,7 +37,6 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
                 // MUST BE LITTLE ENDIAN (true)
                 sampleSum += (32768 + view.getInt16(2 * i, true)) / sampleCount;
             }
-            console.log(sampleSum);
         }
 
         // MUST BE LITTLE ENDIAN

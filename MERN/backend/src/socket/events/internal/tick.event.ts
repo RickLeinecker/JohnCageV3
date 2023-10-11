@@ -47,8 +47,6 @@ const gatherAudioBuffers = function (currentConcert: Concert): Buffer[] {
     if (maestro) {
         let chunkStart = maestro.data.audioBuffer.byteOffset + maestro.data.bytesProcessed;
         let chunk = maestro.data.audioBuffer.buffer.slice(chunkStart, chunkStart + outgoingAudioChunkSize);
-        console.log(maestro.data.audioBuffer.buffer);
-        console.log(chunk);
         rawBuffers.push(Buffer.from(chunk));
     }
 
@@ -84,16 +82,19 @@ const concertTick = function (currentConcert: Concert) {
     // If there is enough data in each participant's buffer, mix and send.
     if (validatePerformerBuffers(currentConcert) === true) {
         console_log("Performer buffers validated.");
+        console_log("\n");
 
         // Gather equally sized audio chunks.
         let chunkBuffers: Buffer[] = gatherAudioBuffers(currentConcert);
         console_log("Audio buffers gathered.");
         console_log(chunkBuffers);
+        console_log("\n");
 
         // Mix audio chunks.
         let mixedBuffer: Buffer = defaultMix(chunkBuffers);
         console_log("Audio mixed.");
         console_log(mixedBuffer);
+        console_log("\n");
 
         // Add null byte header to audio message.
         let header: Uint8Array = new Uint8Array(1);
@@ -102,6 +103,7 @@ const concertTick = function (currentConcert: Concert) {
         // Broadcast mixed chunk.
         broadcastMessage(currentConcert, audioMessage, true, false, true);
         console_log("Audio broadcast.");
+        console_log("\n");
 
         // Update performers' internal data.
         updatePerformers(currentConcert);
