@@ -27,25 +27,33 @@ const LoginPage = () =>{
     }
 
     const validate = (values: { email: string; password: string; }) =>{
+        const errors = regexCheck(values);
+        if(errors.email === '' && errors.password === ''){
+            //this is where we would call the API
+        }
+        
+        return errors;
+    }   
+    
+    const regexCheck = (values: {email: string; password:string; }) =>{
         const errors = {
             email: '',
             password: '',
         };
-
+        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+$/g;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         if(values.email === ''){
             errors.email = '*Email is blank';
+        }else if(!emailRegex.test(values.email)){
+            errors.email = "Invalid email address format. Please try again";
         }
         if(values.password === ''){
            errors.password = '*Password is blank'
+        } else if(!passwordRegex.test(values.password)){
+            errors.password = "Invalid password format. Please try again";
         }
-        if(values.email !== '' && values.password !== ''){
-            //this is where we would connect the API 
-
-        }
-
         return errors;
-    }   
-    
+    }
     useEffect(() =>{
         const loggedInUser = localStorage.getItem("user");
         if(loggedInUser){
@@ -70,7 +78,7 @@ const LoginPage = () =>{
                 <div id='login-input'>
                     <form onSubmit={handleSubmit}>
                         <div className='input-group'>
-                            <div className='email-group'>
+                            <div className='email-group' style={{width: '100%'}}>
                                 <label htmlFor='Email' style={{fontSize: 'calc(5px + 2vmin)'}}>Email</label>
                                 <input
                                     type='text'
@@ -78,7 +86,7 @@ const LoginPage = () =>{
                                     id='login-email'
                                     value={formValues.email}
                                     onChange={handleChange}
-                                    style={{display:'block', padding: '10px', width: '100%',borderRadius: '1em'}}
+                                    style={{padding: '10px', width: '100%',borderRadius: '1em'}}
                                 ></input>
                                 <p className='error'>{formErrors.email}</p>
                             </div>
