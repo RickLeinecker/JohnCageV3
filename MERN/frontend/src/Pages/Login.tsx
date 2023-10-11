@@ -3,6 +3,9 @@ import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import '../Style/login.css';
 
+//API
+import takeCredentials from "../API/takeCredentialsAPI";
+
 const LoginPage = () =>{
 
     const initialValues = {
@@ -26,6 +29,18 @@ const LoginPage = () =>{
         setFormErrors(validate(formValues));
     }
 
+    const sendVerificationEmail = (email:string) =>
+    {
+        const currentURL:string = "https://localhost:3000/";
+
+        const mailOptions = {
+            from: process.env.AUTH_EMAIL,
+            to: email,
+            subject: "Verify your Email",
+            html: "<p>This is a test verification email</p>"
+        }
+    }
+
     const validate = (values: { email: string; password: string; }) =>{
         const errors = {
             email: '',
@@ -40,7 +55,7 @@ const LoginPage = () =>{
         }
         if(values.email !== '' && values.password !== ''){
             //this is where we would connect the API 
-
+            takeCredentials(values.email,values.password);
         }
 
         return errors;
