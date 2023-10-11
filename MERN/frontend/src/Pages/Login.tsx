@@ -3,6 +3,9 @@ import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import '../Style/login.css';
 
+//API
+import takeCredentials from "../API/takeCredentialsAPI";
+
 const LoginPage = () =>{
 
     const initialValues = {
@@ -26,10 +29,22 @@ const LoginPage = () =>{
         setFormErrors(validate(formValues));
     }
 
+    const sendVerificationEmail = (email:string) =>
+    {
+        const currentURL:string = "https://localhost:3000/";
+
+        const mailOptions = {
+            from: process.env.AUTH_EMAIL,
+            to: email,
+            subject: "Verify your Email",
+            html: "<p>This is a test verification email</p>"
+        }
+    }
+
     const validate = (values: { email: string; password: string; }) =>{
         const errors = regexCheck(values);
         if(errors.email === '' && errors.password === ''){
-            //this is where we would call the API
+            takeCredentials(values.email, values.password);
         }
         
         return errors;
@@ -45,12 +60,13 @@ const LoginPage = () =>{
         if(values.email === ''){
             errors.email = '*Email is blank';
         }else if(!emailRegex.test(values.email)){
-            errors.email = "Invalid email address format. Please try again";
+            errors.email = "*Invalid email address format. Please try again";
         }
         if(values.password === ''){
            errors.password = '*Password is blank'
-        } else if(!passwordRegex.test(values.password)){
-            errors.password = "Invalid password format. Please try again";
+        }
+        if(!passwordRegex.test(values.password)){
+            errors.password = "*Invalid password format. Please try again";
         }
         return errors;
     }

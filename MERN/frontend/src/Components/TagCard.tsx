@@ -1,10 +1,14 @@
 import React, { Component } from "react";
 import "../Style/button.css"
 import "../Style/App.css";
-import Tag from "../Types/Tag";
+import tag from "../Types/tag";
+import { useEffect, useState, useRef } from "react";
 
-type Tags = {
-  tagList: Tag[];
+type TagCardProps = {
+  tagList: tag[];
+  tagListHandler: (values: any) => void;
+  tagQueue: tag[];
+  tagQueueHandler: (values: any, valuess: any, value: any) => void;
 }
 
 type TagButtons = {
@@ -23,53 +27,56 @@ class TagButton extends Component<TagButtons>
 
   handleClick = () => {
     this.setState({
-      activeTag: !(this.props.isActive)
+      //activeTag: !(this.props.isActive)
     });
     this.props.toggleFunction(this.props.index);
-    console.log("The tag is now " + this.state.activeTag);
+    console.log("Tag is " + this.state.activeTag);
   };
 
   render() {
     return <button type="button" className={this.nameOfClass + (this.state.activeTag ? 'activeTag' : 'inactiveTag')}
-      onClick={this.handleClick}>{this.props.tagName}</button>;;
+      onClick={this.handleClick}>{this.props.tagName}</button>;
   }
 }
 
-export class TagCard extends Component<Tags> {
+const TagCard = function (TagCardProps: TagCardProps) {
 
-  state = {
-    activeIndex: 0
-  }
+  const [dequeuedIndex, setDequeuedIndex] = useState<number>(0);
 
-  handleClick = (index: number) => {
-    //console.log("Setting tag at index: " + index + " to: " + this.props.tagList[index].active);
-    if (this.props.tagList[index].active == true) {
-      this.props.tagList[index].active = false;
+  const handleClick = (index: number) => {
+
+    console.log("DDDDDDDDDD")
+
+    if (TagCardProps.tagList[index].active == true) {
+      //TagCardProps.tagList[index].active = false;
     }
     else {
-      this.props.tagList[index].active = true;
+      TagCardProps.tagQueueHandler(TagCardProps.tagList, TagCardProps.tagQueue, TagCardProps.tagList[index]);
+      //TagCardProps.tagList[index].active = true;
     }
-    //console.log("Tag at index: " + index + " is now: " + this.props.tagList[index].active);
-    this.setState({ activeIndex: index });
+
+    console.log(TagCardProps.tagQueue);
+
+    TagCardProps.tagListHandler(TagCardProps.tagList);
   }
 
-  render() {
-    return (
-      <React.Fragment>
-        <div
-          className="card"
-          style={{ width: "100%", height: "50%", backgroundColor: "#D9D9D9" }}
-        >
-          <div className="btn-group-horizontal">
-            {
-              this.props.tagList.map((key, i) => {
-                return <TagButton key={i} index={i} tagName={key.tag} isActive={key.active} toggleFunction={this.handleClick} />
-              })
-            }
-          </div>
+  return (
+    <React.Fragment>
+      <div
+        className="card"
+        style={{ width: "100%", height: "50%", backgroundColor: "#D9D9D9" }}
+      >
+        <div className="btn-group-horizontal">
+          {
+            TagCardProps.tagList.map((key, i) => {
+              return <TagButton key={i} index={i} tagName={key.tag} isActive={TagCardProps.tagList[i].active} toggleFunction={handleClick} />
+            })
+          }
         </div>
-      </React.Fragment>
-    );
-  }
+      </div>
+    </React.Fragment>
+  );
 }
+
+export default TagCard;
 

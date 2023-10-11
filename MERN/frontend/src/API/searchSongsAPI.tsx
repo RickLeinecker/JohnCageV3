@@ -2,30 +2,29 @@ import searchResult from "../Types/searchResult";
 import { buildPath } from "../Variables/expressServer";
 
 
-const searchSongs = async function (searchText: string) {
+const searchSongs = async function (searchText: string, page: number) {
     try {
         //Get recording metadata according to search text
-        const response = await fetch(buildPath('/concerts/searchSongs?search=' + searchText), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        console.log("Fetch request URL: ", buildPath('/concerts/searchSongs?search=' + searchText));
-        var res = JSON.parse(await response.text());
-        var sd = JSON.parse(JSON.stringify(res));
+        const URL = buildPath('/concerts/searchSongs?search=' + searchText + "&page=" + page);
+        console.log("Fetch request URL: ", URL);
+        const response = await fetch(URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+        const res = JSON.parse(await response.text());
+        const sd = JSON.parse(JSON.stringify(res));
         const searchResults = sd.searchResults;
 
         //Save metadata to "result" interface array
-        var searchTemp: searchResult[] = [];
-        for (var i = 0; i < searchResults.length && i < 10; ++i) {
-            searchTemp.push(
-                {
-                    title: searchResults[i].title,
-                    id: searchResults[i].id,
-                    tags: searchResults[i].tags,
-                    maestro: searchResults[i].maestro,
-                }
-            );
+        var search: searchResult[] = [];
+        for (let i = 0; i < searchResults.length && i < 10; ++i) {
+            search.push({
+                id: searchResults[i].GroupID,
+                title: searchResults[i].Title,
+                tags: searchResults[i].Tags,
+                maestro: searchResults[i].GroupLeaderName
+            });
         }
 
-        console.log("Search Results: ", searchTemp);
-        return searchTemp;
+        console.log("Search Results: ", search);
+        return search;
     }
     catch (e) {
         if (e instanceof Error) {
@@ -36,13 +35,13 @@ const searchSongs = async function (searchText: string) {
         }
         var searchEmpty: searchResult[] = [
             {
-                title: "",
+                title: "An error occured during your search.",
                 id: -1,
-                tags: [],
+                tags: "",
                 maestro: ""
             }
         ];
-        console.log("Search Results: ", searchEmpty);
+        console.log("Error Search Results: ", searchEmpty);
         return searchEmpty;
     }
 };

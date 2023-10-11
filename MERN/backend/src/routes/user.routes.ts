@@ -10,11 +10,18 @@ class UserRoutes {
   }
 
   intializeRoutes() {
+
+    this.router.get('/validate', this.controller.validateToken);
+    this.router.post('/register', this.controller.register);
+    this.router.post('/login', this.controller.login);
+    this.router.get('/findAll', this.controller.getAllUsers);
+
+
     // Create a new User
-    this.router.post("/", this.controller.create);
+    // this.router.post("/", this.controller.create);
 
     // Retrieve all Users
-    this.router.get("/", this.controller.findAll);
+    // this.router.get("/", this.controller.findAll);
 
     // Retrieve a single User with id
     this.router.get("/:id", this.controller.findOne);
