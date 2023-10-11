@@ -1,9 +1,12 @@
 import WebSocket, { WebSocketServer } from "ws";
-import console_log from "../../logging/console_log";
-import defaultMix from "../mixers/default.mix";
-import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../socket.types";
-import { outgoingAudioChunkSize } from "../socket.config";
-import { addPerformer } from "../handlers/performer.handler";
+import console_log from "../../../logging/console_log";
+import defaultMix from "../../mixers/default.mix";
+import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../../socket.types";
+import { outgoingAudioChunkSize } from "../../socket.config";
+import { addPerformer } from "../../handlers/performer.handler";
+import { broadcastMessage } from "../../utilities/socket.binary";
+import { broadcastStart } from "../outgoing/start.broadcast";
+import { broadcastNames } from "../outgoing/names.broadcast";
 
 const updatePerformers = function (currentConcert: Concert): void {
     let performers: Performer[] = currentConcert.performers;
@@ -44,8 +47,6 @@ const gatherAudioBuffers = function (currentConcert: Concert): Buffer[] {
     if (maestro) {
         let chunkStart = maestro.data.audioBuffer.byteOffset + maestro.data.bytesProcessed;
         let chunk = maestro.data.audioBuffer.buffer.slice(chunkStart, chunkStart + outgoingAudioChunkSize);
-        console.log(maestro.data.audioBuffer.buffer);
-        console.log(chunk);
         rawBuffers.push(Buffer.from(chunk));
     }
 
@@ -77,33 +78,36 @@ const validatePerformerBuffers = function (currentConcert: Concert): boolean {
 }
 
 const concertTick = function (currentConcert: Concert) {
+    // Tick happens whenever an audio buffer is received, at least as of writing this.
     // If there is enough data in each participant's buffer, mix and send.
     if (validatePerformerBuffers(currentConcert) === true) {
         console_log("Performer buffers validated.");
+        console_log("\n");
 
         // Gather equally sized audio chunks.
         let chunkBuffers: Buffer[] = gatherAudioBuffers(currentConcert);
         console_log("Audio buffers gathered.");
         console_log(chunkBuffers);
+        console_log("\n");
 
         // Mix audio chunks.
         let mixedBuffer: Buffer = defaultMix(chunkBuffers);
         console_log("Audio mixed.");
         console_log(mixedBuffer);
+        console_log("\n");
 
+        // Add null byte header to audio message.
+        let header: Uint8Array = new Uint8Array(1);
+        header[0] = 0;
+        let audioMessage: Buffer = Buffer.concat([header, mixedBuffer]);
         // Broadcast mixed chunk.
-        currentConcert.performers.forEach(function each(performer) {
-            let socket: WebSocket = performer.socket;
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(mixedBuffer, { binary: true });
-                console_log("Mixed chunk sent:");
-                console_log(mixedBuffer);
-            }
-        });
-        currentConcert.maestro?.socket.send(mixedBuffer, { binary: true });
+        broadcastMessage(currentConcert, audioMessage, true, false, true);
+        console_log("Audio broadcast.");
+        console_log("\n");
 
         // Update performers' internal data.
         updatePerformers(currentConcert);
+        console_log("Performers updated.");
         console_log("\n");
 
         // Add any waiting participants to the concert.
@@ -114,6 +118,7 @@ const concertTick = function (currentConcert: Concert) {
                 let waiter: waitingPerformer | undefined = waitingPerformers.pop();
                 if (waiter) {
                     addPerformer(waiter.socket, currentConcert, waiter.nickname);
+                    broadcastStart(currentConcert);
                 }
             }
         }
@@ -121,3 +126,18 @@ const concertTick = function (currentConcert: Concert) {
 }
 
 export default concertTick;
+
+
+/* Backup of audio data broadcast after switching to broadcastMessage function.
+
+        // Replace with common broadcast function.
+        currentConcert.performers.forEach(function each(performer) {
+            let socket: WebSocket = performer.socket;
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(mixedBuffer, { binary: true });
+                console_log("Mixed chunk sent:");
+                console_log(mixedBuffer);
+            }
+        });
+        currentConcert.maestro?.socket.send(mixedBuffer, { binary: true });
+*/

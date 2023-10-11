@@ -13,25 +13,9 @@ function SocketTest() {
     const [connectionText, setConnectionText] = useState<string>('');
     const [extra, setExtra] = useState<number>(0);
 
-
-    useEffect(() => {
-        // ws = new WebSocket(websocketURL + ":8080/concert/performer");
-        // ws.binaryType = "arraybuffer";
-
-        // ws.onopen = () => {
-        //     console.log("Socket connection opened.")
-        // }
-
-        // ws.onmessage = (event: any) => {
-        //     console.log("WebSocket message from Server: ", event.data);
-        //     let newarray = new Uint8Array(event.data);
-        //     console.log("WebSocket message as UInt8Array: ", newarray);
-        // }
-    }, []);
-
     // Sends example binary data for testing mixer and streaming.
     const sendData = function () {
-        const array = new Uint8Array([0, 0, counter + extra, 0, counter + extra]);
+        const array = new Uint8Array([0, 0, counter, 0, counter]);
         counter++;
 
         console.log("Sending Data to WebSocket server.");
@@ -72,8 +56,6 @@ function SocketTest() {
         }
 
         ws.onmessage = (event: any) => {
-            console.log("WebSocket message from Server: ", event.data);
-
             let newarray = new Uint8Array(event.data);
             console.log("WebSocket message as UInt8Array: ", newarray);
 
