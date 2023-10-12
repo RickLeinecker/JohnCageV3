@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import MeetOurTeam from '../Components/MeetOurTeam';
-import MeetOurTeam2 from '../Components/MeetOurTeam2';
-import MeetOurTeam3 from '../Components/MeetOurTeam3';
+import MeetOurTeamV1 from '../Components/MeetOurTeamV1';
+import MeetOurTeamV2 from '../Components/MeetOurTeamV2';
+import MeetOurTeamV3 from '../Components/MeetOurTeamV3';
 import '../Style/AboutUs.css';
 
 function AboutPage(){
-    const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+    const [selectedComponent, setSelectedComponent] = useState<string | null>('MeetOurTeamV3'); 
+    // Set 'MeetOurTeamV3' as the default value
+
 
     const goToTeam = (component: string) => {
       setSelectedComponent(component);
@@ -24,14 +26,26 @@ function AboutPage(){
                     </p>
                 </div>
                 <div className='button-container'>
-                    <button onClick ={() =>goToTeam('MeetOurTeam')}>Show Version 1</button>
-                    <button onClick ={() =>goToTeam('MeetOurTeam2')}>Show Version 2</button>
-                    <button onClick ={() =>goToTeam('MeetOurTeam3')}>Show Version 3</button>
+                    <button
+                        className={selectedComponent === 'MeetOurTeamV3' ? 'selected' : ''}
+                        onClick={() => goToTeam('MeetOurTeamV3')}>
+                    Show Version 3
+                    </button>
+                    <button
+                        className={selectedComponent === 'MeetOurTeamV2' ? 'selected' : ''}
+                        onClick={() => goToTeam('MeetOurTeamV2')}>
+                    Show Version 2
+                    </button>
+                    <button
+                        className={selectedComponent === 'MeetOurTeamV1' ? 'selected' : ''}
+                        onClick={() => goToTeam('MeetOurTeamV1')}>
+                        Show Version 1
+                    </button>
                 </div>
                 <div className='about-devs-container'>
-                    {selectedComponent === 'MeetOurTeam' && <MeetOurTeam/>}
-                    {selectedComponent === 'MeetOurTeam2' && <MeetOurTeam2/>}
-                    {selectedComponent === 'MeetOurTeam3' && <MeetOurTeam3/>}
+                    {selectedComponent === 'MeetOurTeamV3' && <MeetOurTeamV3/>}
+                    {selectedComponent === 'MeetOurTeamV2' && <MeetOurTeamV2/>}
+                    {selectedComponent === 'MeetOurTeamV1' && <MeetOurTeamV1/>}
                 </div>
             </div>
        </div>

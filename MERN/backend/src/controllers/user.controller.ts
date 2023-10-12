@@ -19,7 +19,10 @@ export default class UserController {
 
   // For creating a new user and storing them in the database.
   async register(req: Request, res: Response, next: NextFunction) {
+    console.log(req.body);
     let { Name, UserName, Email, Password, Phone } = req.body;
+
+    console.log(Password);
 
     if (!Password) {
       return res.status(400).send({
@@ -49,8 +52,10 @@ export default class UserController {
           Phone: Phone
         },
 
-        // Define which attributes can be set based on a form (restrict the User model to set only these fields)
-        { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] });
+          // Define which attributes can be set based on a form (restrict the User model to set only these fields)
+          { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] });
+
+        console.log(newUser);
 
         if (newUser) {
           // Return the (registered) user as response.
@@ -59,6 +64,10 @@ export default class UserController {
             user: newUser
           });
         }
+
+        return res.status(201).json({
+          message: "Failed"
+        });
       });
     } catch (err) {
       res.status(500).send({
@@ -116,10 +125,10 @@ export default class UserController {
           }
         });
       });
-    } catch(err) {
+    } catch (err) {
       res.status(500).send({
         message: "Some error occurred while logging in a user."
-      });      
+      });
     }
   };
 
