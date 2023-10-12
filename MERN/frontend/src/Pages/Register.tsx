@@ -36,8 +36,8 @@ function RegisterPage(){
 
     const regexCheck = (values: {email: string; password: string;}) =>{
         const errors = initialValues;
-        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+$/g;
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/; 
+        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]/g;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}/; 
         if(values.email === ''){
             errors.email = "Email is empty";
         }
@@ -90,7 +90,7 @@ function RegisterPage(){
                                     type='text'
                                     name='username'
                                     id='register-username'
-                                    value={formErrors.username}
+                                    value={formValues.username}
                                     onChange={handleChange}
                                     style={{padding: '10px', width:'100%', borderRadius: '1em'}}
                                     ></input>

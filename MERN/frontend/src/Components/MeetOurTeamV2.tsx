@@ -1,8 +1,8 @@
 import React from 'react';
-import imageToUse from '../Images/JohnCage.png'
+import imageToUse from '../Images/default-image.jpg'
 import '../Style/AboutUs.css';
 
-export default function MeetOurTeam2(){
+export default function MeetOurTeamV2(){
     return(
         <div className='meet-our-team-container'>
             <div className='team-header-container'>
