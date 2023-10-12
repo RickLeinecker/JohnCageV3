@@ -23,10 +23,15 @@ function RegisterPage(){
         setFormErrors(validate(formValues));
 
     }
+
+    function allErrorsClear(errors: { email: string; password: string; screenName: string; username: string; phone:string; }):boolean
+    {
+        return (errors.email === '' && errors.password === '' && errors.screenName === '' && errors.username === '')
+    }
     
     const validate = (values: { email: string; password: string; screenName: string; username: string; phone:string; }) =>{
         const errors = regexCheck(values);
-        if(errors.email === '' && errors.password === ''){
+        if(allErrorsClear(errors)){
             //API call goes here;
             //takeCredentials(values.email, values.password);
             createAccount(values.screenName,values.username,values.email,values.password,values.phone);
@@ -36,7 +41,7 @@ function RegisterPage(){
 
     }
 
-    const regexCheck = (values: {email: string; password: string;}) =>{
+    const regexCheck = (values: { email: string; password: string; screenName: string; username: string; phone:string; }) =>{
         const errors = initialValues;
         const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+/g;
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}/; 
@@ -52,6 +57,16 @@ function RegisterPage(){
         }
         else if(!passwordRegex.test(values.password)){
             errors.password = "You need a capital letter, a number, and minimum of 8 characters";
+        }
+
+        if(values.screenName === '')
+        {
+            errors.screenName ="Cannot be left blank"
+        }
+
+        if (values.username === '')
+        {
+            errors.username = "Cannot be left blank"
         }
 
         return errors;
@@ -84,6 +99,7 @@ function RegisterPage(){
                                     onChange={handleChange}
                                     style={{padding: '10px', width:'100%', borderRadius: '1em'}}
                                 ></input>
+                                <p className='error'>{formErrors.screenName}</p>
                             </div>
 
                             <div className='username-group' style={{width: '100%'}}>
@@ -96,6 +112,7 @@ function RegisterPage(){
                                     onChange={handleChange}
                                     style={{padding: '10px', width:'100%', borderRadius: '1em'}}
                                     ></input>
+                                    <p className='error'>{formErrors.username}</p>
                             </div>
                         </div>
 
