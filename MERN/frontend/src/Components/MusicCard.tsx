@@ -46,6 +46,8 @@ function MusicCard(thisConcert: concertData) {
                 })
 
               }
+            </p>
+            <p className="text-muted">
               {"\nTags: "}
               {
                 data["tags"]
