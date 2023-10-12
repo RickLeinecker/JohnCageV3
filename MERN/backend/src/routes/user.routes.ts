@@ -29,12 +29,12 @@ class UserRoutes {
       // Route
       '/register',
 
-      // Express Middleware
-      [
-        Middleware.verifyRegister.checkDuplicateUsernameOrEmail
-      ],
+      // // Express Middleware
+      // [
+      //   Middleware.verifyRegister.checkDuplicateUsernameOrEmail
+      // ],
 
-      this.controller.register,
+      this.controller.register
     );
 
     this.router.post(

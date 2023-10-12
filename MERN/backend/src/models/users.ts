@@ -14,11 +14,12 @@ export interface usersAttributes {
   Phone?: string;
   IsAdmin: number;
   IsVerified: number;
+  VerificationCode?: number;
 }
 
 export type usersPk = "ID";
 export type usersId = users[usersPk];
-export type usersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "Phone" | "IsAdmin" | "IsVerified";
+export type usersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "Phone" | "IsAdmin" | "IsVerified" | "VerificationCode";
 export type usersCreationAttributes = Optional<usersAttributes, usersOptionalAttributes>;
 
 export class users extends Model<usersAttributes, usersCreationAttributes> implements usersAttributes {
@@ -33,6 +34,7 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
   Phone?: string;
   IsAdmin!: number;
   IsVerified!: number;
+  VerificationCode?: number;
 
   // users hasMany groups via GroupLeaderID
   groups!: groups[];
@@ -101,6 +103,10 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0
+    },
+    VerificationCode: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     sequelize,

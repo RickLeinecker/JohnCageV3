@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { recordings, recordingsId } from './recordings';
+import type { schedules, schedulesId } from './schedules';
 import type { users, usersId } from './users';
 
 export interface groupsAttributes {
@@ -55,6 +56,18 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
   hasRecording!: Sequelize.HasManyHasAssociationMixin<recordings, recordingsId>;
   hasRecordings!: Sequelize.HasManyHasAssociationsMixin<recordings, recordingsId>;
   countRecordings!: Sequelize.HasManyCountAssociationsMixin;
+  // groups hasMany schedules via GroupID
+  schedules!: schedules[];
+  getSchedules!: Sequelize.HasManyGetAssociationsMixin<schedules>;
+  setSchedules!: Sequelize.HasManySetAssociationsMixin<schedules, schedulesId>;
+  addSchedule!: Sequelize.HasManyAddAssociationMixin<schedules, schedulesId>;
+  addSchedules!: Sequelize.HasManyAddAssociationsMixin<schedules, schedulesId>;
+  createSchedule!: Sequelize.HasManyCreateAssociationMixin<schedules>;
+  removeSchedule!: Sequelize.HasManyRemoveAssociationMixin<schedules, schedulesId>;
+  removeSchedules!: Sequelize.HasManyRemoveAssociationsMixin<schedules, schedulesId>;
+  hasSchedule!: Sequelize.HasManyHasAssociationMixin<schedules, schedulesId>;
+  hasSchedules!: Sequelize.HasManyHasAssociationsMixin<schedules, schedulesId>;
+  countSchedules!: Sequelize.HasManyCountAssociationsMixin;
   // groups belongsTo users via GroupLeaderID
   GroupLeader!: users;
   getGroupLeader!: Sequelize.BelongsToGetAssociationMixin<users>;

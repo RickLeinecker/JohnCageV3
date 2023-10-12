@@ -1,3 +1,4 @@
+
 .about-layout{
     display: flex;
     flex-direction: column;
@@ -20,6 +21,7 @@
 .about-us-body{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.5rem;
+    
 }
 #about-us-header{
     font-family: bold;
@@ -32,7 +34,6 @@
 .meet-our-team-container{
     display: flex;
     flex-direction: column;
-    margin-top: 100px;
     text-align: center;
     justify-content: center;
 }
@@ -86,5 +87,21 @@
 }
 .button-container{
     display: flex;
-    justify-content: space-around;
+    width:100%;
+}
+.button-container button {
+    flex:1;
+    padding: 20px 30px;
+    border: 1px solid black;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover{
+    background-color: #333;
+    color:white;
+}
+.button-container button.selected{
+    background-color: goldenrod;
+    color:white;
 }

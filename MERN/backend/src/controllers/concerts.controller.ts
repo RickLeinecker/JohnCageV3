@@ -6,6 +6,8 @@ import { tags, tagsAttributes, recordings, groups } from "../models/init-models"
 var ms = require('mediaserver');
 const { Op } = require("sequelize");
 
+var fs = require("fs");
+
 class ConcertsController {
   async findAndPipeAudio(req: Request, res: Response) {
     // Todo: Add ability to query a recording by id and return the actual audio.
