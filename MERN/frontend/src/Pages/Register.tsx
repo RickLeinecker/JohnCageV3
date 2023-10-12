@@ -1,6 +1,7 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
 import '../Style/register.css';
+import createAccount from '../API/createAccount';
 
 function RegisterPage(){
 
@@ -28,6 +29,7 @@ function RegisterPage(){
         if(errors.email === '' && errors.password === ''){
             //API call goes here;
             //takeCredentials(values.email, values.password);
+            createAccount(values.screenName,values.username,values.email,values.password,values.phone);
         }
 
         return errors;
@@ -36,8 +38,8 @@ function RegisterPage(){
 
     const regexCheck = (values: {email: string; password: string;}) =>{
         const errors = initialValues;
-        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+$/g;
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/; 
+        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+/g;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}/; 
         if(values.email === ''){
             errors.email = "Email is empty";
         }
@@ -49,7 +51,7 @@ function RegisterPage(){
             errors.password = "Password is empty";
         }
         else if(!passwordRegex.test(values.password)){
-            errors.password = "invalid Password Format";
+            errors.password = "You need a capital letter, a number, and minimum of 8 characters";
         }
 
         return errors;
@@ -90,7 +92,7 @@ function RegisterPage(){
                                     type='text'
                                     name='username'
                                     id='register-username'
-                                    value={formErrors.username}
+                                    value={formValues.username}
                                     onChange={handleChange}
                                     style={{padding: '10px', width:'100%', borderRadius: '1em'}}
                                     ></input>
