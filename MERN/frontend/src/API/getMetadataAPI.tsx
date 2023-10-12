@@ -3,22 +3,32 @@ import concertData from "../Types/concertData";
 
 const getMetadata = async function (id: number) {
     try {
-        const response = await fetch(buildPath('/concerts/getSongData?id=' + id), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        console.log("Fetch request URL: ", buildPath('/concerts/getSongData?id=' + id));
-
+        // Get song metadata based on unique song id
+        const URL = buildPath('/concerts/getSongData?id=' + id);
+        console.log("Fetch request URL: ", URL);
+        const response = await fetch(URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
         var res = JSON.parse(await response.text());
         var sd = JSON.parse(JSON.stringify(res));
-        const currentSongData = sd.songData;
+        const currentSongData = sd.group;
 
+        let performers: string[] = [];
+        performers.push(currentSongData["User1Name"]);
+        performers.push(currentSongData["User2Name"]);
+        performers.push(currentSongData["User3Name"]);
+        performers.push(currentSongData["User4Name"]);
+        performers.push(currentSongData["GroupLeaderName"]);
+
+        // Save metadata to concertData type
         var newMetaData: concertData = {
-            id: currentSongData["id"],
-            title: currentSongData["title"],
-            date: currentSongData["date"],
-            description: currentSongData["description"],
-            tags: currentSongData["tags"],
-            maestro: currentSongData["maestro"],
-            performers: currentSongData["performers"]
+            id: currentSongData["GroupID"],
+            title: currentSongData["Title"],
+            date: currentSongData["Date"],
+            description: currentSongData["Description"],
+            tags: currentSongData["Tags"] != null ? currentSongData["Tags"] : [],
+            maestro: currentSongData["GroupLeaderName"],
+            performers: performers
         };
+
         console.log("Metadata: ", newMetaData);
         return newMetaData;
     }
@@ -35,11 +45,11 @@ const getMetadata = async function (id: number) {
             title: "",
             date: "",
             description: "",
-            tags: [],
+            tags: "",
             maestro: "",
             performers: []
         };
-        console.log("Metadata: ", emptyMetaData);
+        console.log("Error Metadata: ", emptyMetaData);
         return emptyMetaData;
     }
 };

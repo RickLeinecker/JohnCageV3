@@ -94,7 +94,7 @@ function HomePage() {
 
     return (
         <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
-            <div className="row"  id = "0">
+            <div className="row intersect"  id = "0">
                 <div className="col">
                     <img src={JohnCage} className ="johnCageImage"></img>
                 </div>

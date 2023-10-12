@@ -1,11 +1,11 @@
 import console_log from '../logging/console_log';
-import {Request, Response} from 'express';
-import {Tags} from '../models/Tags';
+import { Request, Response } from 'express';
+import { tags } from '../models/init-models';
 
 class TagsController {
     async getTags(req: Request, res: Response) {
-        const tags = await Tags.findAll();
-        res.status(200).send(tags);
+        const tagsResponse = await tags.findAll();
+        res.status(200).send(tagsResponse);
     }
 }
 

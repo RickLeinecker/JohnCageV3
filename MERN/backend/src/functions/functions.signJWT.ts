@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config";
 import logging from '../config/logging';
-import { Users } from "../models/Users";
+import { users } from "../models/init-models";
 
 const NAMESPACE = "Auth";
 
-const signJWT = (user: Users, callback: (error: Error | null, token: string | null) => void): void => {
+const signJWT = (user: users, callback: (error: Error | null, token: string | null) => void): void => {
     var timeSinceEpoch = new Date().getTime();
     var expirationTime = timeSinceEpoch + Number(config.server.token.expireTime) * 100000;
     var expirationTimeInSeconds = Math.floor(expirationTime / 1000);
