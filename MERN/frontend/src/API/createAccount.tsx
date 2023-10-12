@@ -1,8 +1,8 @@
 import { buildPath } from "../Variables/expressServer";
 
-const takeCredentials = async function name(email:string, password:string) {
+const createAccount = async function name(screenName:string,userName:string,email:string, password:string, phoneNum:string) {
     try{
-        const JSONObj = JSON.stringify({"Email":email,"Password":password});
+        const JSONObj = JSON.stringify({"Screen Name":screenName,"User Name":userName,"Email":email,"Password":password,"Phone":phoneNum});
         console.log("Successfully created a JSON of login "+JSONObj);
     }
     catch(e)
@@ -16,4 +16,4 @@ const takeCredentials = async function name(email:string, password:string) {
     }
 };
 
-export default takeCredentials;
+export default createAccount;
