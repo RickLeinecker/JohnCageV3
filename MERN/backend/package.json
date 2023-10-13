@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jest testing.test.ts",
     "build": "tsc",
-    "start": "NODE_ENV=development nodemon ./build/backend.js",
-    "winStart": "set NODE_ENV=development&&nodemon ./build/backend.js",
-    "startServer": "NODE_ENV=production nodemon ./build/backend.js"
+    "start": "NODE_ENV=development node ./build/backend.js",
+    "winStart": "set NODE_ENV=development&&node ./build/backend.js",
+    "startServer": "NODE_ENV=production node ./build/backend.js"
   },
   "repository": {
     "type": "git",
