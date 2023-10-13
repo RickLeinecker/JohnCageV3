@@ -7,7 +7,7 @@ const takeCredentials = async function name(email:string, password:string) {
         const URL = buildPath("/users/login");
         console.log("Fetch request URL:", URL);
         const response = await fetch(URL,{ method: 'POST', mode: "cors", headers: { 'Content-Type': 'application/json' },body: JSONObj })
-        console.log("Response "+response.json);
+        console.log("Response: "+response.json);
         return response.json;
     }
     catch(e)
