@@ -5,6 +5,7 @@ import bcryptjs from 'bcryptjs';
 import logging from "../config/logging";
 import signJWT from "../functions/functions.signJWT";
 const { Op } = require("sequelize");
+import console_log from "../logging/console_log";
 
 const NAMESPACE = "User";
 
@@ -63,7 +64,7 @@ export default class UserController {
           });
         }
 
-        return res.status(201).json({
+        return res.status(500).json({
           message: "Failed"
         });
       });
@@ -81,7 +82,8 @@ export default class UserController {
 
     try {
       // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
-      const allUsers = await users.findAll({
+      // const allUsers = 
+      await users.findAll({
         attributes: { exclude: ['VerificationCode'] },
         where: {
           UserName: {
@@ -89,19 +91,29 @@ export default class UserController {
           }
         }
       }).then((allUsers) => {
+        console_log("Login query successful: ");
+        console_log(allUsers);
+
         // Verify that the allUsers has type 'users' when retrieved
-        console.log(allUsers.every(allUsers => allUsers instanceof users)); // true
+        // console.log(allUsers.every(allUsers => allUsers instanceof users)); // true
 
         // Log all the users (that the 'allUsers' variable is pointing to) that were retrieved.
-        console.log("All users:", allUsers, null, 2);
+        // console.log("All users:", allUsers, null, 2);
 
         bcryptjs.compare(password, allUsers[0].Password, (error, result) => {
+
+          console_log("Login password comparison begun: ");
+
           if (error) {
+            console_log("Login password comparison error: ");
+            console_log(error);
             return res.status(401).json({
-              message: error.message,
-              error
+              message: error.message
             });
-          } else if (result) {
+          }
+          else if (result) {
+            console_log("Login password comparison passed.");
+
             signJWT(allUsers[0], (_error, token) => {
               if (_error) {
                 return res.status(401).json({
@@ -110,12 +122,11 @@ export default class UserController {
                 });
               }
               else if (token) {
+                console_log("JWT signed. Login successful.");
+                console_log("\n");
                 return res.status(200).json({
-                  message: "Authorization Successful",
-
-                  // return token to the user
-                  token,
-                  // return user for frontend to make use of any of the users information.
+                  message: "Authorization Successful.",
+                  token: token,
                   user: allUsers[0]
                 });
               }
@@ -123,8 +134,11 @@ export default class UserController {
           }
         });
       });
-    } catch (err) {
-      console.log(err);
+    }
+    catch (err) {
+      console_log("Login Error: ");
+      console_log(err);
+      console_log("\n");
       res.status(500).send({
         message: "Some error occurred while logging in a user."
       });
