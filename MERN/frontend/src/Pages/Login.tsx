@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import '../Style/login.css';
 
 //API
-import takeCredentials from "../API/takeCredentialsAPI";
+import LoggingIn from "../API/LoginAPI";
 
 const LoginPage = () =>{
 
@@ -46,7 +46,7 @@ const LoginPage = () =>{
         // if(errors.email === '' && errors.password === ''){
         //     takeCredentials(values.email, values.password);
         // }
-        takeCredentials(values.email, values.password);
+        LoggingIn(values.email, values.password);
         return errors;
     }   
     

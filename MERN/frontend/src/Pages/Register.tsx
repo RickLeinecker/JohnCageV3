@@ -1,7 +1,7 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
 import '../Style/register.css';
-import createAccount from '../API/createAccount';
+import RegisterAccount from '../API/RegisterAPI';
 
 function RegisterPage(){
 
@@ -34,8 +34,8 @@ function RegisterPage(){
         if(allErrorsClear(errors)){
             //API call goes here;
             //takeCredentials(values.email, values.password);
-            createAccount(values.screenName,values.username,values.email,values.password,values.phone);
         }
+        RegisterAccount(values.screenName,values.username,values.email,values.password,values.phone);
 
         return errors;
 
