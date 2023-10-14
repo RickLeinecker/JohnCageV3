@@ -43,10 +43,10 @@ const LoginPage = () =>{
 
     const validate = (values: { email: string; password: string; }) =>{
         const errors = regexCheck(values);
-        if(errors.email === '' && errors.password === ''){
-            takeCredentials(values.email, values.password);
-        }
-        
+        // if(errors.email === '' && errors.password === ''){
+        //     takeCredentials(values.email, values.password);
+        // }
+        takeCredentials(values.email, values.password);
         return errors;
     }   
     
