@@ -11,7 +11,7 @@ import { ConcertParticipant, Performer } from "../socket.types";
 import { Concert } from "../socket.types";
 
 // Functions
-import concertTick from "../events/internal/tick.event";
+import { concertTick } from "../events/internal/tick.event";
 import { receiveAudio } from "../events/internal/receive.event";
 import { retrieveHeader, retrieveMessageContents } from "../utilities/socket.binary";
 
