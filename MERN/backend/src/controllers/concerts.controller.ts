@@ -18,7 +18,7 @@ class ConcertsController {
 
     const recording = await recordings.findOne({
       where: {
-        ID: recordingId
+        ID: recordingId // PRetty sure this should be changed to the groupID FK.
       }
     }).then((recording) => {
       // Check if there is a recording.

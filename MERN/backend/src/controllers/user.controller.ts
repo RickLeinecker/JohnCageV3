@@ -69,7 +69,7 @@ export default class UserController {
         });
       });
     } catch (err) {
-      res.status(500).send({
+      return res.status(500).send({
         message: "Some error occurred while creating a new user."
       });
     };
@@ -139,7 +139,7 @@ export default class UserController {
       console_log("Login Error: ");
       console_log(err);
       console_log("\n");
-      res.status(500).send({
+      return res.status(500).send({
         message: "Some error occurred while logging in a user."
       });
     }

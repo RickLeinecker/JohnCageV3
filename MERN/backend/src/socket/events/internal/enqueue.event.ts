@@ -2,13 +2,12 @@ import WebSocket from "ws";
 import console_log from "../../../logging/console_log";
 import { Concert, waitingPerformer } from "../../socket.types";
 
+// Add performer to waitlist before concert.
 const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
-    // Add performer to line before they are added to the concert.
     let waiting: waitingPerformer = { socket: ws, nickname: name }
-
     currentConcert.waitingPerformers.push(waiting);
 
-    // Identify waiter socket and close connection.
+    // Define onclose event for waiter sockets.
     ws.on('close', function message(data) {
         for (let i = 0; i < currentConcert.waitingPerformers.length; ++i) {
             if (currentConcert.waitingPerformers.at(i)?.socket === ws) {
