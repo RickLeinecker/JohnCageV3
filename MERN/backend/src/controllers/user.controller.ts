@@ -54,7 +54,7 @@ export default class UserController {
         },
           // Define which attributes can be set based on a form (restrict the User model to set only these fields)
           { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
-          .catch((error) => { });
+          .catch((error) => {console.log("Erory Message: ",error) });
 
         if (newUser) {
           // Return the (registered) user as response.

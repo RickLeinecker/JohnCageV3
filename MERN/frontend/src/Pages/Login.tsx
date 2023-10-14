@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import '../Style/login.css';
 
 //API
-import takeCredentials from "../API/takeCredentialsAPI";
+import LoggingIn from "../API/LoginAPI";
 
 const LoginPage = () =>{
 
@@ -43,10 +43,10 @@ const LoginPage = () =>{
 
     const validate = (values: { email: string; password: string; }) =>{
         const errors = regexCheck(values);
-        if(errors.email === '' && errors.password === ''){
-            takeCredentials(values.email, values.password);
-        }
-        
+        // if(errors.email === '' && errors.password === ''){
+        //     takeCredentials(values.email, values.password);
+        // }
+        LoggingIn(values.email, values.password);
         return errors;
     }   
     
