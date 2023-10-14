@@ -16,7 +16,7 @@ const developmentSequelizeConfig: SequelizeOptions = {
     idle: 10000
   },
   dialectOptions: {
-    // socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
+    socketPath: "/var/run/mysqld/mysqld.sock" // May vary by environment
   },
   define: {
     timestamps: false

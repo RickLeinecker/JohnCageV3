@@ -11,25 +11,11 @@ function SocketTest() {
 
     const [messageTest, setMessageText] = useState<string>('');
     const [connectionText, setConnectionText] = useState<string>('');
-
-    useEffect(() => {
-        ws = new WebSocket(websocketURL + ":8080/concert/performer");
-        ws.binaryType = "arraybuffer";
-
-        ws.onopen = () => {
-            console.log("Socket connection opened.")
-        }
-
-        ws.onmessage = (event: any) => {
-            console.log("WebSocket message from Server: ", event.data);
-            let newarray = new Uint8Array(event.data);
-            console.log("WebSocket message as UInt8Array: ", newarray);
-        }
-    }, []);
+    const [extra, setExtra] = useState<number>(0);
 
     // Sends example binary data for testing mixer and streaming.
     const sendData = function () {
-        const array = new Uint8Array([65, 66, 0, counter, counter, counter, counter]);
+        const array = new Uint8Array([0, 0, counter, 0, counter]);
         counter++;
 
         console.log("Sending Data to WebSocket server.");
@@ -70,10 +56,16 @@ function SocketTest() {
         }
 
         ws.onmessage = (event: any) => {
-            console.log("WebSocket message from Server: ", event.data);
             let newarray = new Uint8Array(event.data);
             console.log("WebSocket message as UInt8Array: ", newarray);
+
+            var enc = new TextDecoder("utf-8");
+            console.log("WebSocket message as string: ", enc.decode(newarray));
         }
+    }
+
+    const setst = function () {
+        setExtra(4);
     }
 
     return (
@@ -96,6 +88,7 @@ function SocketTest() {
                     <Form.Control value={messageTest} onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setMessageText(e.target.value)} placeholder="Message" />
                 </Form.Group>
                 <Button onClick={sendMessage}>Send Message</Button>
+                <Button onClick={setst}>ChangeRawData</Button>
                 <br />
             </Card>
         </div>
