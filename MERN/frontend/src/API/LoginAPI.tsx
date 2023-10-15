@@ -9,8 +9,9 @@ const LoginAPI = async function name(email:string, password:string) {
         const response = await fetch(URL,{ method: 'POST', mode: "cors", headers: { 'Content-Type': 'application/json' },body: JSONObj })
         const JSONRes = JSON.parse(await response.text());
         console.log("Response: ",JSONRes);
+        console.log("Storing token: "+JSONRes.token);
         localStorage.setItem("AuthToken",JSONRes.token);
-        return response.json;
+        return JSONRes;
     }
     catch(e)
     {
