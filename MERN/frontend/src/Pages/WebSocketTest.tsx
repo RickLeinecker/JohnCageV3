@@ -11,7 +11,13 @@ function WebSocketTest() {
 
     useEffect(() => {
 
-        ws = new WebSocket(websocketURL + ":8080/concert/audience");
+
+
+    }, []);
+
+    // Connects to websocket role for testing. Incomplete currently.
+    const connect = function () {
+        ws = new WebSocket(websocketURL + ":8080/concert/performer");
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
@@ -23,8 +29,7 @@ function WebSocketTest() {
             let newarray = new Uint8Array(event.data);
             console.log("WebSocket message as UInt8Array: ", newarray);
         }
-
-    }, []);
+    }
 
     return (
         <div className="WebSocket">
@@ -37,6 +42,7 @@ function WebSocketTest() {
                 <Card.Title>WebSocketTest Page</Card.Title>
                 See console for listen.
             </Card>
+            <button onClick={connect}>Connect</button>
         </div>
     );
 }

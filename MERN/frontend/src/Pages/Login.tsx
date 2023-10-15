@@ -3,6 +3,9 @@ import {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import '../Style/login.css';
 
+//API
+import LoggingIn from "../API/LoginAPI";
+
 const LoginPage = () =>{
 
     const initialValues = {
@@ -26,26 +29,47 @@ const LoginPage = () =>{
         setFormErrors(validate(formValues));
     }
 
+    const sendVerificationEmail = (email:string) =>
+    {
+        const currentURL:string = "https://localhost:3000/";
+
+        const mailOptions = {
+            from: process.env.AUTH_EMAIL,
+            to: email,
+            subject: "Verify your Email",
+            html: "<p>This is a test verification email</p>"
+        }
+    }
+
     const validate = (values: { email: string; password: string; }) =>{
+        const errors = regexCheck(values);
+        // if(errors.email === '' && errors.password === ''){
+        //     takeCredentials(values.email, values.password);
+        // }
+        LoggingIn(values.email, values.password);
+        return errors;
+    }   
+    
+    const regexCheck = (values: {email: string; password:string; }) =>{
         const errors = {
             email: '',
             password: '',
         };
-
+        const emailRegex = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+\.[a-zA-z]+$/g;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         if(values.email === ''){
             errors.email = '*Email is blank';
+        }else if(!emailRegex.test(values.email)){
+            errors.email = "*Invalid email address format. Please try again";
         }
         if(values.password === ''){
            errors.password = '*Password is blank'
         }
-        if(values.email !== '' && values.password !== ''){
-            //this is where we would connect the API 
-
+        if(!passwordRegex.test(values.password)){
+            errors.password = "*Invalid password format. Please try again";
         }
-
         return errors;
-    }   
-    
+    }
     useEffect(() =>{
         const loggedInUser = localStorage.getItem("user");
         if(loggedInUser){
@@ -70,7 +94,7 @@ const LoginPage = () =>{
                 <div id='login-input'>
                     <form onSubmit={handleSubmit}>
                         <div className='input-group'>
-                            <div className='email-group'>
+                            <div className='email-group' style={{width: '100%'}}>
                                 <label htmlFor='Email' style={{fontSize: 'calc(5px + 2vmin)'}}>Email</label>
                                 <input
                                     type='text'
@@ -78,7 +102,7 @@ const LoginPage = () =>{
                                     id='login-email'
                                     value={formValues.email}
                                     onChange={handleChange}
-                                    style={{display:'block', padding: '10px', width: '100%',borderRadius: '1em'}}
+                                    style={{padding: '10px', width: '100%',borderRadius: '1em'}}
                                 ></input>
                                 <p className='error'>{formErrors.email}</p>
                             </div>

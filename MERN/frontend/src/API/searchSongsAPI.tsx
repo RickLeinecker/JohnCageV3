@@ -2,10 +2,10 @@ import searchResult from "../Types/searchResult";
 import { buildPath } from "../Variables/expressServer";
 
 
-const searchSongs = async function (searchText: string) {
+const searchSongs = async function (searchText: string, page: number) {
     try {
         //Get recording metadata according to search text
-        const URL = buildPath('/concerts/searchSongs?search=' + searchText);
+        const URL = buildPath('/concerts/searchSongs?search=' + searchText + "&page=" + page);
         console.log("Fetch request URL: ", URL);
         const response = await fetch(URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
         const res = JSON.parse(await response.text());
@@ -16,10 +16,10 @@ const searchSongs = async function (searchText: string) {
         var search: searchResult[] = [];
         for (let i = 0; i < searchResults.length && i < 10; ++i) {
             search.push({
-                id: searchResults[i].id,
-                title: searchResults[i].title,
-                tags: searchResults[i].tags,
-                maestro: ""
+                id: searchResults[i].GroupID,
+                title: searchResults[i].Title,
+                tags: searchResults[i].Tags,
+                maestro: searchResults[i].GroupLeaderName
             });
         }
 
@@ -37,7 +37,7 @@ const searchSongs = async function (searchText: string) {
             {
                 title: "An error occured during your search.",
                 id: -1,
-                tags: [],
+                tags: "",
                 maestro: ""
             }
         ];

@@ -1,8 +1,13 @@
 import React from 'react';
-import imageToUse from '../Images/JohnCage.png'
+import Rayyan_img from '../Images/Rayyan.png';
+import Kyle_img from '../Images/Kyle.png';
+import Paul_img from '../Images/Paul.png';
+import Himil_img from '../Images/Himil.jpg';
+import Demetri_img from '../Images/demetri.jpg';
+import imageToUse from '../Images/default-image.jpg';
 import '../Style/AboutUs.css';
 
-export default function MeetOurTeam3(){
+export default function MeetOurTeamV3(){
     return(
         <div className='meet-our-team-container'>
             <div className='team-header-container'>
@@ -12,7 +17,7 @@ export default function MeetOurTeam3(){
             <div className='team-container'>
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Kyle'></img>
+                        <img className='team-pic' src={Kyle_img} alt='Kyle'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Kyle Mason</h2>
@@ -22,7 +27,7 @@ export default function MeetOurTeam3(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Demetri'></img>
+                        <img className='team-pic' src={Demetri_img} alt='Demetri'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Demetri</h2>
@@ -32,7 +37,7 @@ export default function MeetOurTeam3(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Rayyan'></img>
+                        <img className='team-pic' src={Rayyan_img} alt='Rayyan'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Rayyan Haque</h2>
@@ -42,7 +47,7 @@ export default function MeetOurTeam3(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Himil'></img>
+                        <img className='team-pic' src={Himil_img} alt='Himil'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Himil Patel</h2>
@@ -62,7 +67,7 @@ export default function MeetOurTeam3(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Paul'></img>
+                        <img className='team-pic' src={Paul_img} alt='Paul'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Paul</h2>

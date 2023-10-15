@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { users, usersAttributes, usersCreationAttributes } from "../models/init-models";
+import { users } from "../models/init-models";
 import userRepository from "../repositories/user.repository";
 import bcryptjs from 'bcryptjs';
 import logging from "../config/logging";
 import signJWT from "../functions/functions.signJWT";
-// import IUser from "../interfaces/interface.user";
+const { Op } = require("sequelize");
+import console_log from "../logging/console_log";
 
 const NAMESPACE = "User";
 
@@ -13,153 +14,151 @@ export default class UserController {
     logging.info(NAMESPACE, "Token validated, user authorized");
 
     return res.status(200).json({
-      message: "Authorized"
+      message: "User is Authorized"
     });
   };
 
+  // For creating a new user and storing them in the database.
   async register(req: Request, res: Response, next: NextFunction) {
-    let { Email, UserName, Phone, Password } = req.body;
+    console.log(req.body);
+    let { Name, UserName, Email, Password, Phone } = req.body;
 
-    if (!Phone) {
-      res.status(400).send({
-        message: "Phone number required!"
-      });
-      return;
-    }
-
-    if (!Email) {
-      res.status(400).send({
-        message: "Email can not be empty!"
-      });
-      return;
-    }
-
-    if (!UserName) {
-      res.status(400).send({
-        message: "UserName can not be empty!"
-      });
-      return;
-    }
+    console.log(Password);
 
     if (!Password) {
-      res.status(400).send({
-        message: "Password can not be empty!"
+      return res.status(400).send({
+        message: "Password invalid!"
       });
-      return;
     }
 
-    users
-      .findOne({
-        where: {
-          UserName: req.body.UserName
-        }
-      })
-      .then(user => {
-        if (user) {
-          res
-            .status(400)
-            .send(
-              { message: "Failed! Username is already in use!" }
-            );
-          return;
-        }
-
-        // Check if there is an Email that already exists.
-        users
-          .findOne({
-            where: {
-              Email: req.body.Email
-            }
-          })
-          .then(user => {
-            if (user) {
-              res
-                .status(400)
-                .send(
-                  { message: "Failed! Email is already in use!" }
-                );
-              return;
-            }
-            next();
+    try {
+      // Hash the password
+      bcryptjs.hash(Password, 10, async (hashError, hash) => {
+        if (hashError) {
+          return res.status(500).json({
+            message: hashError.message,
+            error: hashError
           });
-      }).catch((error) => {
-        console.log(res.status(400).send("Failed to sign up"));
-        return;
-      });
+        }
 
+        // Create a new user
+        const newUser = await users.create({
+          // Required fields
+          Name: Name,
+          UserName: UserName,
+          Email: Email,
+          Password: hash,
 
-    bcryptjs.hash(Password, 10, (hashError, hash) => {
-      if (hashError) {
+          // Optional field(s)
+          Phone: Phone
+        },
+          // Define which attributes can be set based on a form (restrict the User model to set only these fields)
+          { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
+          .catch((error) => {console.log("Erory Message: ",error) });
+
+        if (newUser) {
+          // Return the (registered) user as response.
+          return res.status(201).json({
+            message: "User registered successfully!",
+            user: newUser
+          });
+        }
+
         return res.status(500).json({
-          message: hashError.message,
-          error: hashError
+          message: "Failed"
         });
-      }
-
-      console.log("HASH " + hash);
-
-
-      // TODO: Insert user into DB here.
-      try {
-        // let { FirstName, LastName, Email, Password, Phone, UserName } = req.body;
-        let user: users = req.body;
-
-        user.Password = hash;
-
-        // const savedUser = userRepository.save(user);
-
-        // res.status(201).send(savedUser);
-      } catch (err) {
-        res.status(500).send({
-          message: "Some error occurred while creating user."
-        });
-        return;
-      }
-    });
-  };
-
-  async login(req: Request, res: Response, next: NextFunction) {
-    let { username, password } = req.body;
-    await users.findAll({
-      where: {
-        UserName: username
-      }
-    }).then((users) => {
-      bcryptjs.compare(password, users[0].Password, (error, result) => {
-        if (error) {
-          return res.status(401).json({
-            message: error.message,
-            error
-          });
-        } else if (result) {
-          signJWT(users[0], (_error, token) => {
-            if (_error) {
-              return res.status(401).json({
-                message: "Unable to Sign JWT",
-                error: _error
-              });
-            }
-            else if (token) {
-              return res.status(200).json({
-                message: "Auth Successful",
-                token,
-                user: users[0]
-              });
-            }
-          });
-        }
       });
-    });
+    } catch (err) {
+      return res.status(500).send({
+        message: "Some error occurred while creating a new user."
+      });
+    };
+  }; // Register
+
+  // To login the user and return token & user object
+  async login(req: Request, res: Response, next: NextFunction) {
+    // Parse the body of the request for the required fields to log in.
+    let { username, password } = req.body;
+
+    try {
+      // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
+      // const allUsers = 
+      await users.findAll({
+        attributes: { exclude: ['VerificationCode'] },
+        where: {
+          UserName: {
+            [Op.eq]: username
+          }
+        }
+      }).then((allUsers) => {
+        console_log("Login query successful: ");
+        console_log(allUsers);
+
+        // Verify that the allUsers has type 'users' when retrieved
+        // console.log(allUsers.every(allUsers => allUsers instanceof users)); // true
+
+        // Log all the users (that the 'allUsers' variable is pointing to) that were retrieved.
+        // console.log("All users:", allUsers, null, 2);
+
+        bcryptjs.compare(password, allUsers[0].Password, (error, result) => {
+
+          console_log("Login password comparison begun: ");
+
+          if (error) {
+            console_log("Login password comparison error: ");
+            console_log(error);
+            return res.status(401).json({
+              message: error.message
+            });
+          }
+          else if (result) {
+            console_log("Login password comparison passed.");
+
+            signJWT(allUsers[0], (_error, token) => {
+              if (_error) {
+                return res.status(401).json({
+                  message: "Unable to Sign JWT",
+                  error: _error
+                });
+              }
+              else if (token) {
+                console_log("JWT signed. Login successful.");
+                console_log("\n");
+                return res.status(200).json({
+                  message: "Authorization Successful.",
+                  token: token,
+                  user: allUsers[0]
+                });
+              }
+            });
+          }
+        });
+      });
+    }
+    catch (err) {
+      console_log("Login Error: ");
+      console_log(err);
+      console_log("\n");
+      return res.status(500).send({
+        message: "Some error occurred while logging in a user."
+      });
+    }
   };
 
+  // Select all the 'users' in the database.
   async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      // Returns the Id and Username attributes of the user only.
-      const users = await userRepository.retrieveAll();
+      // Only want to select the 'ID' and 'UserName' using the attributes option.
+      let allTheUsers: users[] = await users.findAll({
+        attributes: ['ID', 'UserName']
+      });
 
       res.status(200).json({
-        users,
-        count: users.length
+        // Pass
+        allTheUsers,
+
+        // Pass the number of users found to frontend.
+        count: allTheUsers.length
       });
     } catch (err) {
       res.status(500).send({
@@ -167,24 +166,6 @@ export default class UserController {
       });
     }
   };
-
-  async create(req: Request, res: Response) {
-
-  }
-
-  // async findAll(req: Request, res: Response) {
-  //   const userName = typeof req.query.UserName === "string" ? req.query.UserName : "";
-
-  //   try {
-  //     const users = await userRepository.retrieveAll({ userName });
-
-  //     res.status(200).send(users);
-  //   } catch (err) {
-  //     res.status(500).send({
-  //       message: "Some error occurred while retrieving users."
-  //     });
-  //   }
-  // }
 
   async findOne(req: Request, res: Response) {
     const id: number = parseInt(req.params.id);
