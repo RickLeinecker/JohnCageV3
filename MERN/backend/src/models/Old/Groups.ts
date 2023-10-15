@@ -1,61 +1,68 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Users, UsersId } from './Users';
+import type { recordings, recordingsId } from './recordings';
+import type { users, usersId } from './users';
 
-export interface GroupsAttributes {
+export interface groupsAttributes {
   GroupID: number;
   DateCreated: Date;
   GroupLeaderID: number;
-  User1ID?: number;
-  User2ID?: number;
-  User3ID?: number;
-  User4ID?: number;
+  GroupLeaderName?: string;
+  User1Name?: string;
+  User2Name?: string;
+  User3Name?: string;
+  User4Name?: string;
   GroupName?: string;
+  Title: string;
+  Tags?: string;
+  PictureFileName?: string;
+  Description?: string;
+  Date?: string;
+  Time?: string;
 }
 
-export type GroupsPk = "GroupID";
-export type GroupsId = Groups[GroupsPk];
-export type GroupsOptionalAttributes = "GroupID" | "User1ID" | "User2ID" | "User3ID" | "User4ID" | "GroupName";
-export type GroupsCreationAttributes = Optional<GroupsAttributes, GroupsOptionalAttributes>;
+export type groupsPk = "GroupID";
+export type groupsId = groups[groupsPk];
+export type groupsOptionalAttributes = "GroupID" | "DateCreated" | "GroupLeaderName" | "User1Name" | "User2Name" | "User3Name" | "User4Name" | "GroupName" | "Tags" | "PictureFileName" | "Description" | "Date" | "Time";
+export type groupsCreationAttributes = Optional<groupsAttributes, groupsOptionalAttributes>;
 
-export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> implements GroupsAttributes {
+export class groups extends Model<groupsAttributes, groupsCreationAttributes> implements groupsAttributes {
   GroupID!: number;
   DateCreated!: Date;
   GroupLeaderID!: number;
-  User1ID?: number;
-  User2ID?: number;
-  User3ID?: number;
-  User4ID?: number;
+  GroupLeaderName?: string;
+  User1Name?: string;
+  User2Name?: string;
+  User3Name?: string;
+  User4Name?: string;
   GroupName?: string;
+  Title!: string;
+  Tags?: string;
+  PictureFileName?: string;
+  Description?: string;
+  Date?: string;
+  Time?: string;
 
-  // Groups belongsTo Users via GroupLeaderID
-  GroupLeader!: Users;
-  getGroupLeader!: Sequelize.BelongsToGetAssociationMixin<Users>;
-  setGroupLeader!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
-  createGroupLeader!: Sequelize.BelongsToCreateAssociationMixin<Users>;
-  // Groups belongsTo Users via User1ID
-  User1!: Users;
-  getUser1!: Sequelize.BelongsToGetAssociationMixin<Users>;
-  setUser1!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
-  createUser1!: Sequelize.BelongsToCreateAssociationMixin<Users>;
-  // Groups belongsTo Users via User2ID
-  User2!: Users;
-  getUser2!: Sequelize.BelongsToGetAssociationMixin<Users>;
-  setUser2!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
-  createUser2!: Sequelize.BelongsToCreateAssociationMixin<Users>;
-  // Groups belongsTo Users via User3ID
-  User3!: Users;
-  getUser3!: Sequelize.BelongsToGetAssociationMixin<Users>;
-  setUser3!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
-  createUser3!: Sequelize.BelongsToCreateAssociationMixin<Users>;
-  // Groups belongsTo Users via User4ID
-  User4!: Users;
-  getUser4!: Sequelize.BelongsToGetAssociationMixin<Users>;
-  setUser4!: Sequelize.BelongsToSetAssociationMixin<Users, UsersId>;
-  createUser4!: Sequelize.BelongsToCreateAssociationMixin<Users>;
+  // groups hasMany recordings via GroupID
+  recordings!: recordings[];
+  getRecordings!: Sequelize.HasManyGetAssociationsMixin<recordings>;
+  setRecordings!: Sequelize.HasManySetAssociationsMixin<recordings, recordingsId>;
+  addRecording!: Sequelize.HasManyAddAssociationMixin<recordings, recordingsId>;
+  addRecordings!: Sequelize.HasManyAddAssociationsMixin<recordings, recordingsId>;
+  createRecording!: Sequelize.HasManyCreateAssociationMixin<recordings>;
+  removeRecording!: Sequelize.HasManyRemoveAssociationMixin<recordings, recordingsId>;
+  removeRecordings!: Sequelize.HasManyRemoveAssociationsMixin<recordings, recordingsId>;
+  hasRecording!: Sequelize.HasManyHasAssociationMixin<recordings, recordingsId>;
+  hasRecordings!: Sequelize.HasManyHasAssociationsMixin<recordings, recordingsId>;
+  countRecordings!: Sequelize.HasManyCountAssociationsMixin;
+  // groups belongsTo users via GroupLeaderID
+  GroupLeader!: users;
+  getGroupLeader!: Sequelize.BelongsToGetAssociationMixin<users>;
+  setGroupLeader!: Sequelize.BelongsToSetAssociationMixin<users, usersId>;
+  createGroupLeader!: Sequelize.BelongsToCreateAssociationMixin<users>;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Groups {
-    return Groups.init({
+  static initModel(sequelize: Sequelize.Sequelize): typeof groups {
+    return groups.init({
     GroupID: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -64,55 +71,68 @@ export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> im
     },
     DateCreated: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     GroupLeaderID: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
+        model: 'users',
         key: 'ID'
       }
     },
-    User1ID: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Users',
-        key: 'ID'
-      }
+    GroupLeaderName: {
+      type: DataTypes.STRING(100),
+      allowNull: true
     },
-    User2ID: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Users',
-        key: 'ID'
-      }
+    User1Name: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
-    User3ID: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Users',
-        key: 'ID'
-      }
+    User2Name: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
-    User4ID: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Users',
-        key: 'ID'
-      }
+    User3Name: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    User4Name: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
     GroupName: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    Title: {
+      type: DataTypes.STRING(255),
+      allowNull: false
+    },
+    Tags: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    PictureFileName: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    Description: {
+      type: DataTypes.STRING(140),
+      allowNull: true
+    },
+    Date: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    Time: {
       type: DataTypes.STRING(50),
       allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'Groups',
+    tableName: 'groups',
     timestamps: false,
     indexes: [
       {
@@ -124,38 +144,18 @@ export class Groups extends Model<GroupsAttributes, GroupsCreationAttributes> im
         ]
       },
       {
+        name: "GroupID_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "GroupID" },
+        ]
+      },
+      {
         name: "GroupLeaderID_idx",
         using: "BTREE",
         fields: [
           { name: "GroupLeaderID" },
-        ]
-      },
-      {
-        name: "User1ID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "User1ID" },
-        ]
-      },
-      {
-        name: "User2ID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "User2ID" },
-        ]
-      },
-      {
-        name: "User3ID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "User3ID" },
-        ]
-      },
-      {
-        name: "User4ID_idx",
-        using: "BTREE",
-        fields: [
-          { name: "User4ID" },
         ]
       },
     ]

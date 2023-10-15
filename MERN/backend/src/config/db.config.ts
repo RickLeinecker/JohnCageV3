@@ -1,12 +1,16 @@
 // Models
 import { SequelizeOptions } from "sequelize-typescript";
-import { isServerEnvironment } from "./env.config";
+import { initModels } from "../models/init-models";
+
+const isServerEnvironment = process.env.NODE_ENV === 'production';
+
+//const models = [Recording, User, Tag];
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "jct3",
   username: "TheBeast",
   password: "WeLoveJCT",
-  host: "localhost",
+  host: "127.0.0.1",
   dialect: "mysql",
   port: 3306,
   pool: {
