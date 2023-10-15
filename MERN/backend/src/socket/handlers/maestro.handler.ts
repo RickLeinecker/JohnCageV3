@@ -34,9 +34,7 @@ const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: strin
 const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
     // Handle messages, including audio data.
     ws.on('message', function message(data) {
-        console_log("Received message data: ");
-        console_log(data);
-        console_log("\n");
+        console_log("Received message data: ", data, "\n");
 
         let message: Buffer = <Buffer>data;
         let headerData: CustomHeader = retrieveHeader(<Buffer>data);
@@ -59,18 +57,19 @@ const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
             }
         }
         else if (header == "start") {
-            beginConcert(currentConcert);
-            broadcastStart(currentConcert);
+            if (!currentConcert.active) {
+                beginConcert(currentConcert);
+                broadcastStart(currentConcert);
+            }
         }
         else if (header == "stop") {
-            broadcastStop(currentConcert);
-
-            endConcert(currentConcert);
+            if (currentConcert.active) {
+                broadcastStop(currentConcert);
+                endConcert(currentConcert);
+            }
         }
         else {
-            console_log("No Event Matches the Given Header: ");
-            console_log(header);
-            console_log("\n");
+            console_log("No Event Matches the Given Header: ", header, "\n");
         }
     });
 }

@@ -1,14 +1,21 @@
 import { Request, Response } from "express";
-import recordingRepository from "../repositories/recording.repository";
 import console_log from "../logging/console_log";
 import tagRepository from "../repositories/tag.repository";
-import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
+import { tagsAttributes, recordings, groups } from "../models/init-models";
 var ms = require('mediaserver');
 const { Op } = require("sequelize");
-
 var fs = require("fs");
 
-class ConcertsController {
+interface concertsAPI {
+  findAndPipeAudio(req: Request, res: Response): Promise<void>;
+  findAllGroups(req: Request, res: Response): Promise<void>;
+  filterConcertsByDateRange(req: Request, res: Response): Promise<void>;
+  findOne(req: Request, res: Response): Promise<void>;
+  searchConcerts(req: Request, res: Response): Promise<void>;
+}
+
+class ConcertsController implements concertsAPI {
+  // IMPORTNAT: THIS CURRENTLY USES THE GROUP ID TO SEARCH. IDEALLY WE USE THE PK FROM THE TABLE. IT SHOULD STILL WORK.
   async findAndPipeAudio(req: Request, res: Response) {
     // Todo: Add ability to query a recording by id and return the actual audio.
     let recordingId: number = parseInt(req.query.id as string);
@@ -137,6 +144,7 @@ class ConcertsController {
     });
   }
 
+  // IMPORTANT: MNUST FILTER BY DATE, OTHERWISE SEARCH WILL SHOW SCHEDULED RECORDINGS AS WELL.
   async searchConcerts(req: Request, res: Response) {
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
@@ -145,7 +153,7 @@ class ConcertsController {
       page = 0;
     }
 
-    // Find all groups based on the 'search' filter.
+    // Find all groups with "search" substring in Title or Tags.
     const allTheGroups = await groups.findAll({
       limit: pageLength,
       offset: pageLength * page,
@@ -154,13 +162,11 @@ class ConcertsController {
         [Op.or]:
           [
             {
-              // Find any song title that has 'search' as a substring.
               Title: {
                 [Op.like]: `%${searchString}%`
               }
             },
             {
-              // Find any song with tags that have 'search' string query as a substring.
               Tags: {
                 [Op.like]: `%${searchString}%`
               }
@@ -172,19 +178,6 @@ class ConcertsController {
     //console.log(allTheGroups);
 
     res.status(200).send({ searchResults: allTheGroups });
-  }
-
-  async retrieveRandomTags(req: Request, res: Response) {
-    let response: tagsAttributes[] = [];
-
-    try {
-      response = await tagRepository.retrieveAll();
-    } catch (err) {
-      res.status(500).send({ message: "Some error occurred while retrieving tags." });
-    }
-
-    //console.log(response);
-    res.status(200).send({ tags: response });
   }
 }
 

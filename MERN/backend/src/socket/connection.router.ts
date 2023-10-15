@@ -11,7 +11,7 @@ import enqueuePerformer from "./events/internal/enqueue.event";
 import { addMaestro } from "./handlers/maestro.handler";
 import { broadcastNames } from "./events/outgoing/names.broadcast";
 
-var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false };
+var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false, mixedAudio: Buffer.alloc(2) };
 
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
     let route = String(req.url);

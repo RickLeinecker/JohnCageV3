@@ -8,9 +8,7 @@ import { broadcastMessage } from "../../utilities/socket.binary";
 import { broadcastStart } from "../outgoing/start.broadcast";
 import { broadcastNames } from "../outgoing/names.broadcast";
 import { maxAudioBufferSize } from "../../socket.config";
-
-// This should be in another file. For now, this should work.
-var mixedConcert: Buffer = Buffer.alloc(2);
+const fs = require("fs");
 
 const updatePerformers = function (currentConcert: Concert): void {
     let performers: Performer[] = currentConcert.performers;
@@ -96,7 +94,7 @@ const concertTick = function (currentConcert: Concert) {
 
         // Mix audio chunks.
         let mixedBuffer: Buffer = defaultMix(chunkBuffers);
-        mixedConcert = Buffer.concat([mixedConcert, mixedBuffer]);
+        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixedBuffer]);
         console_log("Audio mixed.");
         console_log(mixedBuffer);
         console_log("\n");
@@ -130,7 +128,7 @@ const concertTick = function (currentConcert: Concert) {
     }
 }
 
-export { concertTick, mixedConcert };
+export { concertTick };
 
 
 /* Backup of audio data broadcast after switching to broadcastMessage function.
