@@ -19,18 +19,13 @@ class TagRepository implements ITagRepository {
     }
 
     async retrieveAll(): Promise<tagsAttributes[]> {
-        var tagList: tagsAttributes[] = [];
+        let tagList: tagsAttributes[] = [];
 
         try {
-            // Get response
             const query = await tags.findAll();
-
-            // Translate to basic object
             for (let i = 0; i < query.length; ++i) {
                 tagList.push(query[i].dataValues);
             }
-
-            // Return result
             return tagList;
         } catch (error) {
             // This error catch doesn't seem to work. 
