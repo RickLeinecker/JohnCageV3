@@ -6,6 +6,8 @@ import logging from "../config/logging";
 import signJWT from "../functions/functions.signJWT";
 const { Op } = require("sequelize");
 import console_log from "../logging/console_log";
+import getEmailOptions from "../functions/functions.getEmailOptions";
+import { sendEmail } from "../functions/sendEmail";
 
 const NAMESPACE = "User";
 
@@ -56,7 +58,15 @@ export default class UserController {
           { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
           .catch((error) => {console.log("Erory Message: ",error) });
 
+          // Email verification
+          let newCode = Math.floor((Math.random() * 800000) + 100000);
+          var emailOptions = getEmailOptions(Email, newCode);
+          sendEmail(emailOptions);
+
         if (newUser) {
+          newUser.IsVerified = 1;
+          newUser.VerificationCode = newCode;
+          newUser.save();
           // Return the (registered) user as response.
           return res.status(201).json({
             message: "User registered successfully!",
