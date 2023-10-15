@@ -1,6 +1,10 @@
 import WebSocket from "ws";
 import { addPerformer } from "../../handlers/performer.handler";
 import { Concert, Performer, waitingPerformer } from "../../socket.types";
+import console_log from "../../../logging/console_log";
+const fs = require("fs");
+
+const tempFileName: string = "recording.bin";
 
 // MUST KEEP TRACK OF PERFORMERS THAT LEFT EARLY. THIS IS INCOMPLETE.
 const gatherNames = function (currentConcert: Concert): string[] {
@@ -30,6 +34,14 @@ const endConcert = function (currentConcert: Concert): void {
     // Save mixed buffer as wav or mp3 or whatever and save its file name.
     // Get group id and make recordings row with groupid foreign id and filename.
     // Remove row from scheduled useing "where GroupID = groupid."
+
+    const performerNames: string[] = gatherNames(currentConcert);
+
+    fs.writeFile("./temp/" + tempFileName, currentConcert.mixedAudio, { flag: 'a' }, (err: any) => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }
 
 export default endConcert;

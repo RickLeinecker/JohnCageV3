@@ -1,7 +1,6 @@
 import { Request, Response, response } from "express";
 import console_log from "../logging/console_log";
 import { users, groups, schedules, groupsAttributes, usersAttributes, schedulesAttributes } from "../models/init-models";
-const ms = require('mediaserver');
 const { Op } = require("sequelize");
 const fs = require("fs");
 import bcryptjs from 'bcryptjs';
@@ -10,6 +9,29 @@ interface scheduleAPI {
     scheduleConcert(req: Request, res: Response): Promise<void>;
     getSchedule(req: Request, res: Response): Promise<void>;
     prepareConcert(req: Request, res: Response): Promise<void>;
+}
+
+const getPerformerPasscodes = function (schedule: schedulesAttributes): number[] {
+    // Does not get maestro's, since that was required to even get here.
+    let passcodes: number[] = [];
+    if (schedule.User1Passcode) { passcodes.push(schedule.User1Passcode); }
+    if (schedule.User2Passcode) { passcodes.push(schedule.User2Passcode); }
+    if (schedule.User3Passcode) { passcodes.push(schedule.User3Passcode); }
+    if (schedule.User4Passcode) { passcodes.push(schedule.User4Passcode); }
+    return passcodes;
+}
+
+const storePasscodes = function (passcodes: number[]): boolean {
+    passcodes.forEach((passcode, index) => {
+        fs.writeFile("./temp/passcode" + (index + 1), passcode.toString(), { flag: 'a' }, (err: any) => {
+            if (err) {
+                console_log(err.message);
+                return false;
+            }
+        });
+    })
+
+    return true
 }
 
 const getFlooredTime = function (time: string): string {
@@ -47,7 +69,7 @@ const concatTags = function (tags: string[]): string {
 
 // Probably works every time but might need some testing.
 // Each code must be unique and there must be exactly the number that is passed.
-// Also must be 6 digit, although it shouldn't breka anything if it isn't.
+// Also must be 6 digit, although it shouldn't break anything if it isn't.
 const generatePasscodes = function (count: number): number[] {
     let passCodes: number[] = [];
     for (let i = 0; i < count; ++i) {
@@ -67,62 +89,72 @@ const generatePasscodes = function (count: number): number[] {
 
 class ScheduleController implements scheduleAPI {
     // IMPORTANT: DOES NOT CHECK IF TIME IS ALREADY SCHEDULED YET.
-    // IMPORTANT: DATE AND TIME IN BOTH GROUPS AND SHCEDULES. REDUNDANT.
-    // IMPORTANT: DOES NOT AUTHENTICATE USER.
+    // IMPORTANT: DATE AND TIME IN BOTH GROUPS AND SHCEDULES. MAYBE REDUNDANT.
     async scheduleConcert(req: Request, res: Response) {
         // Inputs
-        console_log("Request body: ", req.body, "\n");
-        const { maestroId, maestroName, concertTitle, concertTags, concertDescription, date, time } = req.body;
+        const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
 
-        // Create new group.
-        let newGroup: groupsAttributes;
-        let newSchedule: schedulesAttributes;
-        await groups.create({
-            GroupLeaderID: maestroId,
-            GroupLeaderName: maestroName,
-            Title: concertTitle,
-            Tags: tags,
-            Description: concertDescription,
-            Date: date,
-            Time: time
-        }).then((group) => {
-            newGroup = group.dataValues;
-            if (!newGroup) {
-                throw new Error("Error: newGroup is undefined.");
-            }
+        // Find user.
+        let user: usersAttributes | undefined = undefined;
+        await users.findAll({
+            attributes: { exclude: ['VerificationCode'] },
+            where: { UserName: { [Op.eq]: username } }
+        }).then((users) => {
+            let first: users | undefined = users.at(0);
+            if (users.length > 1) { console_log("Warning: Multiple users with same username and password detected.\n"); }
+            bcryptjs.compare(password, users[0].Password, (e, equal) => {
+                if (e) { return res.status(401).json({ error: e.message }); }
+                else if (!equal) { return res.status(401).json({ error: "Incorrect password." }); }
+            });
+            if (!first) { throw new Error("User not found.") }
+            user = first.dataValues;
+            // if (user.IsVerified != 0) { throw new Error("Please verify email befoer scheduling.") } // Add back once email verification works.
 
-            // Schedule recording.
-            const passcodes: number[] = generatePasscodes(5);
-            schedules.create({
-                GroupID: newGroup.GroupID,
-                Date: newGroup["Date"],
-                Time: newGroup["Time"],
-                MaestroPasscode: passcodes.at(0),
-                User1Passcode: passcodes.at(1),
-                User2Passcode: passcodes.at(2),
-                User3Passcode: passcodes.at(3),
-                User4Passcode: passcodes.at(4)
-            }).then((schedule) => {
-                newSchedule = schedule.dataValues;
-                if (!newSchedule) {
-                    throw new Error("Failed to create new schedule. Unknown error.");
-                }
+            // Create group.
+            let newGroup: groupsAttributes;
+            let newSchedule: schedulesAttributes;
+            groups.create({
+                GroupLeaderID: user.ID,
+                GroupLeaderName: user.Name,
+                Title: concertTitle,
+                Tags: tags,
+                Description: concertDescription,
+                Date: date,
+                Time: time
+            }).then((group) => {
+                newGroup = group.dataValues;
 
-                console_log("New schedule: ", newSchedule, "\n");
-                return res.status(200).send({ group: newGroup, schedule: newSchedule });
+                // Schedule recording.
+                const passcodes: number[] = generatePasscodes(5);
+                schedules.create({
+                    GroupID: newGroup.GroupID,
+                    Date: newGroup["Date"],
+                    Time: newGroup["Time"],
+                    MaestroPasscode: passcodes.at(0),
+                    User1Passcode: passcodes.at(1),
+                    User2Passcode: passcodes.at(2),
+                    User3Passcode: passcodes.at(3),
+                    User4Passcode: passcodes.at(4)
+                }).then((schedule) => {
+                    newSchedule = schedule.dataValues;
+
+                    console_log("New schedule: ", newSchedule, "\n");
+                    return res.status(200).send({ group: newGroup, schedule: newSchedule });
+                }).catch((e) => {
+                    console_log("Error: ", e.message, "\n");
+                    return res.status(500).send({ error: e.message });
+                });
             }).catch((e) => {
                 console_log("Error: ", e.message, "\n");
                 return res.status(500).send({ error: e.message });
             });
-
         }).catch((e) => {
             console_log("Error: ", e.message, "\n");
             return res.status(500).send({ error: e.message });
         });
     }
 
-    // Get all scheduled recording times for a specific day.
     async getSchedule(req: Request, res: Response) {
         const date = typeof req.query.date === "string" ? req.query.date : "";
         console_log("Date: ", date, "\n");
@@ -143,10 +175,10 @@ class ScheduleController implements scheduleAPI {
                 }
             })
 
-            console_log("Scheduled times: ", schedule, "\n");
+            console_log("Scheduled times: ", schedule, "\n\n");
             return res.status(200).send({ scheduledTimes: Array.from(schedule) });
         }).catch((e) => {
-            console_log("Error: ", e.message, "\n");
+            console_log("Error: ", e.message, "\n\n");
             return res.status(500).send({ error: e.message });
         });
     }
@@ -169,25 +201,25 @@ class ScheduleController implements scheduleAPI {
                 }
             }
         }).then((schedules) => {
-            console_log("schedules: ", schedules);
-
+            let firstSchedule: schedules | undefined = schedules.at(0);
             if (schedules.length > 1) {
                 console_log("Warning: Multiple schedules with same time detected.\n");
             }
-            let first: schedules | undefined = schedules.at(0);
-            if (!first) {
+            if (!firstSchedule) {
                 throw new Error("No concert found scheduled for the current time slot.");
             }
-            else if (parseInt(maestroPasscode) != first.MaestroPasscode) {
+            else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) {
                 throw new Error("Maestro passcode does not match that of the currently scheduled recording.");
             }
 
-            // Save passcodes to files for the socket server to check. // INCOMPLETE
-            console_log("SAVE PASSCODES TO FILE HERE.");
-            console_log(getTimeUTC());
-            console_log(getDateUTC());
+            // Save passcodes to files for the socket server to check.
+            storePasscodes(getPerformerPasscodes(firstSchedule));
+            console_log("Passcodes saved to files.\n");
 
-            return res.status(200).send({ message: "No errors caught." });
+            console_log(getTimeUTC(), "\n");
+            console_log(getDateUTC(), "\n");
+
+            return res.status(200).send({ message: "No errors caught. Passcodes saved to files." });
         }).catch((e) => {
             console_log("Error: ", e.message, "\n");
             return res.status(500).send({ error: e.message });
@@ -196,47 +228,3 @@ class ScheduleController implements scheduleAPI {
 }
 
 export default ScheduleController;
-
-
-/*  Essentially login, but also checks for verification.
-
-
-    // Hash password.
-        const hash = await bcryptjs.hash(password, 10).catch(() => {
-            return res.status(500).send({ error: "Hashing password failed." });
-        });
-
-        // Verify user.
-        let user: usersAttributes | undefined = undefined;
-        await users.findAll({
-            attributes: { exclude: ['VerificationCode'] },
-            where: {
-                UserName: {
-                    [Op.eq]: username
-                },
-                Password: {
-                    [Op.eq]: hash
-                },
-                IsVerified: {
-                    [Op.eq]: 1
-                }
-            }
-        }).then((users) => {
-            if (users.length > 1) {
-                console_log("Warning: Multiple users with same username and password detected.\n");
-            }
-            let first: users | undefined = users.at(0);
-            if (first) {
-                user = first.dataValues;
-                if (!user.IsVerified) {
-                    throw new Error("User not verified.");
-                }
-            }
-        }).catch((e) => {
-            return res.status(500).send({ error: e.message });
-        });
-
-        if (!user) {
-            return res.status(500).send({ error: "User not found." });
-        }
-*/

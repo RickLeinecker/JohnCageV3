@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { users } from "../models/init-models";
+import { users, usersAttributes } from "../models/init-models";
 import userRepository from "../repositories/user.repository";
 import bcryptjs from 'bcryptjs';
 import logging from "../config/logging";
@@ -9,7 +9,7 @@ import console_log from "../logging/console_log";
 
 const NAMESPACE = "User";
 
-export default class UserController {
+class UserController {
   async validateToken(req: Request, res: Response, next: NextFunction) {
     logging.info(NAMESPACE, "Token validated, user authorized");
 
@@ -20,10 +20,10 @@ export default class UserController {
 
   // For creating a new user and storing them in the database.
   async register(req: Request, res: Response, next: NextFunction) {
-    console.log(req.body);
+    console_log(req.body);
     let { Name, UserName, Email, Password, Phone } = req.body;
 
-    console.log(Password);
+    console_log(Password);
 
     if (!Password) {
       return res.status(400).send({
@@ -54,7 +54,7 @@ export default class UserController {
         },
           // Define which attributes can be set based on a form (restrict the User model to set only these fields)
           { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
-          .catch((error) => {console.log("Erory Message: ",error) });
+          .catch((e) => { console_log("Error: ", e.errors, "\n") });
 
         if (newUser) {
           // Return the (registered) user as response.
@@ -254,3 +254,5 @@ export default class UserController {
   //     }
   //   }
 }
+
+export default UserController;
