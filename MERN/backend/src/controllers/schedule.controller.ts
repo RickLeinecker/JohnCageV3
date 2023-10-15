@@ -37,6 +37,9 @@ const storePasscodes = function (passcodes: number[]): boolean {
 const getFlooredTime = function (time: string): string {
     let object = new Date();
     let hours: string = object.getUTCHours().toString();
+    if (hours.length == 1) {
+        hours = "0" + hours;
+    }
     let minutes: string = (Math.floor(object.getUTCMinutes() / 20) * 20).toString();
     if (minutes.length == 1) {
         minutes = "0" + minutes;
@@ -53,7 +56,19 @@ const getDateUTC = function (): string {
 
 const getTimeUTC = function (): string {
     let object = new Date();
-    return object.getUTCHours().toString() + ":" + object.getUTCMinutes().toString() + ":" + object.getUTCSeconds().toString();
+    let minutes = object.getUTCMinutes().toString();
+    let hours = object.getUTCHours().toString();
+    let seconds = object.getUTCSeconds().toString();
+    if (minutes.length == 1) {
+        minutes = "0" + minutes;
+    }
+    if (hours.length == 1) {
+        hours = "0" + hours;
+    }
+    if (seconds.length == 1) {
+        seconds = "0" + seconds;
+    }
+    return hours + ":" + minutes + ":" + seconds;
 }
 
 // Adds a backtick between tags as a separater to simplify storing/searching tags in MySQL.
@@ -87,6 +102,29 @@ const generatePasscodes = function (count: number): number[] {
     return passCodes;
 }
 
+// const updateNames = async function (names: string[], groupId: number): Promise<boolean> {
+//     if (names.length < 4) {
+//         return false;
+//     }
+
+//     await groups.update(
+//         {
+//             User1Name: names.at(0),
+//             User2Name: names.at(1),
+//             User3Name: names.at(2),
+//             User4Name: names.at(3)
+//         },
+//         { where: { GroupID: { [Op.eq]: groupId } } }
+//     ).then((group) => {
+//         console_log(group);
+//     }).catch((e) => {
+//         console_log(e.message);
+//         return false;
+//     });
+
+//     return true;
+// }
+
 class ScheduleController implements scheduleAPI {
     // IMPORTANT: DOES NOT CHECK IF TIME IS ALREADY SCHEDULED YET.
     // IMPORTANT: DATE AND TIME IN BOTH GROUPS AND SHCEDULES. MAYBE REDUNDANT.
@@ -94,6 +132,8 @@ class ScheduleController implements scheduleAPI {
         // Inputs
         const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
+
+        console_log(getTimeUTC(), getDateUTC(), "\n");
 
         // Find user.
         let user: usersAttributes | undefined = undefined;
@@ -214,6 +254,10 @@ class ScheduleController implements scheduleAPI {
 
             // Save passcodes to files for the socket server to check.
             storePasscodes(getPerformerPasscodes(firstSchedule));
+            fs.writeFile("./temp/groupId", firstSchedule.GroupID?.toString(), (e: any) => {
+                if (e) { throw new Error("Saving groupId file failed."); }
+            });
+
             console_log("Passcodes saved to files.\n");
 
             console_log(getTimeUTC(), "\n");

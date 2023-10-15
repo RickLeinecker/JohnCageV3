@@ -15,6 +15,7 @@ interface concertsAPI {
 }
 
 class ConcertsController implements concertsAPI {
+  // IMPORTNAT: THIS CURRENTLY USES THE GROUP ID TO SEARCH. IDEALLY WE USE THE PK FROM THE TABLE. IT SHOULD STILL WORK.
   async findAndPipeAudio(req: Request, res: Response) {
     // Todo: Add ability to query a recording by id and return the actual audio.
     let recordingId: number = parseInt(req.query.id as string);
