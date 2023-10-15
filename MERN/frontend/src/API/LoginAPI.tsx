@@ -7,7 +7,9 @@ const LoginAPI = async function name(email:string, password:string) {
         const URL = buildPath("/users/login");
         console.log("Fetch request URL:", URL);
         const response = await fetch(URL,{ method: 'POST', mode: "cors", headers: { 'Content-Type': 'application/json' },body: JSONObj })
-        console.log(JSON.parse(await response.text()));
+        const JSONRes = JSON.parse(await response.text());
+        console.log("Response: ",JSONRes);
+        localStorage.setItem("AuthToken",JSONRes.token);
         return response.json;
     }
     catch(e)
