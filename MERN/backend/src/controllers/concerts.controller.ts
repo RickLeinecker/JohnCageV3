@@ -143,6 +143,7 @@ class ConcertsController implements concertsAPI {
     });
   }
 
+  // IMPORTANT: MNUST FILTER BY DATE, OTHERWISE SEARCH WILL SHOW SCHEDULED RECORDINGS AS WELL.
   async searchConcerts(req: Request, res: Response) {
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
@@ -151,7 +152,7 @@ class ConcertsController implements concertsAPI {
       page = 0;
     }
 
-    // Find all groups based on the 'search' filter.
+    // Find all groups with "search" substring in Title or Tags.
     const allTheGroups = await groups.findAll({
       limit: pageLength,
       offset: pageLength * page,
@@ -160,13 +161,11 @@ class ConcertsController implements concertsAPI {
         [Op.or]:
           [
             {
-              // Find any song title that has 'search' as a substring.
               Title: {
                 [Op.like]: `%${searchString}%`
               }
             },
             {
-              // Find any song with tags that have 'search' string query as a substring.
               Tags: {
                 [Op.like]: `%${searchString}%`
               }
