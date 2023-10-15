@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component , useState, useEffect} from "react";
 import { createRoot } from 'react-dom/client';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
@@ -15,13 +15,28 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
 import WebSocketTest from "./Pages/WebSocketTest";
 
-class Compiled extends Component {
-  render() {
+const Compiled = () => {
+  const [userName, setUserName] = useState("");
+  
+  function LoggingIn(name:string)
+  {
+    setUserName(name);
+    console.log("All components will have "+name);
+  }
+
+  useEffect(() =>{
+    const loggedInUser = localStorage.getItem("Username");
+    if (userName === "" && loggedInUser)
+    {
+      setUserName(loggedInUser);
+    }
+  },[])
+
     return (
       <div>
         <BrowserRouter>
           <div className="row">
-            <NavBar />
+            <NavBar userName={userName}/>
           </div>
           <div className="row">
             <div className="col-2"></div>
@@ -32,7 +47,7 @@ class Compiled extends Component {
                 <Route path="/Concerts" element={<ConcertPage />} />
                 <Route path="/Record" element={<RecordPage />} />
                 <Route path="/Listen" element={<ListenPage />} />
-                <Route path="/Login" element={<LoginPage />} />
+                <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
                 <Route path="/About" element={<AboutPage />} />
                 <Route path="/Register" element={<RegisterPage />} />
                 <Route path="/WebSocket" element={<SocketTest />} />
@@ -45,7 +60,6 @@ class Compiled extends Component {
         </BrowserRouter>
       </div>
     );
-  }
 }
 
 const musicElement = document.getElementById("musicMenu");
