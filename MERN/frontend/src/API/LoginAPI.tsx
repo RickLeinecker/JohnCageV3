@@ -8,13 +8,16 @@ const LoginAPI = async function name(email:string, password:string, loginFunctio
         console.log("Fetch request URL:", URL);
         const response = await fetch(URL,{ method: 'POST', mode: "cors", headers: { 'Content-Type': 'application/json' },body: JSONObj })
         const JSONText = JSON.parse(await response.text());
-        if (JSONText.message === "Some error occurred while logging in a user.")
-            console.log("Login Failed")
-        else
+        if (response.status === 200)
         {
             console.log("Logging in successeful. Welcome ",JSONText.user.UserName);
             localStorage.setItem("Username",JSONText.user.UserName);
             loginFunction(localStorage.getItem("Username"));
+        }
+        else
+        {
+            console.log("Login Failed")
+            
         }
         console.log(JSONText);
         return JSONText;
