@@ -76,7 +76,7 @@ const Compiled = () => {
                 <Route path="/Listen" element={<ListenPage />} />
                 <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
                 <Route path="/About" element={<AboutPage />} />
-                <Route path="/Register" element={<RegisterPage />} />
+                <Route path="/Register" element={<RegisterPage setUserName={LoggingIn}/>} />
                 <Route path="/WebSocket" element={<SocketTest />} />
                 <Route path="/Calendar" element={<CalendarPage />} />
                 <Route path="/WebSocketTest" element={<WebSocketTest />} />
