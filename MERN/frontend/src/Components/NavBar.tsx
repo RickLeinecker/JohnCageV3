@@ -1,8 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Nav, Container, Navbar } from "react-bootstrap";
 import { Link, useLocation, useMatch } from "react-router-dom";
 import PropTypes from 'prop-types';
 import '../Style/text.css';
+import LoginData from "../Types/loginData";
 
 
 type NavButton = {
@@ -23,11 +24,10 @@ class NavButtons extends Component<NavButton>{
   }
 }
 
-class NavBar extends Component {
+const NavBar =({userName}:LoginData) => {
 
-  buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+    const buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
 
-  render() {
     return (
       <Navbar
         className="navbar navbar-expand-sm navbar-light"
@@ -47,17 +47,22 @@ class NavBar extends Component {
             <br />
             <Nav className="me-auto">
               {
-                this.buttonList.map((key, i) => {
-                  return <NavButtons key={i} buttonName={key} />
+                buttonList.map((key, i) => {
+                  if ((key === "Login" || key === "Register") && userName != "")
+                  {
+                    return <></>;
+                  }
+                  else
+                    return <NavButtons key={i} buttonName={key} />
                 }
                 )
               }
+              {(userName != "" ? "Welcome "+userName : "")}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
     );
-  }
 }
 
 

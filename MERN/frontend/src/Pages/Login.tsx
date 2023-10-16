@@ -6,7 +6,7 @@ import '../Style/login.css';
 //API
 import LoggingIn from "../API/LoginAPI";
 
-const LoginPage = () =>{
+const LoginPage = ({setUserName}:any) =>{
 
     const initialValues = {
         email: "",
@@ -16,7 +16,7 @@ const LoginPage = () =>{
 
     const [formValues, setFormValues] = useState(initialValues);
     const [formErrors, setFormErrors] = useState(initialValues);
-    const [user, setUser] = useState();
+    const [user, setUser] = useState("");
 
     const handleChange =(e: React.ChangeEvent<HTMLInputElement>) =>{
         const {name, value} = e.target;
@@ -33,12 +33,7 @@ const LoginPage = () =>{
     {
         const currentURL:string = "https://localhost:3000/";
 
-        const mailOptions = {
-            from: process.env.AUTH_EMAIL,
-            to: email,
-            subject: "Verify your Email",
-            html: "<p>This is a test verification email</p>"
-        }
+        
     }
 
     const validate = (values: { email: string; password: string; }) =>{
@@ -47,9 +42,12 @@ const LoginPage = () =>{
         //     takeCredentials(values.email, values.password);
         // }
         LoggingIn(values.email, values.password);
-        if(localStorage.getItem("Username")){
-            window.location.href = '/Concert';
-        }
+
+        const loggedInUser = localStorage.getItem("Username");
+
+        if (loggedInUser)
+            setUserName(loggedInUser);
+        
         return errors;
     }   
     
@@ -74,10 +72,12 @@ const LoginPage = () =>{
         return errors;
     }
     useEffect(() =>{
-        const loggedInUser = localStorage.getItem("user");
+        const loggedInUser = localStorage.getItem("Username");
         if(loggedInUser){
-            const foundUser = JSON.parse(loggedInUser);
-            setUser(foundUser);
+            // const foundUser = JSON.parse(loggedInUser);
+            // setUser(loggedInUser);
+            setUser(loggedInUser);
+            console.log("Now setting user to "+loggedInUser)
         }
     },[])
 
