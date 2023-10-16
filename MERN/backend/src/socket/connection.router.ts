@@ -11,6 +11,9 @@ import enqueuePerformer from "./events/internal/enqueue.event";
 import { addMaestro } from "./handlers/maestro.handler";
 import { broadcastNames } from "./events/outgoing/names.broadcast";
 
+const fs = require("fs");
+const WaveFile = require("wavefile").WaveFile;
+
 var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false, mixedAudio: Buffer.alloc(2) };
 
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
@@ -36,6 +39,21 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate first
+
+        // // Save raw audio to file.
+        // const data = fs.readFileSync("./temp/serverStephenSample");
+        // console_log(data, "\n");
+
+        // const buf = Buffer.from(data);
+        // const ar16 = new Int16Array(buf.buffer, buf.byteOffset, buf.byteLength / Int16Array.BYTES_PER_ELEMENT);
+
+
+        // // Convert raw audio file to wav. 
+        // let wav = new WaveFile();
+        // wav.fromScratch(1, 32000, '16', ar16);
+        // const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
+        // fs.writeFileSync("./music/" + fileName, wav.toBuffer());
+
 
         // let argument = route.split("=");
 

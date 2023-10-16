@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { render } from "@testing-library/react";
 import React from "react";
+import schedule from "../API/scheduleAPI";
 
 
 //Functions
@@ -41,9 +42,9 @@ function HomePage() {
             root: null,
             rootMargin: "0px",
             threshold: 0.00
-          };
+        };
 
-          const items = document.querySelectorAll('.intersect'); 
+        const items = document.querySelectorAll('.intersect');
 
         //   const active = new IntersectionObserver((entries) => {
         //     let iter:number = 0;
@@ -65,38 +66,45 @@ function HomePage() {
         // items.forEach((el) => {
         //     active.observe(el);
         //     });
-            
-            const active = function(entries:IntersectionObserverEntry[]){
-                let iter:number = 0;
+
+        const active = function (entries: IntersectionObserverEntry[]) {
+            let iter: number = 0;
             entries.forEach(entry => {
-                if(entry.isIntersecting)
-                {
-                    console.log("Element "+iter+" IS Intersecting");
+                if (entry.isIntersecting) {
+                    console.log("Element " + iter + " IS Intersecting");
                     entry.target.classList.add('animateIn');
                     entry.target.classList.remove('animateOut');
                 }
-                else
-                {
-                    console.log("Element "+iter+" is NOT Intersecting");
+                else {
+                    console.log("Element " + iter + " is NOT Intersecting");
                     entry.target.classList.add('animateOut');
                     entry.target.classList.remove('animateIn');
                 }
                 iter++;
             });
-            }
+        }
 
-            const io2 = new IntersectionObserver(active, options);
-            for(let i=0; i < items.length; i++){
-                io2.observe(items[i]);
-            }
+        const io2 = new IntersectionObserver(active, options);
+        for (let i = 0; i < items.length; i++) {
+            io2.observe(items[i]);
+        }
 
-        });
+    });
 
     return (
-        <div className="container" style={{ padding: " 6% 12%", color: "black"}}>
-            <div className="row intersect"  id = "0">
+        <div className="container" style={{ padding: " 6% 12%", color: "black" }}>
+            <div className="row intersect" id="0">
                 <div className="col">
-                    <img src={JohnCage} className ="johnCageImage"></img>
+                    <img src={JohnCage} className="johnCageImage"></img>
+                    <button onClick={() => schedule({
+                        title: "Example Input",
+                        tags: ["Example Tags", "Example Tag"],
+                        description: "Example Description",
+                        date: "2023-10-29",
+                        time: "20:00:00",
+                        identifier: "Try",
+                        password: "1111"
+                    })}>TEST</button>
                 </div>
                 <div className="col">
                     <div className="row">
@@ -114,7 +122,7 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className="row animateIn intersect"  id = "1">
+            <div className="row animateIn intersect" id="1">
                 <h3>About John Cage 1</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -125,7 +133,7 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className="row animateIn intersect"  id = "2">
+            <div className="row animateIn intersect" id="2">
                 <h3>About John Cage 2</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -136,7 +144,7 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className="row animateIn intersect"  id = "3">
+            <div className="row animateIn intersect" id="3">
                 <h3>About John Cage 3</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>
@@ -147,7 +155,7 @@ function HomePage() {
             </div>
             <div className="row blankBuffer">
             </div>
-            <div className="row animateIn intersect"  id = "4">
+            <div className="row animateIn intersect" id="4">
                 <h3>About John Cage 4</h3>
                 <br />
                 <p>John Cage, in full John Milton Cage, Jr. was an American avant-garde composer whose inventitive compositions and unorthodox ideas profoundly influenced mid-20th century music</p>

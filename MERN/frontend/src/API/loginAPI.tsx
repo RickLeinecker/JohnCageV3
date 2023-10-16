@@ -1,6 +1,6 @@
 import { buildPath } from "../Variables/expressServer";
 
-const LoginAPI = async function name(email:string, password:string) {
+const login = async function name(email:string, password:string) {
     try{
         const JSONObj = JSON.stringify({"username":email,"password":password});
         console.log("Successfully created a JSON of login "+JSONObj);
@@ -21,4 +21,4 @@ const LoginAPI = async function name(email:string, password:string) {
     }
 };
 
-export default LoginAPI;
+export default login;
