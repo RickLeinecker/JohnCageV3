@@ -166,16 +166,21 @@ class ConcertsController implements concertsAPI {
       offset: pageLength * page,
       attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags', 'Date', 'Time'],
       where: {
-        [Op.or]:
-          [
-            { Title: { [Op.like]: `%${searchString}%` } },
-            { Tags: { [Op.like]: `%${searchString}%` } }
-          ],
-        [Op.or]:
-          [
-            { Date: { [Op.lt]: currentDate } },
-            { Date: { [Op.eq]: currentDate }, Time: { [Op.lte]: currentTime } }
-          ]
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { Title: { [Op.like]: `%${searchString}%` } },
+              { Tags: { [Op.like]: `%${searchString}%` } }
+            ]
+          },
+          {
+            [Op.or]: [
+              { Date: { [Op.lt]: currentDate } },
+              { Date: { [Op.eq]: currentDate }, Time: { [Op.lte]: currentTime } },
+              { Date: { [Op.eq]: null }, Time: { [Op.eq]: null } }
+            ]
+          },
+        ]
       }
     }).then((groups) => {
       res.status(200).send({ searchResults: groups });
