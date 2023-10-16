@@ -11,7 +11,7 @@ import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
 import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes} from "react-router-dom";
 import './Style/index.css';
 import WebSocketTest from "./Pages/WebSocketTest";
 

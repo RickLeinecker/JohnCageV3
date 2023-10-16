@@ -47,6 +47,9 @@ const LoginPage = () =>{
         //     takeCredentials(values.email, values.password);
         // }
         LoggingIn(values.email, values.password);
+        if(localStorage.getItem("Username")){
+            window.location.href = '/Concert';
+        }
         return errors;
     }   
     
@@ -130,7 +133,7 @@ const LoginPage = () =>{
                                 </button>
                             </div>
                         </div>
-                        <Link className= 'login-register-swap' to='/pages/Register.tsx'>
+                        <Link className= 'login-register-swap' to='/Register'>
                             Don't have an account yet?
                         </Link>
                     </form>
