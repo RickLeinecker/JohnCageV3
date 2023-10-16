@@ -96,15 +96,6 @@ function HomePage() {
             <div className="row intersect" id="0">
                 <div className="col">
                     <img src={JohnCage} className="johnCageImage"></img>
-                    <button onClick={() => schedule({
-                        title: "Example Input",
-                        tags: ["Example Tags", "Example Tag"],
-                        description: "Example Description",
-                        date: "2023-10-29",
-                        time: "20:00:00",
-                        identifier: "Try",
-                        password: "1111"
-                    })}>TEST</button>
                 </div>
                 <div className="col">
                     <div className="row">
@@ -169,4 +160,17 @@ function HomePage() {
 }
 
 export default HomePage;
+
+
+/*
+       <button onClick={() => schedule({
+                        title: "Example Input",
+                        tags: ["Example Tags", "Example Tag"],
+                        description: "Example Description",
+                        date: "2023-10-29",
+                        time: "20:00:00",
+                        identifier: "Try",
+                        password: "1111"
+                    })}>TEST</button>
+*/
 
