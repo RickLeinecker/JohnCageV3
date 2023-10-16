@@ -27,6 +27,15 @@ const LoginPage = ({setUserName}:any) =>{
         console.log("in handle submit");
         e.preventDefault();
         setFormErrors(validate(formValues));
+        if(formErrors.email !== '' && formErrors.password !== ''){
+            LoggingIn(formValues.email, formValues.password);
+
+            const loggedInUser = localStorage.getItem("Username");
+    
+            if (loggedInUser)
+                setUserName(loggedInUser);
+                window.location.href = '/Concerts';
+        }
     }
 
     const sendVerificationEmail = (email:string) =>
@@ -41,13 +50,6 @@ const LoginPage = ({setUserName}:any) =>{
         // if(errors.email === '' && errors.password === ''){
         //     takeCredentials(values.email, values.password);
         // }
-        LoggingIn(values.email, values.password);
-
-        const loggedInUser = localStorage.getItem("Username");
-
-        if (loggedInUser)
-            setUserName(loggedInUser);
-        
         return errors;
     }   
     
