@@ -142,7 +142,7 @@ const LoginPage = ({setUserName}:any) =>{
                                 </button>
                             </div>
                         </div>
-                        <Link className= 'login-register-swap' to='/pages/Register.tsx'>
+                        <Link className= 'login-register-swap' to='/Register'>
                             Don't have an account yet?
                         </Link>
                     </form>
