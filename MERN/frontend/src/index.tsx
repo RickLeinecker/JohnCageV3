@@ -16,11 +16,30 @@ import './Style/index.css';
 import WebSocketTest from "./Pages/WebSocketTest";
 
 const Compiled = () => {
+
+  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+
   const [userName, setUserName] = useState("");
+  const [buttonList,setButtonList] = useState(baseButtonList);
   
   function LoggingIn(name:string)
   {
     setUserName(name);
+    if (name === "" && buttonList.length < 7)
+    {
+      console.log("Logging out....");
+      localStorage.removeItem("Username");
+      buttonList.pop();
+      buttonList.push("Login");
+      buttonList.push("Register");
+    }
+    else if (buttonList.length > 6)
+    {
+      console.log("Logging in....");
+      buttonList.pop();
+      buttonList.pop();
+      buttonList.push("Logout");
+    }
     console.log("All components will have "+name);
   }
 
@@ -28,7 +47,15 @@ const Compiled = () => {
     const loggedInUser = localStorage.getItem("Username");
     if (userName === "" && loggedInUser)
     {
+      console.log("Use effect logging in ");
       setUserName(loggedInUser);
+      LoggingIn(loggedInUser);
+    }
+    else if (loggedInUser === null)
+    {
+      console.log("Use effect logging out ");
+      setUserName("");
+      LoggingIn("");
     }
   },[])
 
@@ -36,7 +63,7 @@ const Compiled = () => {
       <div>
         <BrowserRouter>
           <div className="row">
-            <NavBar userName={userName}/>
+            <NavBar userName={userName} setterFunction={LoggingIn} buttonList={buttonList}/>
           </div>
           <div className="row">
             <div className="col-2"></div>

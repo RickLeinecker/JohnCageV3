@@ -27,6 +27,13 @@ const LoginPage = ({setUserName}:any) =>{
         console.log("in handle submit");
         e.preventDefault();
         setFormErrors(validate(formValues));
+
+        const loggedInUser = localStorage.getItem("Username");
+        if (loggedInUser)
+        {
+            console.log("Switching to concert");
+            window.location.href = "/Concerts";
+        }
     }
 
     const sendVerificationEmail = (email:string) =>
@@ -41,12 +48,8 @@ const LoginPage = ({setUserName}:any) =>{
         // if(errors.email === '' && errors.password === ''){
         //     takeCredentials(values.email, values.password);
         // }
-        LoggingIn(values.email, values.password);
-
-        const loggedInUser = localStorage.getItem("Username");
-
-        if (loggedInUser)
-            setUserName(loggedInUser);
+        LoggingIn(values.email, values.password, setUserName);
+            
         
         return errors;
     }   
@@ -60,28 +63,34 @@ const LoginPage = ({setUserName}:any) =>{
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         if(values.email === ''){
             errors.email = '*Email is blank';
-        }else if(!emailRegex.test(values.email)){
-            errors.email = "*Invalid email address format. Please try again";
         }
+        // else if(!emailRegex.test(values.email)){
+        //     errors.email = "*Invalid email address format. Please try again";
+        // }
         if(values.password === ''){
            errors.password = '*Password is blank'
         }
-        if(!passwordRegex.test(values.password)){
-            errors.password = "*Invalid password format. Please try again";
-        }
+        // if(!passwordRegex.test(values.password)){
+        //     errors.password = "*Invalid password format. Please try again";
+        // }
         return errors;
     }
     useEffect(() =>{
         const loggedInUser = localStorage.getItem("Username");
         if(loggedInUser){
-            // const foundUser = JSON.parse(loggedInUser);
-            // setUser(loggedInUser);
+
             setUser(loggedInUser);
+            setUserName(loggedInUser);
             console.log("Now setting user to "+loggedInUser)
+        }
+        else
+        {
+            setUser("");
+            setUserName("");
         }
     },[])
 
-    if(user){
+    if(user && user != ""){
         return(<div>{user} is logged in</div>);
     }
 
@@ -98,7 +107,7 @@ const LoginPage = ({setUserName}:any) =>{
                     <form onSubmit={handleSubmit}>
                         <div className='input-group'>
                             <div className='email-group' style={{width: '100%'}}>
-                                <label htmlFor='Email' style={{fontSize: 'calc(5px + 2vmin)'}}>Email</label>
+                                <label htmlFor='Email' style={{fontSize: 'calc(5px + 2vmin)'}}>Username</label>
                                 <input
                                     type='text'
                                     name='email'

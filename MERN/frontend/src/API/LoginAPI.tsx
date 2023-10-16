@@ -1,6 +1,6 @@
 import { buildPath } from "../Variables/expressServer";
 
-const LoginAPI = async function name(email:string, password:string) {
+const LoginAPI = async function name(email:string, password:string, loginFunction:Function) {
     try{
         const JSONObj = JSON.stringify({"username":email,"password":password});
         console.log("Successfully created a JSON of login "+JSONObj);
@@ -14,6 +14,7 @@ const LoginAPI = async function name(email:string, password:string) {
         {
             console.log("Logging in successeful. Welcome ",JSONText.user.UserName);
             localStorage.setItem("Username",JSONText.user.UserName);
+            loginFunction(localStorage.getItem("Username"));
         }
         console.log(JSONText);
         return JSONText;
