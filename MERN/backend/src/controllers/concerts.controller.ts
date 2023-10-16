@@ -27,23 +27,19 @@ class ConcertsController implements concertsAPI {
       groupId = -1;
     }
 
-    const recording = await recordings.findOne({
-      where: {
-        GroupID: groupId // PRetty sure this should be changed to the groupID FK.
-      }
+    await recordings.findOne({
+      where: { GroupID: groupId }
     }).then((recording) => {
-      // Check if there is a recording.
-      if (!recording) {
-        return res.status(400).json({ results: "No Results. Try another recordingID" });
-      }
+      if (!recording) { throw new Error("Recording not found."); }
 
       const filePath = './music/';
       const fileName = recording.RecordingFileName;
       const recordingFilePath = filePath + fileName;
 
       ms.pipe(req, res, recordingFilePath);
-    }).catch((err) => {
-      res.status(401).json({ success: false, message: err });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).json({ error: e.message });
     });
   }
 
@@ -108,44 +104,59 @@ class ConcertsController implements concertsAPI {
   }
 
   async findOne(req: Request, res: Response) {
-    let recordingId: number = parseInt(req.query.id as string);
-    if (!recordingId) {
-      recordingId = -1;
+    let groupId: number = parseInt(req.query.id as string);
+    if (!groupId) {
+      groupId = -1;
     }
 
-    const recording = await recordings.findOne({
+    await groups.findOne({
+      attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
+        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
       where: {
-        ID: recordingId
-      },
-    }).then((recording) => {
-      // Check if there is a group.
-      if (!recording) {
-        return res.status(400).json({ results: "No Results. Try another Recording ID" });
-      };
+        GroupID: groupId
+      }
+    }).then((group) => {
+      if (!group) { throw new Error("Group not found.") }
 
-      const group = groups.findOne({
-        attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
-          'GroupName', 'Title', 'Tags', 'Description', 'Date'],
-        where: {
-          GroupID: recording?.GroupID
-        }
-      }).then((group) => {
-        // Check if there is a group.
-        if (!group) {
-          return res.status(400).json({ results: "No Results. Try another GroupID" });
-        }
-
-        // response contains the group that is mapped to this specific recording via the GroupID.
-        res.status(200).json({
-          group
-        });
-
-      }).catch((err) => {
-        res.status(500).send({
-          message: "Some error occurred while retrieving a group."
-        });
-      });
+      res.status(200).json({ group });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).send({ error: e.message });
     });
+
+    // const recording = await recordings.findOne({
+    //   where: {
+    //     ID: recordingId
+    //   },
+    // }).then((recording) => {
+    //   // Check if there is a group.
+    //   if (!recording) {
+    //     return res.status(400).json({ results: "No Results. Try another Recording ID" });
+    //   };
+
+    //   const group = groups.findOne({
+    //     attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
+    //       'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+    //     where: {
+    //       GroupID: recording?.GroupID
+    //     }
+    //   }).then((group) => {
+    //     // Check if there is a group.
+    //     if (!group) {
+    //       return res.status(400).json({ results: "No Results. Try another GroupID" });
+    //     }
+
+    //     // response contains the group that is mapped to this specific recording via the GroupID.
+    //     res.status(200).json({
+    //       group
+    //     });
+
+    //   }).catch((err) => {
+    //     res.status(500).send({
+    //       message: "Some error occurred while retrieving a group."
+    //     });
+    //   });
+    // });
   }
 
   // IMPORTANT: FILTERS BY CURRENT DATE TO IGNORE FUTURE RECORDINGS. UNTESTED.
