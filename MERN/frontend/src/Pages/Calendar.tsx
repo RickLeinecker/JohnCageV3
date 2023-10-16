@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../Style/CalendarStyle.css';
-
+import CalendarDateRegister from '../API/CalendarDateRegister';
 
 const CalendarPage: React.FC = () => {
     const testTimes = ['02:00 AM', '05:40 PM', '08:20 AM', '07:20 PM', '05:00 PM', '05:20 PM', ]//delete later but for testing purposes of how select works
+    let takenTimes: string[] = [];
 
     const initialValues = {
         eventName: "",
@@ -24,9 +25,13 @@ const CalendarPage: React.FC = () => {
     }
 
     const handleDateClick = (date: Date) => {
-        console.log("in date click");
+        console.log("in date click, Date: " + date.toISOString().split('T')[0]);
+        
         setSelectedDate(date);
         setShowForm(true);
+
+        const takenTimes = CalendarDateRegister(date.toISOString().split('T')[0])
+
     };
 
     const closeForm = () => {

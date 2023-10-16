@@ -1,9 +1,9 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import '../Style/register.css';
-import register from '../API/registerAPI';
+import RegisterAPI from '../API/RegisterAPI';
 
-function RegisterPage() {
+function RegisterPage({ setUserName }: any) {
 
     const initialValues = {
         email: '',
@@ -34,7 +34,7 @@ function RegisterPage() {
             //API call goes here;
             //takeCredentials(values.email, values.password);
         }
-        register(values.screenName, values.username, values.email, values.password, values.phone);
+        RegisterAPI(values.screenName, values.username, values.email, values.password, values.phone, setUserName);
 
         return errors;
 
