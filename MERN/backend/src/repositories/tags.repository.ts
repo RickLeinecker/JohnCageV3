@@ -1,4 +1,4 @@
-import { tags, tagsAttributes } from "../models/tags";
+import { tags, tagsAttributes } from "../models/init-models";
 import console_log from "../logging/console_log";
 
 interface ITagRepository {

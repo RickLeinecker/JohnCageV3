@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { users } from "../models/users";
+import { users } from "../models/init-models";
 
 interface IUsersRepository {
   //save(user: users): Promise<users>;

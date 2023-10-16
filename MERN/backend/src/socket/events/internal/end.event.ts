@@ -7,7 +7,6 @@ const fs = require("fs");
 
 import { groups, recordings, schedules } from "../../../models/init-models";
 const { Op } = require("sequelize");
-const CloudmersiveVideoApiClient = require('cloudmersive-video-api-client');
 const tempFileName: string = "recording.bin";
 const WaveFile = require("wavefile").WaveFile;
 
@@ -113,7 +112,3 @@ export default endConcert;
 // Save mixed buffer as wav or mp3 or whatever and save its file name.
 // Get group id and make recordings row with groupid foreign id and filename.
 // Remove row from scheduled using "where GroupID = groupid."
-
-
-// Save music to file.
-// fs.writeFile("./music/" + fileName, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });

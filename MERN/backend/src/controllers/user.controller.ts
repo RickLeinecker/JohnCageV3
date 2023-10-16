@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { users, usersAttributes } from "../models/init-models";
-import userRepository from "../repositories/user.repository";
+import usersRepository from "../repositories/users.repository";
 import bcryptjs from 'bcryptjs';
 import logging from "../config/logging";
 import signJWT from "../functions/functions.signJWT";
@@ -22,9 +22,6 @@ class UserController {
   async register(req: Request, res: Response, next: NextFunction) {
     console_log(req.body);
     let { Name, UserName, Email, Password, Phone } = req.body;
-
-    console_log(Password);
-
     if (!Password) {
       return res.status(400).send({
         message: "Password invalid!"
@@ -77,18 +74,14 @@ class UserController {
 
   // To login the user and return token & user object
   async login(req: Request, res: Response, next: NextFunction) {
-    // Parse the body of the request for the required fields to log in.
-    let { username, password } = req.body;
+    let { identifier, password } = req.body;
 
     try {
       // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
-      // const allUsers = 
       await users.findAll({
         attributes: { exclude: ['VerificationCode'] },
         where: {
-          UserName: {
-            [Op.eq]: username
-          }
+          UserName: { [Op.eq]: identifier },
         }
       }).then((allUsers) => {
         console_log("Login query successful: ");
@@ -122,7 +115,7 @@ class UserController {
                 });
               }
               else if (token) {
-                console_log("JWT signed. Login successful.");
+                console_log("JWT signed. Login successful.\n");
                 console_log("\n");
                 return res.status(200).json({
                   message: "Authorization Successful.",
@@ -135,13 +128,9 @@ class UserController {
         });
       });
     }
-    catch (err) {
-      console_log("Login Error: ");
-      console_log(err);
-      console_log("\n");
-      return res.status(500).send({
-        message: "Some error occurred while logging in a user."
-      });
+    catch (e: any) {
+      console_log("Error: ", e.message, "\n");
+      return res.status(500).send({ error: e.message });
     }
   };
 
@@ -171,7 +160,7 @@ class UserController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const user = await userRepository.retrieveById(id);
+      const user = await usersRepository.retrieveById(id);
 
       if (user) res.status(200).send(user);
       else
@@ -190,7 +179,7 @@ class UserController {
     user.ID = parseInt(req.params.id);
 
     try {
-      const num = await userRepository.update(user);
+      const num = await usersRepository.update(user);
 
       if (num == 1) {
         res.send({
@@ -212,7 +201,7 @@ class UserController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await userRepository.delete(id);
+      const num = await usersRepository.delete(id);
 
       if (num == 1) {
         res.send({
@@ -232,7 +221,7 @@ class UserController {
 
   //   async findAllVerified(req: Request, res: Response) {
   //     try {
-  //       const users = await userRepository.retrieveAll({ IsVerified: true });
+  //       const users = await usersRepository.retrieveAll({ IsVerified: true });
 
   //       res.status(200).send(users);
   //     } catch (err) {
@@ -244,7 +233,7 @@ class UserController {
 
   //   async findAllAdmins(req: Request, res: Response) {
   //     try {
-  //       const users = await userRepository.retrieveAll({ IsAdmin: true });
+  //       const users = await usersRepository.retrieveAll({ IsAdmin: true });
 
   //       res.status(200).send(users);
   //     } catch (err) {

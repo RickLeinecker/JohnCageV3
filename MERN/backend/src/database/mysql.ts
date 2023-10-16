@@ -25,8 +25,8 @@ class MySQLDatabase {
         console_log("Sequelize: MySQL connection has been established.");
       })
       .catch((err) => {
-        console_err("Sequelize: Unable to connect to MySQL:");
-        console_err(err);
+        console_log("Sequelize: Unable to connect to MySQL:");
+        console_log(err);
       });
   }
 }
