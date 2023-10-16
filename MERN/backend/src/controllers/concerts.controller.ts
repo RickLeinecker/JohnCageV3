@@ -1,10 +1,15 @@
-import { Request, Response } from "express";
-import console_log from "../logging/console_log";
-import tagRepository from "../repositories/tag.repository";
-import { tagsAttributes, recordings, groups } from "../models/init-models";
-var ms = require('mediaserver');
+// Libraries
+const ms = require('mediaserver');
 const { Op } = require("sequelize");
-var fs = require("fs");
+import { Request, Response } from "express";
+
+// Functions
+import console_log from "../logging/console_log";
+import { getDateUTC, getTimeUTC } from "../functions/date.functions";
+
+// Models
+import { recordings, groups } from "../models/init-models";
+
 
 interface concertsAPI {
   findAndPipeAudio(req: Request, res: Response): Promise<void>;
@@ -17,15 +22,14 @@ interface concertsAPI {
 class ConcertsController implements concertsAPI {
   // IMPORTNAT: THIS CURRENTLY USES THE GROUP ID TO SEARCH. IDEALLY WE USE THE PK FROM THE TABLE. IT SHOULD STILL WORK.
   async findAndPipeAudio(req: Request, res: Response) {
-    // Todo: Add ability to query a recording by id and return the actual audio.
-    let recordingId: number = parseInt(req.query.id as string);
-    if (!recordingId) {
-      recordingId = -1;
+    let groupId: number = parseInt(req.query.id as string);
+    if (!groupId) {
+      groupId = -1;
     }
 
     const recording = await recordings.findOne({
       where: {
-        ID: recordingId // PRetty sure this should be changed to the groupID FK.
+        GroupID: groupId // PRetty sure this should be changed to the groupID FK.
       }
     }).then((recording) => {
       // Check if there is a recording.
@@ -144,7 +148,7 @@ class ConcertsController implements concertsAPI {
     });
   }
 
-  // IMPORTANT: MNUST FILTER BY DATE, OTHERWISE SEARCH WILL SHOW SCHEDULED RECORDINGS AS WELL.
+  // IMPORTANT: FILTERS BY CURRENT DATE TO IGNORE FUTURE RECORDINGS. UNTESTED.
   async searchConcerts(req: Request, res: Response) {
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
@@ -153,31 +157,32 @@ class ConcertsController implements concertsAPI {
       page = 0;
     }
 
+    let currentDate: string = getDateUTC();
+    let currentTime: string = getTimeUTC();
+
     // Find all groups with "search" substring in Title or Tags.
-    const allTheGroups = await groups.findAll({
+    await groups.findAll({
       limit: pageLength,
       offset: pageLength * page,
-      attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags'],
+      attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags', 'Date', 'Time'],
       where: {
         [Op.or]:
           [
-            {
-              Title: {
-                [Op.like]: `%${searchString}%`
-              }
-            },
-            {
-              Tags: {
-                [Op.like]: `%${searchString}%`
-              }
-            }
+            { Title: { [Op.like]: `%${searchString}%` } },
+            { Tags: { [Op.like]: `%${searchString}%` } }
+          ],
+        [Op.or]:
+          [
+            { Date: { [Op.lt]: currentDate } },
+            { Date: { [Op.eq]: currentDate }, Time: { [Op.lte]: currentTime } }
           ]
       }
+    }).then((groups) => {
+      res.status(200).send({ searchResults: groups });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).send({ error: e.message });
     });
-
-    //console.log(allTheGroups);
-
-    res.status(200).send({ searchResults: allTheGroups });
   }
 }
 
