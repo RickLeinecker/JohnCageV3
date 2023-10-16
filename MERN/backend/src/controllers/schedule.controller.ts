@@ -50,46 +50,46 @@ class ScheduleController implements scheduleAPI {
             }).then((users) => {
                 let first: users | undefined = users.at(0);
                 if (users.length > 1) { console_log("Warning: Multiple users with same username and password detected.\n"); }
-                bcryptjs.compare(password, users[0].Password, (e: any, equal: any) => {
-                    if (e) { return res.status(401).json({ error: e.message }); }
-                    else if (!equal) { return res.status(401).json({ error: "Incorrect password." }); }
-                });
                 if (!first) { throw new Error("User not found.") }
                 user = first.dataValues;
                 // if (user.IsVerified != 0) { throw new Error("Please verify email befoer scheduling.") } // Add back once email verification works.
 
-                // Create the group.
-                let newGroup: groupsAttributes;
-                let newSchedule: schedulesAttributes;
-                groups.create({
-                    GroupLeaderID: user.ID,
-                    GroupLeaderName: user.Name,
-                    Title: concertTitle,
-                    Tags: tags,
-                    Description: concertDescription,
-                    Date: date,
-                    Time: floorTime(time)
-                }).then((group) => {
-                    newGroup = group.dataValues;
+                bcryptjs.compare(password, user.Password).then((result: any) => {
+                    if (!result) { throw new Error("Incorrect password."); }
 
-                    // Schedule the recording.
-                    const passcodes: number[] = generatePasscodes(5);
-                    schedules.create({
-                        GroupID: newGroup.GroupID,
-                        Date: newGroup["Date"],
-                        Time: newGroup["Time"],
-                        MaestroPasscode: passcodes.at(0),
-                        User1Passcode: passcodes.at(1),
-                        User2Passcode: passcodes.at(2),
-                        User3Passcode: passcodes.at(3),
-                        User4Passcode: passcodes.at(4)
-                    }).then((schedule) => {
-                        newSchedule = schedule.dataValues;
+                    // Create the group.
+                    let newGroup: groupsAttributes;
+                    let newSchedule: schedulesAttributes;
+                    groups.create({
+                        GroupLeaderID: user?.ID ? user.ID : 1,
+                        GroupLeaderName: user?.Name ? user.Name : "John Cage",
+                        Title: concertTitle,
+                        Tags: tags,
+                        Description: concertDescription,
+                        Date: date,
+                        Time: floorTime(time)
+                    }).then((group) => {
+                        newGroup = group.dataValues;
 
-                        console_log("New schedule: ", newSchedule, "\n");
-                        return res.status(200).send({ group: newGroup, schedule: newSchedule });
+                        // Schedule the recording.
+                        const passcodes: number[] = generatePasscodes(5);
+                        schedules.create({
+                            GroupID: newGroup.GroupID,
+                            Date: newGroup["Date"],
+                            Time: newGroup["Time"],
+                            MaestroPasscode: passcodes.at(0),
+                            User1Passcode: passcodes.at(1),
+                            User2Passcode: passcodes.at(2),
+                            User3Passcode: passcodes.at(3),
+                            User4Passcode: passcodes.at(4)
+                        }).then((schedule) => {
+                            newSchedule = schedule.dataValues;
+
+                            console_log("New schedule: ", newSchedule, "\n");
+                            return res.status(200).send({ group: newGroup, schedule: newSchedule });
+                        }).catch((e) => { error(e); });
                     }).catch((e) => { error(e); });
-                }).catch((e) => { error(e); });
+                }).catch((e: any) => { error(e); });
             }).catch((e) => { error(e); });
         }).catch((e) => { error(e); });
 

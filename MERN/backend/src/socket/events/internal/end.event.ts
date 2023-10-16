@@ -2,7 +2,6 @@ import WebSocket from "ws";
 import { addPerformer } from "../../handlers/performer.handler";
 import { Concert, Performer, waitingPerformer } from "../../socket.types";
 import console_log from "../../../logging/console_log";
-import e from "cors";
 const fs = require("fs");
 
 import { groups, recordings, schedules } from "../../../models/init-models";
@@ -65,16 +64,18 @@ const endConcert = function (currentConcert: Concert): void {
 
     // Convert raw audio file to wav. 
     let wav = new WaveFile();
-    wav.fromScratch(1, 32000, '16', currentConcert.mixedAudio);
+    let mixedBuffer: Buffer = currentConcert.mixedAudio;
+    const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
+    wav.fromScratch(1, 32000, '16', samples16);
     const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
     fs.writeFileSync("./music/" + fileName, wav.toBuffer());
     console_log("BBBBBBBBBBB\n");
 
     // Gather data for database queries.
     const performerNames: string[] = gatherNames(currentConcert);
-    console_log("CCCCCCCCCCC\n");
     const groupId = parseInt(fs.readFileSync("./temp/groupId").toString());
     console_log("groupId: ", groupId);
+    console_log("CCCCCCCCCCC\n");
 
     // Update performer names in DB.
     updateNames(performerNames, groupId);
