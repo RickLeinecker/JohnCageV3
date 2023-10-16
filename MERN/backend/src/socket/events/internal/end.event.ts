@@ -103,6 +103,7 @@ const endConcert = function (currentConcert: Concert): void {
         console_log("Error: ", e.message, "\n");
     });
 
+    currentConcert.mixedAudio = Buffer.alloc(2);
     console_log("Concert Ended\n");
 }
 
