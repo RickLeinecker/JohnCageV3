@@ -103,7 +103,7 @@ const endConcert = function (currentConcert: Concert): void {
         console_log("Error: ", e.message, "\n");
     });
 
-    fs.writeFileSync("./temp/groupId", -1);
+    // fs.writeFileSync("./temp/groupId", -1);
     currentConcert.mixedAudio = Buffer.alloc(2);
     console_log("Concert Ended\n");
 }
