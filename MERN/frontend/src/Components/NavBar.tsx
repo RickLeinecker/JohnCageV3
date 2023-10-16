@@ -1,4 +1,4 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Nav, Container, Navbar } from "react-bootstrap";
 import { Link, useLocation, useMatch } from "react-router-dom";
 import PropTypes from 'prop-types';
@@ -48,11 +48,16 @@ const NavBar =({userName}:LoginData) => {
             <Nav className="me-auto">
               {
                 buttonList.map((key, i) => {
-                  return <NavButtons key={i} buttonName={key} />
+                  if ((key === "Login" || key === "Register") && userName != "")
+                  {
+                    return <></>;
+                  }
+                  else
+                    return <NavButtons key={i} buttonName={key} />
                 }
                 )
               }
-              {"Welcome "+userName}
+              {(userName != "" ? "Welcome "+userName : "")}
             </Nav>
           </Navbar.Collapse>
         </Container>
