@@ -30,7 +30,7 @@ class ScheduleController implements scheduleAPI {
         const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
 
-        //TODO: Validate requested Date and Time and reject if invalid format, or in the past.
+        // TODO: Validate requested Date and Time and reject if invalid format, or in the past.
 
         // Check if timeslot is taken.
         schedules.findOne({

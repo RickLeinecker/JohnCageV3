@@ -6,9 +6,11 @@ const fs = require("fs");
 
 import { groups, recordings, schedules } from "../../../models/init-models";
 const { Op } = require("sequelize");
-const tempFileName: string = "recording.bin";
 const WaveFile = require("wavefile").WaveFile;
 
+import { MUSIC_FOLDER } from "../../../config/backend.config";
+
+// Make types to save data to file for DB to save.
 
 // MUST KEEP TRACK OF PERFORMERS THAT LEFT EARLY. THIS IS INCOMPLETE.
 const gatherNames = function (currentConcert: Concert): string[] {
@@ -58,17 +60,17 @@ const updateNames = async function (names: string[], groupId: number): Promise<b
 }
 
 const endConcert = function (currentConcert: Concert): void {
-    // Save raw audio to file.
-    fs.writeFileSync("./temp/" + tempFileName, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
+    // // Save raw audio to file.
+    // fs.writeFileSync("./temp/" + tempFileName, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
     console_log("AAAAAAAAAAA\n");
 
-    // Convert raw audio file to wav. 
+    // Convert raw audio file wav. 
     let wav = new WaveFile();
     let mixedBuffer: Buffer = currentConcert.mixedAudio;
     const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
     wav.fromScratch(1, 32000, '16', samples16);
     const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
-    fs.writeFileSync("./music/" + fileName, wav.toBuffer());
+    fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
     console_log("BBBBBBBBBBB\n");
 
     // Gather data for database queries.

@@ -5,11 +5,13 @@ import { Request, Response } from "express";
 
 // Functions
 import console_log from "../logging/console_log";
-import { getDateUTC, getTimeUTC } from "../functions/date.functions";
+import { getDateUTC, getTimeUTC, formatDateTime, validDate } from "../functions/date.functions";
 
 // Models
 import { recordings, groups } from "../models/init-models";
 
+// Config
+import { MUSIC_FOLDER } from "../config/backend.config";
 
 interface concertsAPI {
   findAndPipeAudio(req: Request, res: Response): Promise<void>;
@@ -32,9 +34,8 @@ class ConcertsController implements concertsAPI {
     }).then((recording) => {
       if (!recording) { throw new Error("Recording not found."); }
 
-      const filePath = './music/';
       const fileName = recording.RecordingFileName;
-      const recordingFilePath = filePath + fileName;
+      const recordingFilePath = MUSIC_FOLDER + fileName;
 
       ms.pipe(req, res, recordingFilePath);
     }).catch((e) => {
@@ -159,31 +160,39 @@ class ConcertsController implements concertsAPI {
     // });
   }
 
-  // IMPORTANT: FILTERS BY CURRENT DATE TO IGNORE FUTURE RECORDINGS. UNTESTED.
   async searchConcerts(req: Request, res: Response) {
+    // Store and validate input.
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
+    const fromDateTime = validDate(req.query.fromDateTime as string) ? formatDateTime(Date.parse(req.query.fromDateTime as string)) : "2000-01-01T00:00:00";
+    const toDateTime = validDate(req.query.toDateTime as string) ? formatDateTime(Date.parse(req.query.toDateTime as string)) : "9999-12-31T23:59:59";
     let page: number = parseInt(req.query.page as string);
-    if (!page) {
-      page = 0;
-    }
 
-    let currentDate: string = getDateUTC();
-    let currentTime: string = getTimeUTC();
+    const fromDate: string = fromDateTime.split('T').at(0) as string;
+    const fromTime: string = fromDateTime.split('T').at(1) as string;
+    const toDate: string = toDateTime.split('T').at(0) as string;
+    const toTime: string = toDateTime.split('T').at(1) as string;
 
-    // Find all groups with "search" substring in Title or Tags.
+    console_log(fromDate, fromTime, toDate, toTime);
+
+    const currentDate: string = getDateUTC();
+    const currentTime: string = getTimeUTC();
+
+    // Search
     await groups.findAll({
       limit: pageLength,
       offset: pageLength * page,
       attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags', 'Date', 'Time'],
       where: {
         [Op.and]: [
+          // Find search string
           {
             [Op.or]: [
               { Title: { [Op.like]: `%${searchString}%` } },
               { Tags: { [Op.like]: `%${searchString}%` } }
             ]
           },
+          // Ignore future groups
           {
             [Op.or]: [
               { Date: { [Op.lt]: currentDate } },
@@ -191,6 +200,13 @@ class ConcertsController implements concertsAPI {
               { Date: { [Op.eq]: null }, Time: { [Op.eq]: null } }
             ]
           },
+          // // Find date and time
+          // {
+          //   [Op.and]: [
+          //     { Date: { [Op.between]: [fromDate, toDate] } },
+          //     { Time: { [Op.between]: [fromTime, toTime] } }
+          //   ]
+          // }
         ]
       }
     }).then((groups) => {
