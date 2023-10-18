@@ -16,10 +16,18 @@ const WaveFile = require("wavefile").WaveFile;
 
 var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false, mixedAudio: Buffer.alloc(2) };
 
+const validatePasscode = function (passcode: string): boolean {
+    const passcodes = fs.readdirSync("./temp/passcodes/");
+    console_log("Passcodes: ", passcodes, "\n");
+
+    if (passcodes.includes(passcode)) { return true; }
+    return false;
+}
+
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
     let route = String(req.url);
 
-    if (route.includes("/concert/performer/maestro")) { // Needs to be altered to authenticate a passcode.
+    if (route.includes("/concert/performer/maestro")) {
         // Authenticate first
 
         let argument = route.split("=");
@@ -29,13 +37,24 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         broadcastNames(currentConcert);
     }
     else if (route.includes("/concert/performer")) {
-        // Authenticate first
-
         let argument = route.split("=");
 
         enqueuePerformer(ws, currentConcert, argument[1]);
         console_log("performer connected.");
         broadcastNames(currentConcert);
+    }
+    else if (route.includes("/concert/performerSECURE")) {
+        let argument = route.split("=");
+
+        // Authenticate
+        if (!validatePasscode(argument[3])) {
+            ws.close(0, "Invalid passcode.");
+        }
+        else {
+            enqueuePerformer(ws, currentConcert, argument[1]);
+            console_log("performerSECURE connected.");
+            broadcastNames(currentConcert);
+        }
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate first
