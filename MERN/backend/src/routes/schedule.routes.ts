@@ -14,6 +14,7 @@ class SchedulesRoutees {
         this.router.get("/getSchedule", this.controller.getSchedule);
         this.router.post("/prepareConcert", this.controller.prepareConcert);
         this.router.post("/validatePerformer", this.controller.validatePerformer);
+        this.router.get("/getNextConcert", this.controller.getNextConcert);
     }
 }
 
