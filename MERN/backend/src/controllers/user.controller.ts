@@ -41,16 +41,12 @@ class UserController {
         // Create a new user
         const newUser = await users.create({
           // Required fields
-          Name: Name,
           UserName: UserName,
           Email: Email,
           Password: hash,
-
-          // Optional field(s)
-          Phone: Phone
         },
           // Define which attributes can be set based on a form (restrict the User model to set only these fields)
-          { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
+          { fields: ['UserName', 'Email', 'Password'] })
           .catch((e) => { console_log("Error: ", e.errors, "\n") });
 
         if (newUser) {

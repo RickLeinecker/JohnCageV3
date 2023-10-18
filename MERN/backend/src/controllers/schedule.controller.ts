@@ -41,6 +41,7 @@ class ScheduleController implements scheduleAPI {
                 Time: { [Op.eq]: floorTime(time) }
             }
         }).then((schedule) => {
+            // TODO: Might be improved by makeing date time pair unique in groups, meaning no search or check needed.
             console_log("\nSchedule: ", schedule, "\n");
             if (schedule) { throw new Error("This date and time has already been reserved."); }
 
@@ -64,7 +65,7 @@ class ScheduleController implements scheduleAPI {
                     let newSchedule: schedulesAttributes;
                     groups.create({
                         GroupLeaderID: user?.ID ? user.ID : 1,
-                        GroupLeaderName: user?.Name ? user.Name : "John Cage",
+                        GroupLeaderName: user?.UserName ? user.UserName : "John Cage",
                         Title: concertTitle,
                         Tags: tags,
                         Description: concertDescription,
@@ -96,7 +97,7 @@ class ScheduleController implements scheduleAPI {
         }).catch((e) => { error(e); });
 
         function error(e: any) {
-            console_log("Error: ", e.message, "\n");
+            console_log("Error: ", e, "\n");
             return res.status(500).send({ error: e.message });
         }
     }

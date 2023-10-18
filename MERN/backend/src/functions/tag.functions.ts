@@ -9,4 +9,8 @@ const concatTags = function (tags: string[]): string {
     return cTags;
 }
 
-export { concatTags };
+const splitTags = function (tags: string): string[] {
+    return tags.split('`');
+}
+
+export { concatTags, splitTags };
