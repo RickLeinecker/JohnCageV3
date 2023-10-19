@@ -36,25 +36,25 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         console_log("performer/maestro connected.");
         broadcastNames(currentConcert);
     }
-    else if (route.includes("/concert/performer")) {
-        let argument = route.split("=");
-
-        enqueuePerformer(ws, currentConcert, argument[1]);
-        console_log("performer connected.");
-        broadcastNames(currentConcert);
-    }
     else if (route.includes("/concert/performerSECURE")) {
         let argument = route.split("=");
 
         // Authenticate
         if (!validatePasscode(argument[3])) {
-            ws.close(0, "Invalid passcode.");
+            ws.close();
         }
         else {
             enqueuePerformer(ws, currentConcert, argument[1]);
             console_log("performerSECURE connected.");
             broadcastNames(currentConcert);
         }
+    }
+    else if (route.includes("/concert/performer")) {
+        let argument = route.split("=");
+
+        enqueuePerformer(ws, currentConcert, argument[1]);
+        console_log("performer connected.");
+        broadcastNames(currentConcert);
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate first
