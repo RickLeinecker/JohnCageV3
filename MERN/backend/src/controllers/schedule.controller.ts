@@ -17,6 +17,8 @@ interface scheduleAPI {
     scheduleConcert(req: Request, res: Response): Promise<void>;
     getSchedule(req: Request, res: Response): Promise<void>;
     prepareConcert(req: Request, res: Response): Promise<void>;
+    validatePerformer(req: Request, res: Response): Promise<void>;
+    getNextConcert(req: Request, res: Response): Promise<void>;
 }
 
 class ScheduleController implements scheduleAPI {
@@ -30,7 +32,7 @@ class ScheduleController implements scheduleAPI {
         const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
 
-        //TODO: Validate requested Date and Time and reject if invalid format, or in the past.
+        // TODO: Validate requested Date and Time and reject if invalid format, or in the past.
 
         // Check if timeslot is taken.
         schedules.findOne({
@@ -39,6 +41,7 @@ class ScheduleController implements scheduleAPI {
                 Time: { [Op.eq]: floorTime(time) }
             }
         }).then((schedule) => {
+            // TODO: Might be improved by makeing date time pair unique in groups, meaning no search or check needed.
             console_log("\nSchedule: ", schedule, "\n");
             if (schedule) { throw new Error("This date and time has already been reserved."); }
 
@@ -62,7 +65,7 @@ class ScheduleController implements scheduleAPI {
                     let newSchedule: schedulesAttributes;
                     groups.create({
                         GroupLeaderID: user?.ID ? user.ID : 1,
-                        GroupLeaderName: user?.Name ? user.Name : "John Cage",
+                        GroupLeaderName: user?.UserName ? user.UserName : "John Cage",
                         Title: concertTitle,
                         Tags: tags,
                         Description: concertDescription,
@@ -94,7 +97,7 @@ class ScheduleController implements scheduleAPI {
         }).catch((e) => { error(e); });
 
         function error(e: any) {
-            console_log("Error: ", e.message, "\n");
+            console_log("Error: ", e, "\n");
             return res.status(500).send({ error: e.message });
         }
     }
@@ -122,12 +125,87 @@ class ScheduleController implements scheduleAPI {
             });
     }
 
+    async getNextConcert(req: Request, res: Response) {
+        const date = getDateUTC();
+        const time = floorTime(getTimeUTC());
+        await groups.findAll(
+            {
+                order: [
+                    ['Date', 'ASC'],
+                    ['Time', 'ASC']
+                ],
+                where: {
+                    [Op.or]:
+                        [
+                            {
+                                Date: { [Op.eq]: date },
+                                Time: { [Op.gte]: time }
+                            },
+                            { Date: { [Op.gt]: date } }
+                        ]
+                }
+            }).then((group) => {
+                if (!group.at(0)) { throw new Error("No future concert found.") }
+
+                console_log("Next concert group: ", group.at(0), "\n\n");
+                return res.status(200).send({ nextConcertGroup: group.at(0) });
+            }).catch((e) => {
+                console_log("Error: ", e.message, "\n\n");
+                return res.status(500).send({ error: e.message });
+            });
+    }
+
     async prepareConcert(req: Request, res: Response) {
         console_log("Preparing concert. Current time: ", "\n");
         console_log(getTimeUTC(), "\n");
         console_log(getDateUTC(), "\n");
 
-        let { maestroPasscode } = req.body;
+        const { maestroPasscode } = req.body;
+
+        // Get currently scheduled recording and validate if user is the maestro.
+        const currentDate: string = getDateUTC();
+        const currentTime: string = getTimeUTC();
+
+        // Authenticate user.
+        await schedules.findAll({
+            where: {
+                Date: {
+                    [Op.eq]: currentDate
+                },
+                Time: {
+                    [Op.between]: [floorTime(currentTime), currentTime]
+                }
+            }
+        }).then((schedules) => {
+            let firstSchedule: schedules | undefined = schedules.at(0);
+            if (schedules.length > 1) { console_log("Warning: Multiple schedules with same time detected.\n"); }
+            if (!firstSchedule) { throw new Error("No concert found scheduled for the current time slot."); }
+            else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) { throw new Error("Maestro passcode does not match that of the currently scheduled recording."); }
+
+            // Save passcode to file for the socket server to check.
+            fs.writeFile("./temp/passcodes/" + maestroPasscode.toString(), "", (e: any) => {
+                if (e) { throw new Error("Saving maestro passcode failed."); }
+            });
+
+            // Save groupId to file for socket server to read.
+            fs.writeFile("./temp/groupId", firstSchedule.GroupID?.toString(), (e: any) => {
+                if (e) { throw new Error("Saving groupId file failed."); }
+            });
+
+            console_log("Maestro passcode saved to file.\n");
+            return res.status(200).send({ message: "No errors caught." });
+        }).catch((e) => {
+            console_log("Error: ", e.message, "\n");
+            return res.status(500).send({ error: e.message });
+        });
+    }
+
+    async validatePerformer(req: Request, res: Response) {
+        console_log("Validating performer. Current time: ", "\n");
+        console_log(getTimeUTC(), "\n");
+        console_log(getDateUTC(), "\n");
+
+        let { performerPasscode } = req.body;
 
         // Get currently scheduled recording and validate if user is the maestro.
         let currentDate: string = getDateUTC();
@@ -145,24 +223,17 @@ class ScheduleController implements scheduleAPI {
             }
         }).then((schedules) => {
             let firstSchedule: schedules | undefined = schedules.at(0);
-            if (schedules.length > 1) {
-                console_log("Warning: Multiple schedules with same time detected.\n");
-            }
-            if (!firstSchedule) {
-                throw new Error("No concert found scheduled for the current time slot.");
-            }
-            else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) {
-                throw new Error("Maestro passcode does not match that of the currently scheduled recording.");
-            }
+            if (schedules.length > 1) { console_log("Warning: Multiple schedules with same time detected.\n"); }
+            if (!firstSchedule) { throw new Error("No concert found scheduled for the current time slot."); }
+            if (!getPerformerPasscodes(firstSchedule).includes(parseInt(performerPasscode))) { throw new Error("Passcode not found in the currently scheduled concert."); }
 
-            // Save passcodes to files for the socket server to check.
-            storePasscodes(getPerformerPasscodes(firstSchedule));
-            fs.writeFile("./temp/groupId", firstSchedule.GroupID?.toString(), (e: any) => {
-                if (e) { throw new Error("Saving groupId file failed."); }
+            // TODO: Store file paths in config file and import everywhere.
+            fs.writeFile("./temp/passcodes/" + performerPasscode.toString(), "", (e: any) => {
+                if (e) { throw new Error("Saving passcode failed."); }
             });
 
-            console_log("Passcodes saved to files.\n");
-            return res.status(200).send({ message: "No errors caught. Passcodes saved to files." });
+            console_log("Passcode saved to file.\n");
+            return res.status(200).send({ message: "No errors caught. Passcode saved to file." });
         }).catch((e) => {
             console_log("Error: ", e.message, "\n");
             return res.status(500).send({ error: e.message });

@@ -1,17 +1,16 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { groups, groupsId } from './groups';
+import type { verification, verificationId } from './verification';
 
 export interface usersAttributes {
   ID: number;
   Role: string;
   DateCreated: Date;
   DateLastLoggedIn: Date;
-  Name: string;
   UserName: string;
   Email: string;
   Password: string;
-  Phone?: string;
   IsAdmin: number;
   IsVerified: number;
   VerificationCode?: number;
@@ -19,7 +18,7 @@ export interface usersAttributes {
 
 export type usersPk = "ID";
 export type usersId = users[usersPk];
-export type usersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "Phone" | "IsAdmin" | "IsVerified" | "VerificationCode";
+export type usersOptionalAttributes = "ID" | "Role" | "DateCreated" | "DateLastLoggedIn" | "IsAdmin" | "IsVerified" | "VerificationCode";
 export type usersCreationAttributes = Optional<usersAttributes, usersOptionalAttributes>;
 
 export class users extends Model<usersAttributes, usersCreationAttributes> implements usersAttributes {
@@ -27,11 +26,9 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
   Role!: string;
   DateCreated!: Date;
   DateLastLoggedIn!: Date;
-  Name!: string;
   UserName!: string;
   Email!: string;
   Password!: string;
-  Phone?: string;
   IsAdmin!: number;
   IsVerified!: number;
   VerificationCode?: number;
@@ -48,6 +45,18 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
   hasGroup!: Sequelize.HasManyHasAssociationMixin<groups, groupsId>;
   hasGroups!: Sequelize.HasManyHasAssociationsMixin<groups, groupsId>;
   countGroups!: Sequelize.HasManyCountAssociationsMixin;
+  // users hasMany verification via UserID
+  verifications!: verification[];
+  getVerifications!: Sequelize.HasManyGetAssociationsMixin<verification>;
+  setVerifications!: Sequelize.HasManySetAssociationsMixin<verification, verificationId>;
+  addVerification!: Sequelize.HasManyAddAssociationMixin<verification, verificationId>;
+  addVerifications!: Sequelize.HasManyAddAssociationsMixin<verification, verificationId>;
+  createVerification!: Sequelize.HasManyCreateAssociationMixin<verification>;
+  removeVerification!: Sequelize.HasManyRemoveAssociationMixin<verification, verificationId>;
+  removeVerifications!: Sequelize.HasManyRemoveAssociationsMixin<verification, verificationId>;
+  hasVerification!: Sequelize.HasManyHasAssociationMixin<verification, verificationId>;
+  hasVerifications!: Sequelize.HasManyHasAssociationsMixin<verification, verificationId>;
+  countVerifications!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof users {
     return users.init({
@@ -72,10 +81,6 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
-    Name: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
     UserName: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -89,10 +94,6 @@ export class users extends Model<usersAttributes, usersCreationAttributes> imple
     Password: {
       type: DataTypes.STRING(69),
       allowNull: false
-    },
-    Phone: {
-      type: DataTypes.STRING(11),
-      allowNull: true
     },
     IsAdmin: {
       type: DataTypes.TINYINT,

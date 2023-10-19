@@ -72,11 +72,11 @@ class UsersRepository implements IUsersRepository {
   }
 
   async update(user: users): Promise<number> {
-    const { ID, Role, Name, Email, Password, Phone, UserName, IsAdmin, IsVerified } = user;
+    const { ID, Role, Email, Password, UserName, IsAdmin, IsVerified } = user;
 
     try {
       const affectedRows = await users.update(
-        { ID, Role, Name, Email, Password, Phone, UserName, IsAdmin, IsVerified },
+        { ID, Role, Email, Password, UserName, IsAdmin, IsVerified },
         { where: { ID: ID } }
       );
 

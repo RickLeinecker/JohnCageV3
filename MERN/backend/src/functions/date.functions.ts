@@ -34,4 +34,65 @@ const getTimeUTC = function (): string {
     return hours + ":" + minutes + ":" + seconds;
 }
 
-export { getTimeUTC, getDateUTC, floorTime };
+// Concerts timestamp to YYYY-MM-DDTHH:MM:SS Date Time string format.
+// Not tested extensively.
+const formatDateTime = function (timestamp: number): string {
+    let object = new Date(timestamp);
+    var year = object.getFullYear().toString();
+    var month = (object.getMonth() + 1).toString();
+    var day = (object.getDate()).toString();
+    var hours = (object.getHours()).toString();
+    var minutes = (object.getMinutes()).toString();
+    var seconds = (object.getSeconds()).toString();
+
+    if (month.length == 1) { month = "0" + month; }
+    if (day.length == 1) { day = "0" + day; }
+    if (hours.length == 1) { hours = "0" + hours; }
+    if (minutes.length == 1) { minutes = "0" + minutes; }
+    if (seconds.length == 1) { seconds = "0" + seconds; }
+
+    return year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds;
+}
+
+// Concerts timestamp to YYYY-MM-DDTHH:MM:SS Date Time string format.
+// Not tested extensively.
+const validDate = function (date: string): boolean {
+    if (isNaN(Date.parse(date))) { return false; }
+    return true;
+}
+
+export { getTimeUTC, getDateUTC, floorTime, formatDateTime, validDate };
+
+
+
+// // Verifies that Date is in YYYY-MM-DD format.
+// const validateDateFormat = function (date: string): boolean {
+//     const example: String = "2023-12-10";
+//     if (example.length != 10) { console.log("Date is not 10 characters."); }
+
+//     let hms: string[] = date.split('-');
+//     if (hms.length != 3) { console.log("Date does not have 3 substrings separated by dashes '-'."); }
+
+//     // Validate year.
+//     let year: string = hms.at(0) as string;
+//     if (year.length != 4 || !(2000 <= parseInt(year) && parseInt(year) <= 9999)) {
+//         console_log("Year must be 4 digits, for year between 2000 and 9999 inclusive.");
+//         return false;
+//     }
+
+//     // Validate month.
+//     let month: string = hms.at(1) as string;
+//     if (month.length != 2 || !(1 <= parseInt(month) && parseInt(month) <= 12)) {
+//         console_log("Month must be 2 digits, for month between 01 and 12 inclusive.");
+//         return false;
+//     }
+
+//     // Validate day.
+//     let day: string = hms.at(2) as string;
+//     if (month.length != 2 || !(1 <= parseInt(day) && parseInt(day) <= 31)) {
+//         console_log("Day must be 2 digits, for day between 01 and 31 inclusive.");
+//         return false;
+//     }
+
+//     return true;
+// }

@@ -18,8 +18,8 @@ export interface groupsAttributes {
   Tags?: string;
   PictureFileName?: string;
   Description?: string;
-  Date?: string;
-  Time?: string;
+  Date: string;
+  Time: string;
 }
 
 export type groupsPk = "GroupID";
@@ -41,8 +41,8 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
   Tags?: string;
   PictureFileName?: string;
   Description?: string;
-  Date?: string;
-  Time?: string;
+  Date!: string;
+  Time!: string;
 
   // groups hasMany recordings via GroupID
   recordings!: recordings[];
@@ -121,7 +121,8 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
     },
     Title: {
       type: DataTypes.STRING(255),
-      allowNull: false
+      allowNull: false,
+      unique: "Title_UNIQUE"
     },
     Tags: {
       type: DataTypes.STRING(50),
@@ -137,11 +138,13 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
     },
     Date: {
       type: DataTypes.DATEONLY,
-      allowNull: true
+      allowNull: false,
+      defaultValue: "2000-01-01"
     },
     Time: {
       type: DataTypes.TIME,
-      allowNull: true
+      allowNull: false,
+      defaultValue: "00:00:00"
     }
   }, {
     sequelize,
@@ -162,6 +165,14 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
         using: "BTREE",
         fields: [
           { name: "GroupID" },
+        ]
+      },
+      {
+        name: "Title_UNIQUE",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "Title" },
         ]
       },
       {
