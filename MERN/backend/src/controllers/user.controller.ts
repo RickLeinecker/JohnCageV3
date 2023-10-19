@@ -20,8 +20,7 @@ class UserController {
 
   // For creating a new user and storing them in the database.
   async register(req: Request, res: Response, next: NextFunction) {
-    console_log(req.body);
-    let { Name, UserName, Email, Password, Phone } = req.body;
+    let { UserName, Email, Password } = req.body;
     if (!Password) {
       return res.status(400).send({
         message: "Password invalid!"
@@ -39,27 +38,28 @@ class UserController {
         }
 
         // Create a new user
-        const newUser = await users.create({
-          // Required fields
-          UserName: UserName,
-          Email: Email,
-          Password: hash,
-        },
-          // Define which attributes can be set based on a form (restrict the User model to set only these fields)
+        await users.create(
+          {
+            UserName: UserName,
+            Email: Email,
+            Password: hash,
+          },
           { fields: ['UserName', 'Email', 'Password'] })
-          .catch((e) => { console_log("Error: ", e.errors, "\n") });
+          .then((newUser) => {
+            if (!newUser) { throw new Error("Failed to create user.") }
 
-        if (newUser) {
-          // Return the (registered) user as response.
-          return res.status(201).json({
-            message: "User registered successfully!",
-            user: newUser
+            // Return the (registered) user as response.
+            return res.status(201).json({
+              message: "User registered successfully!",
+              user: newUser
+            });
+          })
+          .catch((e) => {
+            console_log("Error: ", e, "\n");
+            return res.status(500).send({
+              error: e.message
+            });
           });
-        }
-
-        return res.status(500).json({
-          message: "Failed"
-        });
       });
     } catch (err) {
       return res.status(500).send({
