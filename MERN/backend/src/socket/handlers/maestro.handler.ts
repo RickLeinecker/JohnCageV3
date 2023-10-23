@@ -37,7 +37,7 @@ const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
         console_log("Received message data: ", data, "\n");
 
         let message: Buffer = <Buffer>data;
-        let headerData: CustomHeader = retrieveHeader(<Buffer>data);
+        let headerData: CustomHeader = retrieveHeader(message);
 
         let headerEnd: number = headerData.headerEnd;
         let header: string = headerData.header;
@@ -86,7 +86,7 @@ const defineMaestroClose = function (ws: WebSocket, currentConcert: Concert) {
 
 const removeMaestro = function (currentConcert: Concert) {
     currentConcert.maestro = undefined;
-    console_log("Maestro removed."); // CHECK IF DUPLICATE WITH SOCKET ONCLOSE CODE.
+    console_log("Maestro removed.");
     console_log(currentConcert.maestro);
 }
 

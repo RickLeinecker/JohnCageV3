@@ -38,7 +38,7 @@ const definePerformerMessage = function (performer: Performer, currentConcert: C
         console_log("\n");
 
         let message: Buffer = <Buffer>data;
-        let headerData: CustomHeader = retrieveHeader(<Buffer>data);
+        let headerData: CustomHeader = retrieveHeader(message);
 
         let headerEnd: number = headerData.headerEnd;
         let header: string = headerData.header;

@@ -104,7 +104,7 @@ const concertTick = function (currentConcert: Concert) {
         header[0] = 0;
         let audioMessage: Buffer = Buffer.concat([header, mixedBuffer]);
         // Broadcast mixed chunk.
-        broadcastMessage(currentConcert, audioMessage, true, false, true);
+        broadcastMessage(currentConcert, audioMessage, true, false, true, true);
         console_log("Audio broadcast.");
         console_log("\n");
 
@@ -129,18 +129,3 @@ const concertTick = function (currentConcert: Concert) {
 }
 
 export { concertTick };
-
-
-/* Backup of audio data broadcast after switching to broadcastMessage function.
-
-        // Replace with common broadcast function.
-        currentConcert.performers.forEach(function each(performer) {
-            let socket: WebSocket = performer.socket;
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(mixedBuffer, { binary: true });
-                console_log("Mixed chunk sent:");
-                console_log(mixedBuffer);
-            }
-        });
-        currentConcert.maestro?.socket.send(mixedBuffer, { binary: true });
-*/

@@ -1,6 +1,6 @@
 import console_log from "../../logging/console_log";
 import { maxCustomHeaderSize } from "../socket.config";
-import { Concert, waitingPerformer, Performer, CustomHeader } from "../socket.types";
+import { Concert, waitingPerformer, Performer, CustomHeader, Listener } from "../socket.types";
 import WebSocket from "ws";
 
 const retrieveHeader = function (data: Buffer): CustomHeader {
@@ -35,7 +35,7 @@ const retrieveMessageContents = function (message: Buffer, headerEnd: number): A
     return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
 }
 
-const broadcastMessage = function (currentConcert: Concert, message: Uint8Array, perf: boolean, waiters: boolean, maestro: boolean): void {
+const broadcastMessage = function (currentConcert: Concert, message: Uint8Array, perf: boolean, waiters: boolean, maestro: boolean, listener: boolean): void {
     if (perf) {
         broadcastPerformers(currentConcert.performers, message);
     }
@@ -46,6 +46,20 @@ const broadcastMessage = function (currentConcert: Concert, message: Uint8Array,
 
     if (maestro) {
         broadcastMaestro(currentConcert.maestro, message);
+    }
+
+    if (listener) {
+        broadcastListener(currentConcert.listener, message);
+    }
+}
+
+const broadcastListener = function (listener: Listener | undefined, message: Uint8Array): void {
+    // Send to Maestro
+    if (listener) {
+        let listenerSocket = listener.socket;
+        if (listenerSocket) {
+            listenerSocket.send(message);
+        }
     }
 }
 

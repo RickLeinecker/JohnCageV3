@@ -192,6 +192,11 @@ class ScheduleController implements scheduleAPI {
                 if (e) { throw new Error("Saving groupId file failed."); }
             });
 
+            // Save groupId to file for socket server to read.
+            fs.writeFile("./temp/timestamp", firstSchedule.Date + "T" + firstSchedule.Time, (e: any) => {
+                if (e) { throw new Error("Saving timestamp file failed."); }
+            });
+
             console_log("Maestro passcode saved to file.\n");
             return res.status(200).send({ message: "No errors caught." });
         }).catch((e) => {

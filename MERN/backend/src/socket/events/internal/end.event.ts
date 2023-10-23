@@ -60,58 +60,61 @@ const updateNames = async function (names: string[], groupId: number): Promise<b
 }
 
 const endConcert = function (currentConcert: Concert): void {
-    // // Save raw audio to file.
-    // fs.writeFileSync("./temp/" + tempFileName, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
-    console_log("AAAAAAAAAAA\n");
+    if (currentConcert.active) {
+        console_log("AAAAAAAAAAA\n");
 
-    // Convert raw audio file wav. 
-    let wav = new WaveFile();
-    let mixedBuffer: Buffer = currentConcert.mixedAudio;
-    const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
-    wav.fromScratch(1, 32000, '16', samples16);
-    const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
-    fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
-    console_log("BBBBBBBBBBB\n");
+        // Convert raw audio file wav. 
+        let wav = new WaveFile();
+        let mixedBuffer: Buffer = currentConcert.mixedAudio;
+        const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
+        wav.fromScratch(1, 32000, '16', samples16);
+        const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
+        fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
+        console_log("BBBBBBBBBBB\n");
 
-    // Gather data for database queries.
-    const performerNames: string[] = gatherNames(currentConcert);
-    const groupId = parseInt(fs.readFileSync("./temp/groupId").toString());
-    console_log("groupId: ", groupId);
-    console_log("CCCCCCCCCCC\n");
+        // Gather data for database queries.
+        const performerNames: string[] = gatherNames(currentConcert);
+        const groupId = parseInt(fs.readFileSync("./temp/groupId").toString());
+        console_log("groupId: ", groupId);
+        console_log("CCCCCCCCCCC\n");
 
-    // Update performer names in DB.
-    updateNames(performerNames, groupId);
+        // Update performer names in DB.
+        updateNames(performerNames, groupId);
 
-    // Create recording.
-    recordings.create({
-        GroupID: groupId,
-        RecordingFileName: fileName
-    }).then((recording) => {
-        let newRecording = recording.dataValues;
+        // Create recording.
+        recordings.create({
+            GroupID: groupId,
+            RecordingFileName: fileName
+        }).then((recording) => {
+            let newRecording = recording.dataValues;
 
-        console_log("New recording: ", newRecording, "\n");
-    }).catch((e) => {
-        console_log("Error: ", e.message, "\n");
-    });
+            console_log("New recording: ", newRecording, "\n");
+        }).catch((e) => {
+            console_log("Error: ", e.message, "\n");
+        });
 
-    // Delete current schedule record.
-    schedules.destroy({
-        where: {
-            GroupID: groupId
-        }
-    }).then((schedule) => {
-        console_log("Schedule deleted: ", schedule, "\n");
-    }).catch((e) => {
-        console_log("Error: ", e.message, "\n");
-    });
+        // Delete current schedule record.
+        schedules.destroy({
+            where: {
+                GroupID: groupId
+            }
+        }).then((schedule) => {
+            console_log("Schedule deleted: ", schedule, "\n");
+        }).catch((e) => {
+            console_log("Error: ", e.message, "\n");
+        });
 
-    // fs.writeFileSync("./temp/groupId", -1);
-    currentConcert.mixedAudio = Buffer.alloc(2);
-    console_log("Concert Ended\n");
+        currentConcert.mixedAudio = Buffer.alloc(2);
+        currentConcert.active = false;
+        console_log("Concert Ended\n");
+    }
 }
 
 export default endConcert;
 
+
+// // Save raw audio to file.
+// fs.writeFileSync("./temp/" + tempFileName, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });   
 
 // Get performer names // MUST KEEP TRACK OF PERFORMERS THAT LEFT EARLY.
 // Save mixed buffer as wav or mp3 or whatever and save its file name.

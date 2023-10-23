@@ -12,6 +12,11 @@ type Concert = {
     waitingPerformers: waitingPerformer[];
     active: boolean;
     mixedAudio: Buffer;
+    listener: Listener | undefined;
+}
+
+type Listener = {
+    socket: WebSocket;
 }
 
 type waitingPerformer = {
@@ -38,4 +43,4 @@ class ConcertParticipant {
     }
 }
 
-export { Concert, ConcertParticipant, CustomHeader, waitingPerformer, Performer };
+export { Concert, ConcertParticipant, CustomHeader, waitingPerformer, Performer, Listener };
