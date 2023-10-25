@@ -112,7 +112,7 @@ function ConcertPage() {
     const [searchList, setSearchList] = useState<Array<searchResult>>([{ title: "default", id: -1, tags: "", maestro: "", }]);
     const [activeSelection, setActiveSelection] = useState<number>(-1);
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: "", maestro: "", performers: [""] });
-    const [page, setPage] = useState<number>(0);
+    const [page, setPage] = useState<number>(1);
     const [isOpen, setIsOpen] = useState(false);
 
     // Pagination
@@ -122,7 +122,7 @@ function ConcertPage() {
         }
     }
     const prevPage = function () {
-        if (page > 0) {
+        if (page > 1) {
             setPage(page - 1);
         }
     }

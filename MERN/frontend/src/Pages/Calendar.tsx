@@ -24,13 +24,18 @@ const CalendarPage: React.FC = () => {
         display: showForm ? 'none' : 'block',
     }
 
+    function ReadTakenTimes(timesTable:string[])
+    {
+        console.log("Time slot takens for the day are ",timesTable);
+    }
+
     const handleDateClick = (date: Date) => {
         console.log("in date click, Date: " + date.toISOString().split('T')[0]);
         
         setSelectedDate(date);
         setShowForm(true);
 
-        const takenTimes = CalendarDateRegister(date.toISOString().split('T')[0])
+        const takenTimes = CalendarDateRegister(date.toISOString().split('T')[0],ReadTakenTimes)
 
     };
 
