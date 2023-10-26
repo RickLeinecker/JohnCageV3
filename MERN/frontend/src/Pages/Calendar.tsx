@@ -89,25 +89,22 @@ const CalendarPage: React.FC = () => {
         setSelectedTime(newTime);
     }
 
-    function convertTime(timeString:string)
-    {
-        const [time, modifier] = timeString.split(' ');
-        let [hours, minutes] = time.split(':');
-        if (hours === '12') {
-           hours = '00';
-        }
-        if (modifier === 'PM') {
-           hours = (parseInt(hours, 10) + 12).toString();
-        }
-        return `${hours}:${minutes}`+":00";
+     function monthString(mon:string){
+        return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
 
-     function convertTimeDate(timeString:string,dateString:string):string
+     function formattedUTCString(timeString:string,dateString:string):string[]
      {
-        const utcString:string = (new Date(dateString+""+timeString)).toUTCString();
-        const stringArray:string[] = utcString.split(" ");
+        dateString = dateString.replace(/-/gi,"/");
+        console.log("Passing in time: "+timeString+" and date: "+dateString);
+        const utcString:string[] = (new Date(dateString+" "+timeString)).toUTCString().split(" ");
+        const reformmatedDateString:string = utcString[3]+"-"+monthString(utcString[2])+"-"+utcString[1];
+        console.log("reformattedDate string is "+utcString);
+        const utcTimeString = utcString[4];
+        const utcFinalString:string[] = [reformmatedDateString,utcTimeString];
+        console.log("Final string content "+utcFinalString)
 
-        return stringArray[4];
+        return utcFinalString;
      }
 
     const useSelectedTime = () =>{
@@ -118,12 +115,11 @@ const CalendarPage: React.FC = () => {
         {
             console.log("Sending in schedule data");
             const dateString:string = selectedDate.toISOString().split('T')[0];
-            //const convertedTime:string = convertTimeDate(selectedTime,dateString);
-            const convertedTime:string = convertTime(selectedTime);
-            console.log("Returning time "+convertedTime);
+            const convertedTimeArr:string[] = formattedUTCString(selectedTime,dateString);
+            console.log("Returning time "+convertedTimeArr);
             scheduleData.title = event.eventName;
-            scheduleData.date = dateString;
-            scheduleData.time = convertedTime;
+            scheduleData.date = convertedTimeArr[0];
+            scheduleData.time = convertedTimeArr[1];
             scheduleData.identifier = event.identifier;
             scheduleData.password = event.password;
             schedule(scheduleData);
