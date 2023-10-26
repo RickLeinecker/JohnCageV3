@@ -3,6 +3,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '../Style/CalendarStyle.css';
 import CalendarDateRegister from '../API/CalendarDateRegister';
+import schedule from '../API/scheduleAPI';
+import scheduleArgs from '../Types/scheduleArgs';
 
 const CalendarPage: React.FC = () => {
     const testTimes = ['02:00 AM', '05:40 PM', '08:20 AM', '07:20 PM', '05:00 PM', '05:20 PM', ]//delete later but for testing purposes of how select works
@@ -13,11 +15,28 @@ const CalendarPage: React.FC = () => {
         eventTime: "",
         eventTags: "",
         Collaborators: "",
+        identifier: "",
+        password: ""
     }
+
+    const inputData:scheduleArgs = {
+        title: "",
+        tags: ["Wookie","Cookie"],
+        description: "thisi s a test",
+        date: "",
+        time: "",
+        identifier: "",
+        password: ""
+    }
+
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedTime, setSelectedTime] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
+    const [takenTimesList,setTakenTime] = useState(takenTimes);
+    const [maestroID,setMaestroID] = useState(1);
+    const [scheduleData,setScheduleData] = useState(inputData);
+
     const timeOptions = [];//variable for calculating time blocks
 
     const calendarStyle = {
@@ -27,6 +46,9 @@ const CalendarPage: React.FC = () => {
     function ReadTakenTimes(timesTable:string[])
     {
         console.log("Time slot takens for the day are ",timesTable);
+        timesTable.forEach(element => {
+            takenTimesList.push(element);
+        });
     }
 
     const handleDateClick = (date: Date) => {
@@ -60,7 +82,7 @@ const CalendarPage: React.FC = () => {
         }
       }
     //makes an array that includes all the available time slots
-    const filteredTimeOptions = timeOptions.filter((time) => !testTimes.includes(time));
+    const filteredTimeOptions = timeOptions.filter((time) => !takenTimesList.includes(time));
 
     const handleTimeChange = (event : React.ChangeEvent<HTMLSelectElement>) =>{
         const newTime = event.target.value;
@@ -70,6 +92,18 @@ const CalendarPage: React.FC = () => {
     const useSelectedTime = () =>{
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
+        setMaestroID(maestroID + 1);
+        if (selectedDate)
+        {
+            console.log("Sending in schedule data");
+            const dateString:string = selectedDate.toISOString().split('T')[0];
+            scheduleData.title = event.eventName;
+            scheduleData.date = dateString;
+            scheduleData.time = selectedTime;
+            scheduleData.identifier = event.identifier;
+            scheduleData.password = event.password;
+            schedule(scheduleData);
+        }
         closeForm();
     }
 
@@ -137,7 +171,7 @@ const CalendarPage: React.FC = () => {
                             <label htmlFor='Collaborators' style={{fontSize: 'calc(5px + 2vmin)'}}>Collaborators</label>
                             <input
                                 type='text'
-                                name='eventCollaborators'
+                                name='Collaborators'
                                 id='event-collaborators'
                                 onChange={handleChange}
                                 value={event.Collaborators}
@@ -148,6 +182,38 @@ const CalendarPage: React.FC = () => {
                                     borderRadius: '1em',
                                 }}
                             />  
+                            <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
+                                Username
+                            </label>
+                            <input 
+                                type='text'
+                                name='identifier'    
+                                id='event-Ident'
+                                onChange={handleChange}
+                                value={event.identifier}
+                                style={{
+                                    display:'block',
+                                    padding: '10px',
+                                    width:'100%',
+                                    borderRadius: '1em',
+                                }}
+                            />
+                            <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
+                                Password
+                            </label>
+                            <input 
+                                type='text'
+                                name='password'    
+                                id='event-Pass'
+                                onChange={handleChange}
+                                value={event.password}
+                                style={{
+                                    display:'block',
+                                    padding: '10px',
+                                    width:'100%',
+                                    borderRadius: '1em',
+                                }}
+                            />
                         </div>
                         <div className='popup-btns'>
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
