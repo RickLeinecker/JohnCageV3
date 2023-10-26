@@ -89,19 +89,6 @@ const CalendarPage: React.FC = () => {
         setSelectedTime(newTime);
     }
 
-    function convertTime(timeString:string)
-    {
-        const [time, modifier] = timeString.split(' ');
-        let [hours, minutes] = time.split(':');
-        if (hours === '12') {
-           hours = '00';
-        }
-        if (modifier === 'PM') {
-           hours = (parseInt(hours, 10) + 12).toString();
-        }
-        return `${hours}:${minutes}`+":00";
-     }
-
      function monthString(mon:string){
         return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
@@ -128,8 +115,6 @@ const CalendarPage: React.FC = () => {
         {
             console.log("Sending in schedule data");
             const dateString:string = selectedDate.toISOString().split('T')[0];
-            //const convertedTime:string = convertTimeDate(selectedTime,dateString);
-            const convertedTime:string = convertTime(selectedTime);
             const convertedTimeArr:string[] = formattedUTCString(selectedTime,dateString);
             console.log("Returning time "+convertedTimeArr);
             scheduleData.title = event.eventName;
