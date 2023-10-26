@@ -102,12 +102,22 @@ const CalendarPage: React.FC = () => {
         return `${hours}:${minutes}`+":00";
      }
 
-     function convertTimeDate(timeString:string,dateString:string):string
-     {
-        const utcString:string = (new Date(dateString+""+timeString)).toUTCString();
-        const stringArray:string[] = utcString.split(" ");
+     function monthString(mon:string){
+        return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
+     }
 
-        return stringArray[4];
+     function formattedUTCString(timeString:string,dateString:string):string[]
+     {
+        dateString = dateString.replace(/-/gi,"/");
+        console.log("Passing in time: "+timeString+" and date: "+dateString);
+        const utcString:string[] = (new Date(dateString+" "+timeString)).toUTCString().split(" ");
+        const reformmatedDateString:string = utcString[3]+"-"+monthString(utcString[2])+"-"+utcString[1];
+        console.log("reformattedDate string is "+utcString);
+        const utcTimeString = utcString[4];
+        const utcFinalString:string[] = [reformmatedDateString,utcTimeString];
+        console.log("Final string content "+utcFinalString)
+
+        return utcFinalString;
      }
 
     const useSelectedTime = () =>{
@@ -120,10 +130,11 @@ const CalendarPage: React.FC = () => {
             const dateString:string = selectedDate.toISOString().split('T')[0];
             //const convertedTime:string = convertTimeDate(selectedTime,dateString);
             const convertedTime:string = convertTime(selectedTime);
-            console.log("Returning time "+convertedTime);
+            const convertedTimeArr:string[] = formattedUTCString(selectedTime,dateString);
+            console.log("Returning time "+convertedTimeArr);
             scheduleData.title = event.eventName;
-            scheduleData.date = dateString;
-            scheduleData.time = convertedTime;
+            scheduleData.date = convertedTimeArr[0];
+            scheduleData.time = convertedTimeArr[1];
             scheduleData.identifier = event.identifier;
             scheduleData.password = event.password;
             schedule(scheduleData);
