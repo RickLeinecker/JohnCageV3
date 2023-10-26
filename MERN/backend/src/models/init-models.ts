@@ -17,6 +17,8 @@ import { tags as _tags } from "./tags";
 import type { tagsAttributes, tagsCreationAttributes } from "./tags";
 import { users as _users } from "./users";
 import type { usersAttributes, usersCreationAttributes } from "./users";
+import { verification as _verification } from "./verification";
+import type { verificationAttributes, verificationCreationAttributes } from "./verification";
 
 export {
   _groups as groups,
@@ -24,6 +26,7 @@ export {
   _schedules as schedules,
   _tags as tags,
   _users as users,
+  _verification as verification,
 };
 
 export type {
@@ -37,6 +40,8 @@ export type {
   tagsCreationAttributes,
   usersAttributes,
   usersCreationAttributes,
+  verificationAttributes,
+  verificationCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -45,6 +50,7 @@ export function initModels(sequelize: Sequelize) {
   const schedules = _schedules.initModel(sequelize);
   const tags = _tags.initModel(sequelize);
   const users = _users.initModel(sequelize);
+  const verification = _verification.initModel(sequelize);
 
   recordings.belongsTo(groups, { as: "Group", foreignKey: "GroupID"});
   groups.hasMany(recordings, { as: "recordings", foreignKey: "GroupID"});
@@ -52,6 +58,8 @@ export function initModels(sequelize: Sequelize) {
   groups.hasMany(schedules, { as: "schedules", foreignKey: "GroupID"});
   groups.belongsTo(users, { as: "GroupLeader", foreignKey: "GroupLeaderID"});
   users.hasMany(groups, { as: "groups", foreignKey: "GroupLeaderID"});
+  verification.belongsTo(users, { as: "User", foreignKey: "UserID"});
+  users.hasMany(verification, { as: "verifications", foreignKey: "UserID"});
 
   return {
     groups: groups,
@@ -59,5 +67,6 @@ export function initModels(sequelize: Sequelize) {
     schedules: schedules,
     tags: tags,
     users: users,
+    verification: verification,
   };
 }

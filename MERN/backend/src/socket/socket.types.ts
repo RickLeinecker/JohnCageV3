@@ -11,7 +11,7 @@ type Concert = {
     maestro: Performer | undefined;
     waitingPerformers: waitingPerformer[];
     active: boolean;
-
+    mixedAudio: Buffer;
 }
 
 type waitingPerformer = {

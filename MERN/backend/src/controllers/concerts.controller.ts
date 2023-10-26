@@ -1,38 +1,46 @@
-import { Request, Response } from "express";
-import recordingRepository from "../repositories/recording.repository";
-import console_log from "../logging/console_log";
-import tagRepository from "../repositories/tag.repository";
-import { tags, tagsAttributes, recordings, groups } from "../models/init-models";
-var ms = require('mediaserver');
+// Libraries
+const ms = require('mediaserver');
 const { Op } = require("sequelize");
+import { Request, Response } from "express";
 
-var fs = require("fs");
+// Functions
+import console_log from "../logging/console_log";
+import { getDateUTC, getTimeUTC, formatDateTime, validDate } from "../functions/date.functions";
 
-class ConcertsController {
+// Models
+import { recordings, groups } from "../models/init-models";
+
+// Config
+import { MUSIC_FOLDER } from "../config/backend.config";
+
+interface concertsAPI {
+  findAndPipeAudio(req: Request, res: Response): Promise<void>;
+  findAllGroups(req: Request, res: Response): Promise<void>;
+  filterConcertsByDateRange(req: Request, res: Response): Promise<void>;
+  findOne(req: Request, res: Response): Promise<void>;
+  searchConcerts(req: Request, res: Response): Promise<void>;
+}
+
+class ConcertsController implements concertsAPI {
+  // IMPORTNAT: THIS CURRENTLY USES THE GROUP ID TO SEARCH. IDEALLY WE USE THE PK FROM THE TABLE. IT SHOULD STILL WORK.
   async findAndPipeAudio(req: Request, res: Response) {
-    // Todo: Add ability to query a recording by id and return the actual audio.
-    let recordingId: number = parseInt(req.query.id as string);
-    if (!recordingId) {
-      recordingId = -1;
+    let groupId: number = parseInt(req.query.id as string);
+    if (!groupId) {
+      groupId = -1;
     }
 
-    const recording = await recordings.findOne({
-      where: {
-        ID: recordingId // PRetty sure this should be changed to the groupID FK.
-      }
+    await recordings.findOne({
+      where: { GroupID: groupId }
     }).then((recording) => {
-      // Check if there is a recording.
-      if (!recording) {
-        return res.status(400).json({ results: "No Results. Try another recordingID" });
-      }
+      if (!recording) { throw new Error("Recording not found."); }
 
-      const filePath = './music/';
       const fileName = recording.RecordingFileName;
-      const recordingFilePath = filePath + fileName;
+      const recordingFilePath = MUSIC_FOLDER + fileName;
 
       ms.pipe(req, res, recordingFilePath);
-    }).catch((err) => {
-      res.status(401).json({ success: false, message: err });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).json({ error: e.message });
     });
   }
 
@@ -97,94 +105,116 @@ class ConcertsController {
   }
 
   async findOne(req: Request, res: Response) {
-    let recordingId: number = parseInt(req.query.id as string);
-    if (!recordingId) {
-      recordingId = -1;
+    let groupId: number = parseInt(req.query.id as string);
+    if (!groupId) {
+      groupId = -1;
     }
 
-    const recording = await recordings.findOne({
+    await groups.findOne({
+      attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
+        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
       where: {
-        ID: recordingId
-      },
-    }).then((recording) => {
-      // Check if there is a group.
-      if (!recording) {
-        return res.status(400).json({ results: "No Results. Try another Recording ID" });
-      };
+        GroupID: groupId
+      }
+    }).then((group) => {
+      if (!group) { throw new Error("Group not found.") }
 
-      const group = groups.findOne({
-        attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
-          'GroupName', 'Title', 'Tags', 'Description', 'Date'],
-        where: {
-          GroupID: recording?.GroupID
-        }
-      }).then((group) => {
-        // Check if there is a group.
-        if (!group) {
-          return res.status(400).json({ results: "No Results. Try another GroupID" });
-        }
-
-        // response contains the group that is mapped to this specific recording via the GroupID.
-        res.status(200).json({
-          group
-        });
-
-      }).catch((err) => {
-        res.status(500).send({
-          message: "Some error occurred while retrieving a group."
-        });
-      });
+      res.status(200).json({ group });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).send({ error: e.message });
     });
+
+    // const recording = await recordings.findOne({
+    //   where: {
+    //     ID: recordingId
+    //   },
+    // }).then((recording) => {
+    //   // Check if there is a group.
+    //   if (!recording) {
+    //     return res.status(400).json({ results: "No Results. Try another Recording ID" });
+    //   };
+
+    //   const group = groups.findOne({
+    //     attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
+    //       'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+    //     where: {
+    //       GroupID: recording?.GroupID
+    //     }
+    //   }).then((group) => {
+    //     // Check if there is a group.
+    //     if (!group) {
+    //       return res.status(400).json({ results: "No Results. Try another GroupID" });
+    //     }
+
+    //     // response contains the group that is mapped to this specific recording via the GroupID.
+    //     res.status(200).json({
+    //       group
+    //     });
+
+    //   }).catch((err) => {
+    //     res.status(500).send({
+    //       message: "Some error occurred while retrieving a group."
+    //     });
+    //   });
+    // });
   }
 
   async searchConcerts(req: Request, res: Response) {
+    // Store and validate input.
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
+    const fromDateTime = validDate(req.query.fromDateTime as string) ? formatDateTime(Date.parse(req.query.fromDateTime as string)) : "2000-01-01T00:00:00";
+    const toDateTime = validDate(req.query.toDateTime as string) ? formatDateTime(Date.parse(req.query.toDateTime as string)) : "9999-12-31T23:59:59";
     let page: number = parseInt(req.query.page as string);
-    if (!page) {
-      page = 0;
-    }
 
-    // Find all groups based on the 'search' filter.
-    const allTheGroups = await groups.findAll({
+    const fromDate: string = fromDateTime.split('T').at(0) as string;
+    const fromTime: string = fromDateTime.split('T').at(1) as string;
+    const toDate: string = toDateTime.split('T').at(0) as string;
+    const toTime: string = toDateTime.split('T').at(1) as string;
+
+    console_log(fromDate, fromTime, toDate, toTime);
+
+    const currentDate: string = getDateUTC();
+    const currentTime: string = getTimeUTC();
+
+    // Search
+    await groups.findAll({
       limit: pageLength,
       offset: pageLength * page,
-      attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags'],
+      attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags', 'Date', 'Time'],
       where: {
-        [Op.or]:
-          [
-            {
-              // Find any song title that has 'search' as a substring.
-              Title: {
-                [Op.like]: `%${searchString}%`
-              }
-            },
-            {
-              // Find any song with tags that have 'search' string query as a substring.
-              Tags: {
-                [Op.like]: `%${searchString}%`
-              }
-            }
-          ]
+        [Op.and]: [
+          // Find search string
+          {
+            [Op.or]: [
+              { Title: { [Op.like]: `%${searchString}%` } },
+              { Tags: { [Op.like]: `%${searchString}%` } }
+            ]
+          },
+          // Ignore future groups
+          {
+            [Op.or]: [
+              { Date: { [Op.lt]: currentDate } },
+              { Date: { [Op.eq]: currentDate }, Time: { [Op.lte]: currentTime } },
+              { Date: { [Op.eq]: null }, Time: { [Op.eq]: null } }
+            ]
+          },
+          // // Find date and time
+          // {
+          //   [Op.and]: [
+          //     { Date: { [Op.between]: [fromDate, toDate] } },
+          //     { Time: { [Op.between]: [fromTime, toTime] } }
+          //   ]
+          // }
+        ]
       }
+    }).then((groups) => {
+      res.status(200).send({ searchResults: groups });
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).send({ error: e.message });
     });
-
-    //console.log(allTheGroups);
-
-    res.status(200).send({ searchResults: allTheGroups });
-  }
-
-  async retrieveRandomTags(req: Request, res: Response) {
-    let response: tagsAttributes[] = [];
-
-    try {
-      response = await tagRepository.retrieveAll();
-    } catch (err) {
-      res.status(500).send({ message: "Some error occurred while retrieving tags." });
-    }
-
-    //console.log(response);
-    res.status(200).send({ tags: response });
   }
 }
 

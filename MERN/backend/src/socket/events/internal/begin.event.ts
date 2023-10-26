@@ -14,6 +14,7 @@ const beginConcert = function (currentConcert: Concert): void {
         }
     }
 
+    currentConcert.mixedAudio = Buffer.alloc(2);
     currentConcert.active = true;
 }
 

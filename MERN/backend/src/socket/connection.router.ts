@@ -11,12 +11,23 @@ import enqueuePerformer from "./events/internal/enqueue.event";
 import { addMaestro } from "./handlers/maestro.handler";
 import { broadcastNames } from "./events/outgoing/names.broadcast";
 
-var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false };
+const fs = require("fs");
+const WaveFile = require("wavefile").WaveFile;
+
+var currentConcert: Concert = { performers: [], maestro: undefined, waitingPerformers: [], active: false, mixedAudio: Buffer.alloc(2) };
+
+const validatePasscode = function (passcode: string): boolean {
+    const passcodes = fs.readdirSync("./temp/passcodes/");
+    console_log("Passcodes: ", passcodes, "\n");
+
+    if (passcodes.includes(passcode)) { return true; }
+    return false;
+}
 
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
     let route = String(req.url);
 
-    if (route.includes("/concert/performer/maestro")) { // Needs to be altered to authenticate a passcode.
+    if (route.includes("/concert/performer/maestro")) {
         // Authenticate first
 
         let argument = route.split("=");
@@ -25,9 +36,20 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         console_log("performer/maestro connected.");
         broadcastNames(currentConcert);
     }
-    else if (route.includes("/concert/performer")) {
-        // Authenticate first
+    else if (route.includes("/concert/performerSECURE")) {
+        let argument = route.split("=");
 
+        // Authenticate
+        if (!validatePasscode(argument[3])) {
+            ws.close();
+        }
+        else {
+            enqueuePerformer(ws, currentConcert, argument[1]);
+            console_log("performerSECURE connected.");
+            broadcastNames(currentConcert);
+        }
+    }
+    else if (route.includes("/concert/performer")) {
         let argument = route.split("=");
 
         enqueuePerformer(ws, currentConcert, argument[1]);
@@ -36,6 +58,21 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate first
+
+        // // Save raw audio to file.
+        // const data = fs.readFileSync("./temp/serverStephenSample");
+        // console_log(data, "\n");
+
+        // const buf = Buffer.from(data);
+        // const ar16 = new Int16Array(buf.buffer, buf.byteOffset, buf.byteLength / Int16Array.BYTES_PER_ELEMENT);
+
+
+        // // Convert raw audio file to wav. 
+        // let wav = new WaveFile();
+        // wav.fromScratch(1, 32000, '16', ar16);
+        // const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
+        // fs.writeFileSync("./music/" + fileName, wav.toBuffer());
+
 
         // let argument = route.split("=");
 

@@ -1,12 +1,21 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState} from "react";
 import { Nav, Container, Navbar } from "react-bootstrap";
 import { Link, useLocation, useMatch } from "react-router-dom";
 import PropTypes from 'prop-types';
 import '../Style/text.css';
+import navBarData from "../Types/navBarData";
 
 
 type NavButton = {
   buttonName: string;
+}
+
+type LogOut = {
+  logOut:Function;
+}
+
+type LinkList = {
+  buttonList:string[];
 }
 
 class NavButtons extends Component<NavButton>{
@@ -23,11 +32,28 @@ class NavButtons extends Component<NavButton>{
   }
 }
 
-class NavBar extends Component {
+class LogOutButton extends Component<LogOut>{
+  render ()
+  {
+    return <button onClick = {() => this.props.logOut("")}> Logout</button>
+  }
+}
 
-  buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+function LogoutDisplay(userName:string, logOutFunc:Function, )
+{
+  return <div>
+    <p>Welcome {userName}</p>
+    <LogOutButton logOut={logOutFunc}/>
+  </div>
+}
 
-  render() {
+
+const NavBar =({userName, setterFunction, buttonList}:navBarData) => {
+    const [LoginMode,setLoginMode] = useState(userName);
+
+    // const buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+    
+
     return (
       <Navbar
         className="navbar navbar-expand-sm navbar-light"
@@ -47,17 +73,21 @@ class NavBar extends Component {
             <br />
             <Nav className="me-auto">
               {
-                this.buttonList.map((key, i) => {
-                  return <NavButtons key={i} buttonName={key} />
+                buttonList.map((key, i) => {
+                  if (key === "Logout")
+                    return LogoutDisplay(userName,setterFunction as Function);
+                  else
+                    return <NavButtons key={i} buttonName={key} />
                 }
                 )
               }
+              {}
+
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
     );
-  }
 }
 
 

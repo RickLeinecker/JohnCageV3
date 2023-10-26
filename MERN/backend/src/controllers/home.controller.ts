@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-var ms = require('mediaserver');
 
 class HomeController {
   async welcome(req: Request, res: Response) {

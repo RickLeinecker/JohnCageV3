@@ -183,7 +183,7 @@ function ConcertPage() {
                                     </Button>
                                 </div>
                                 <div className="col" style={{ textAlign: "center" }}>
-                                    <p>Page: {page}</p>
+                                    <p>Page: {page + 1}</p>
                                 </div>
                                 <div className="col" style={{ textAlign: "right" }}>
                                     <Button onClick={nextPage}>
