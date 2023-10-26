@@ -1,5 +1,5 @@
 import { Op } from "sequelize";
-import { recordings } from "../models/recordings";
+import { recordings } from "../models/init-models";
 
 interface IRecordingRepository {
   //save(recording: recordings): Promise<recordings>;

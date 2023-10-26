@@ -7,6 +7,8 @@ import { addPerformer } from "../../handlers/performer.handler";
 import { broadcastMessage } from "../../utilities/socket.binary";
 import { broadcastStart } from "../outgoing/start.broadcast";
 import { broadcastNames } from "../outgoing/names.broadcast";
+import { maxAudioBufferSize } from "../../socket.config";
+const fs = require("fs");
 
 const updatePerformers = function (currentConcert: Concert): void {
     let performers: Performer[] = currentConcert.performers;
@@ -92,6 +94,7 @@ const concertTick = function (currentConcert: Concert) {
 
         // Mix audio chunks.
         let mixedBuffer: Buffer = defaultMix(chunkBuffers);
+        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixedBuffer]);
         console_log("Audio mixed.");
         console_log(mixedBuffer);
         console_log("\n");
@@ -125,7 +128,7 @@ const concertTick = function (currentConcert: Concert) {
     }
 }
 
-export default concertTick;
+export { concertTick };
 
 
 /* Backup of audio data broadcast after switching to broadcastMessage function.

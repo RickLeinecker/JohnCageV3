@@ -13,30 +13,40 @@ describe('helloWorld', () => {
         var response = await api
             .get('/api/')
             .expect(200)
+        // .then(() => {
+        //     var stringifiedJSON = JSON.stringify(response);
+        //     var rawJSON = JSON.parse(stringifiedJSON);
+        //     var stringifiedResponse = rawJSON.text;
+        //     var JSONResponse = JSON.parse(stringifiedResponse);
+        //     console.log(JSONResponse["message"]);
+        // }
+        //  );
 
-        var stringifiedJSON = JSON.stringify(response);
-        var rawJSON = JSON.parse(stringifiedJSON);
-        var stringifiedResponse = rawJSON.text;
-        var JSONResponse = JSON.parse(stringifiedResponse);
-        console.log(JSONResponse["message"]);
-    })
-})
+
+
+
+    });
+});
 
 describe('searchSongs', () => {
     test('/api/', async () => {
 
         //API call and expectations
         var response = await api
-            .get('/api/concerts/searchSongs')
+            .get('/api/concerts/searchSongs?search=&page=0')
             .expect(200)
+        // .then(() => {
+        //     var stringifiedJSON = JSON.stringify(response);
+        //     var rawJSON = JSON.parse(stringifiedJSON);
+        //     var stringifiedResponse = rawJSON.text;
+        //     var JSONResponse = JSON.parse(stringifiedResponse);
+        //     console.log(JSONResponse);
+        // }
+        // );
 
-        var stringifiedJSON = JSON.stringify(response);
-        var rawJSON = JSON.parse(stringifiedJSON);
-        var stringifiedResponse = rawJSON.text;
-        var JSONResponse = JSON.parse(stringifiedResponse);
-        console.log(JSONResponse);
-    })
-})
+
+    });
+});
 
 
 
