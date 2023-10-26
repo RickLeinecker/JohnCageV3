@@ -89,17 +89,41 @@ const CalendarPage: React.FC = () => {
         setSelectedTime(newTime);
     }
 
+    function convertTime(timeString:string)
+    {
+        const [time, modifier] = timeString.split(' ');
+        let [hours, minutes] = time.split(':');
+        if (hours === '12') {
+           hours = '00';
+        }
+        if (modifier === 'PM') {
+           hours = (parseInt(hours, 10) + 12).toString();
+        }
+        return `${hours}:${minutes}`+":00";
+     }
+
+     function convertTimeDate(timeString:string,dateString:string):string
+     {
+        const utcString:string = (new Date(dateString+""+timeString)).toUTCString();
+        const stringArray:string[] = utcString.split(" ");
+
+        return stringArray[4];
+     }
+
     const useSelectedTime = () =>{
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
         setMaestroID(maestroID + 1);
-        if (selectedDate)
+        if (selectedDate && selectedTime)
         {
             console.log("Sending in schedule data");
             const dateString:string = selectedDate.toISOString().split('T')[0];
+            //const convertedTime:string = convertTimeDate(selectedTime,dateString);
+            const convertedTime:string = convertTime(selectedTime);
+            console.log("Returning time "+convertedTime);
             scheduleData.title = event.eventName;
             scheduleData.date = dateString;
-            scheduleData.time = selectedTime;
+            scheduleData.time = convertedTime;
             scheduleData.identifier = event.identifier;
             scheduleData.password = event.password;
             schedule(scheduleData);
