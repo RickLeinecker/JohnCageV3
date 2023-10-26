@@ -76,7 +76,7 @@ const CalendarPage: React.FC = () => {
     for (let hours = 1; hours <= 24; hours++) {
         for (let minutes = 0; minutes < 60; minutes += 20) {
           const formattedHours = hours > 12 ? hours - 12 : hours;
-          const ampm = hours >= 12 ? 'PM' : 'AM';
+          const ampm = (hours >= 12 && hours != 24) ? 'PM' : 'AM';
           const formattedTime = `${formattedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${ampm}`;
           timeOptions.push(formattedTime);
         }
