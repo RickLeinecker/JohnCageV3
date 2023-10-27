@@ -4,7 +4,6 @@
   "description": "John Cage Tribute WebSocket Server using Node.js, TypeScript, ws",
   "main": "socket.js",
   "scripts": {
-    "build": "tsc",
     "start": "NODE_ENV=development node ./build/socketServer/Socket/socket.js",
     "winStart": "set NODE_ENV=development&&node ./build/socketServer/Socket/socket.js",
     "startServer": "NODE_ENV=production node ./build/socketServer/Socket/socket.js"

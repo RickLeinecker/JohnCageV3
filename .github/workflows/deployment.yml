@@ -29,17 +29,20 @@ jobs:
             rm -rf JohnCageV3
             git clone https://github.com/RickLeinecker/JohnCageV3.git
             cd JohnCageV3
+            
+            pm2 stop 0
+            pm2 stop 1
 
             cd MERN
             cd backend
             cd Express
             npm install
-            npm run build
+            tsc
             
             cd ..
             cd Socket
             npm install
-            npm run build
+            tsc
 
             cd ..
             cd ..
@@ -50,9 +53,10 @@ jobs:
             cd ..
             cd backend
             cd Express
+            pm2 start 0
             
             cd ..
             cd Socket
-         
-            pm2 save
+            pm2 start 1
+
 
