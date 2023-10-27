@@ -4,6 +4,7 @@
   "description": "John Cage Tribute Rest API using Node.js, TypeScript, Express",
   "main": "backend.js",
   "scripts": {
+    "build": "tsc",
     "test": "jest testing.test.ts",
     "start": "NODE_ENV=development node ./build/expressServer/Express/express.js",
     "winStart": "set NODE_ENV=development&&node./build/expressServer/Express/express.js",
