@@ -5,7 +5,6 @@
   "main": "backend.js",
   "scripts": {
     "test": "jest testing.test.ts",
-    "build": "tsc",
     "start": "NODE_ENV=development node ./build/expressServer/Express/express.js",
     "winStart": "set NODE_ENV=development&&node./build/expressServer/Express/express.js",
     "startServer": "NODE_ENV=production node ./build/expressServer/Express/express.js"
