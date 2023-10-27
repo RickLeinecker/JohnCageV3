@@ -37,12 +37,12 @@ jobs:
             cd backend
             cd Express
             npm install
-            tsc
+            npm run build
             
             cd ..
             cd Socket
             npm install
-            tsc
+            npm run build
 
             cd ..
             cd ..
@@ -50,13 +50,7 @@ jobs:
             npm install
             npm run build
 
-            cd ..
-            cd backend
-            cd Express
             pm2 start 0
-            
-            cd ..
-            cd Socket
             pm2 start 1
 
 
