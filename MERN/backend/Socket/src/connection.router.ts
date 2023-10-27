@@ -24,6 +24,8 @@ var currentConcert: Concert = {
 };
 
 const validateDateTime = function (): boolean {
+    console_log("Validating datetime...");
+
     let date = getDateUTC();
     let time = floorTime(getTimeUTC());
     let dateTime = date + "T" + time;
@@ -37,18 +39,20 @@ const validateDateTime = function (): boolean {
 
     if (dateTime == dateTimeScheduled) { return true; }
 
-    console.log("AAAAAA")
+    console_log("Date Time not valid.");
 
     return false;
 }
 
 const validatePasscode = function (passcode: string): boolean {
-    console.log("BBBBBB")
+    console_log("Validating passcode...");
 
     const passcodes = fs.readdirSync("../temp/passcodes/");
     console_log("Passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
+    console_log("Password not valid.");
+
     return false;
 }
 
@@ -84,7 +88,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
 
         enqueuePerformer(ws, currentConcert, argument[1]);
-        console_log("performer connected.");
+        console_log("performerINSECURE connected.");
         broadcastNames(currentConcert);
     }
     else if (route.includes("/concert/performer")) {
@@ -96,7 +100,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         }
         else {
             enqueuePerformer(ws, currentConcert, argument[1]);
-            console_log("performerSECURE connected.");
+            console_log("performer connected.");
             broadcastNames(currentConcert);
         }
     }
