@@ -1,5 +1,4 @@
 // Debug
-import console_err from "../../../functions/logging/console_err";
 import console_log from "../../../functions/logging/console_log";
 
 // Database
