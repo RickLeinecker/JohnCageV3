@@ -3,7 +3,7 @@ import console_log from "./logging/console_log";
 
 const fs = require("fs");
 
-const removeDirectoryContents = function (directoryPath: string) {
+const removeDirectoryFiles = function (directoryPath: string) {
     fs.readdir(directoryPath, { withFileTypes: true }, (err: any, files: Dirent[]) => {
         if (err) { console_log("Error: ", err, "\n") }
         else {
@@ -18,4 +18,4 @@ const removeDirectoryContents = function (directoryPath: string) {
     });
 }
 
-export { removeDirectoryContents };
+export { removeDirectoryFiles };
