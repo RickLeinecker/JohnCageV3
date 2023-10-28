@@ -4,8 +4,9 @@ import Routes from "./routes/routes";
 import MySQLDatabase from "./database/mysql";
 import console_log from "../../functions/logging/console_log";
 import { getNextTimeslot, minutesToMilliseconds } from "../../functions/date.functions";
-import { removeDirectoryContents } from "../../functions/file.functions";
+import { removeDirectoryFiles } from "../../functions/file.functions";
 import { TEMP_FOLDER } from "../config/express.config";
+import { saveConcert } from "./functions/saveConcert.functions";
 
 class expressServer {
   public expressApp: Application = express();
@@ -47,15 +48,17 @@ class expressServer {
   }
 
   private cleanupTimerStart(msPerInterval: number): void {
-    // Difficult to comprehensively test at intended interval 20 minutes each. 
-    // Look at this function if there are temp file problems.
-    const msUntilNextCall = getNextTimeslot(msPerInterval);
+    // Handle concert data in DB before deleting the data.
+    saveConcert();
 
     // Remove group info and passcodes from temporary file folder.
-    removeDirectoryContents(TEMP_FOLDER);
-    removeDirectoryContents(TEMP_FOLDER + "passcodes/");
+    removeDirectoryFiles(TEMP_FOLDER);
+    removeDirectoryFiles(TEMP_FOLDER + "passcodes/");
 
+    // Difficult to comprehensively test at intended interval 20 minutes each. 
+    // Look at this function if there are temp file problems.
     // Finding a new offset each interval and using recursion ensures a degree of accuracy over time. 
+    const msUntilNextCall = getNextTimeslot(msPerInterval);
     setTimeout(() => { console_log("Cleaning files from old group."); this.cleanupTimerStart(msPerInterval); }, msUntilNextCall);
   }
 }
