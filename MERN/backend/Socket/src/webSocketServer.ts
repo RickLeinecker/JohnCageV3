@@ -1,6 +1,5 @@
 // Debug
 import console_log from "../../functions/logging/console_log";
-import console_err from "../../functions/logging/console_err";
 
 // Web Socket Server using "ws" nodejs module.
 // Http server required for initial ws:// protocol handshake.

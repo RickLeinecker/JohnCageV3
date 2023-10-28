@@ -1,6 +1,5 @@
 import { outgoingAudioChunkSize } from "../socket.config";
 import console_log from "../../../functions/logging/console_log";
-import console_err from "../../../functions/logging/console_err";
 
 const defaultMix = function (buffers: Buffer[]): Buffer {
     let mixedAudio: Buffer = Buffer.alloc(outgoingAudioChunkSize);
@@ -11,8 +10,6 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
         if (buffer == undefined || buffer.byteLength != outgoingAudioChunkSize) {
             console_log("Error: Buffer not correct size, or it doesn't exist: ");
             console_log(buffers.at(i));
-            console_err("Error: Buffer not correct size, or it doesn't exist: ");
-            console_err(buffers.at(i));
             return mixedAudio;
         }
     }
