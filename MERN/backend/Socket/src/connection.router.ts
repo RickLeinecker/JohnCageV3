@@ -29,17 +29,17 @@ const validateDateTime = function (): boolean {
     let date = getDateUTC();
     let time = floorTime(getTimeUTC());
     let dateTime = date + "T" + time;
+    const path = "../temp/timestamp";
+    const dateTimeStamp: any = fs.existsSync(path) ? fs.readFileSync(path).toString() : "";
 
-    const dateTimeScheduled = fs.readFileSync("../temp/timestamp", "utf8", (err: any, data: any) => {
-        if (err) { console_log("Error reading timestamp: ", err, "\n"); }
-        console_log("Timestamp DateTime: ", data);
-        console_log("Current: ", dateTime);
-        console_log("Comparison: ", (dateTime == data));
-    });
+    if (dateTimeStamp == "") { console_log("Error reading timestamp.\n"); }
+    console_log("Timestamp DateTime: ", dateTimeStamp);
+    console_log("Current: ", dateTime);
+    console_log("Comparison: ", (dateTime == dateTimeStamp));
 
-    if (dateTime == dateTimeScheduled) { return true; }
+    if (dateTime == dateTimeStamp) { return true; }
 
-    console_log("Date Time not valid.");
+    console_log("Rejected: Date Time stamp not same as current time slot.");
 
     return false;
 }
@@ -47,7 +47,7 @@ const validateDateTime = function (): boolean {
 const validatePasscode = function (passcode: string): boolean {
     console_log("Validating passcode...");
 
-    const passcodes = fs.readdirSync("../temp/passcodes/");
+    const passcodes = fs.readdirSync("../temp/passcodes/") ? fs.readdirSync("../temp/passcodes/") : [];
     console_log("Passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
