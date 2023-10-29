@@ -44,20 +44,27 @@ const validateDateTime = function (): boolean {
     return false;
 }
 
-const validatePasscode = function (passcode: string): boolean {
-    console_log("Validating passcode...");
+const validatePerformerPasscode = function (passcode: string): boolean {
+    console_log("Validating performer passcode...");
 
-    const passcodes = fs.readdirSync("../temp/passcodes/") ? fs.readdirSync("../temp/passcodes/") : [];
+    const passcodes = fs.readdirSync("../temp/passcodes/performers/") ? fs.readdirSync("../temp/passcodes/performers/") : [];
     console_log("Passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
-    console_log("Password not valid.");
+    console_log("Passcode not valid.");
 
     return false;
 }
 
-const validateConnection = function (passcode: string): boolean {
-    if (validateDateTime() && validatePasscode(passcode)) { return true; }
+const validateMaestroPasscode = function (passcode: string): boolean {
+    console_log("Validating maestro passcode...");
+
+    const passcodes = fs.readdirSync("../temp/passcodes/maestro/") ? fs.readdirSync("../temp/passcodes/maestro/") : [];
+    console_log("Maestro passcodes: ", passcodes, "\n");
+
+    if (passcodes.includes(passcode)) { return true; }
+
+    console_log("Passcode not valid.");
     return false;
 }
 
@@ -75,7 +82,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
 
         // Authenticate
-        if (!validateConnection(argument[3])) {
+        if (!(validateDateTime() && validateMaestroPasscode(argument[3]))) {
             ws.close();
         }
         else {
@@ -95,7 +102,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
 
         // Authenticate
-        if (!validateConnection(argument[3])) {
+        if (!(validateDateTime() && validatePerformerPasscode(argument[3]))) {
             ws.close();
         }
         else {
@@ -109,7 +116,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         let argument = route.split("=");
 
         // Authenticate
-        if (!validateConnection(argument[3])) {
+        if (false) {
             ws.close();
         }
         else {

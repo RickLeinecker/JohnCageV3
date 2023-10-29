@@ -9,11 +9,12 @@ import { users, groups, schedules, groupsAttributes, usersAttributes, schedulesA
 
 // Functions
 import console_log from "../../../functions/logging/console_log";
-import { concatTags } from "../../../functions/tag.functions";
+import { concatTags } from "../functions/tag.functions";
 import { getDateUTC, getTimeUTC, floorTime } from "../../../functions/date.functions";
-import { storePasscodes, getPerformerPasscodes, generatePasscodes } from "../passcode.functions";
+import { getPerformerPasscodes, generatePasscodes } from "../passcode.functions";
 import { TEMP_FOLDER } from "../../config/express.config";
 import { saveConcert } from "../functions/saveConcert.functions";
+import { writeFileForce } from "../../../functions/file.functions";
 
 interface scheduleAPI {
     scheduleConcert(req: Request, res: Response): Promise<void>;
@@ -185,22 +186,14 @@ class ScheduleController implements scheduleAPI {
             else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) { throw new Error("Maestro passcode does not match that of the currently scheduled recording."); }
 
             // Save passcode to file for the socket server to check.
-            fs.writeFile(TEMP_FOLDER + "passcodes/" + maestroPasscode.toString(), (e: any) => {
-                if (e) { throw new Error("Saving maestro passcode failed."); }
-            });
-
+            writeFileForce(TEMP_FOLDER + "passcodes/maestro/", maestroPasscode.toString(), "maestro");
             // Save groupId to file for socket server to read.
-            fs.writeFile(TEMP_FOLDER + "groupId", firstSchedule.GroupID?.toString(), (e: any) => {
-                if (e) { throw new Error("Saving groupId file failed."); }
-            });
-
+            writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID?.toString());
             // Save groupId to file for socket server to read.
-            fs.writeFile(TEMP_FOLDER + "timestamp", firstSchedule.Date + "T" + firstSchedule.Time, (e: any) => {
-                if (e) { throw new Error("Saving timestamp file failed."); }
-            });
+            writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
 
-            console_log("Maestro passcode saved to file.\n");
-            return res.status(200).send({ message: "No errors caught." });
+            console_log("Maestro passcode and concert data saved to files.\n");
+            return res.status(200).send({ message: "No errors caught. Maestro passcode and concert data saved to files." });
         }).catch((e) => {
             console_log("Error: ", e.message, "\n");
             return res.status(500).send({ error: e.message });
@@ -212,11 +205,12 @@ class ScheduleController implements scheduleAPI {
         console_log(getTimeUTC(), "\n");
         console_log(getDateUTC(), "\n");
 
-        let { performerPasscode } = req.body;
+        const { performerPasscode } = req.body;
+        console_log(req.body)
 
         // Get currently scheduled recording and validate if user is the maestro.
-        let currentDate: string = getDateUTC();
-        let currentTime: string = getTimeUTC();
+        const currentDate: string = getDateUTC();
+        const currentTime: string = getTimeUTC();
 
         // Authenticate user.
         await schedules.findAll({
@@ -229,15 +223,20 @@ class ScheduleController implements scheduleAPI {
                 }
             }
         }).then((schedules) => {
-            let firstSchedule: schedules | undefined = schedules.at(0);
+            const firstSchedule: schedules | undefined = schedules.at(0);
+            console_log("Schedule found: ", firstSchedule);
             if (schedules.length > 1) { console_log("Warning: Multiple schedules with same time detected.\n"); }
             if (!firstSchedule) { throw new Error("No concert found scheduled for the current time slot."); }
+            console_log(getPerformerPasscodes(firstSchedule));
+            console_log(getPerformerPasscodes(firstSchedule).includes(parseInt(performerPasscode)));
+            console_log(performerPasscode);
             if (!getPerformerPasscodes(firstSchedule).includes(parseInt(performerPasscode))) { throw new Error("Passcode not found in the currently scheduled concert."); }
 
             // TODO: Store file paths in config file and import everywhere.
-            fs.writeFile(TEMP_FOLDER + "passcodes/" + performerPasscode.toString(), "", (e: any) => {
-                if (e) { throw new Error("Saving passcode failed."); }
-            });
+            writeFileForce(TEMP_FOLDER + "passcodes/performers/", performerPasscode.toString(), "performer");
+            // fs.writeFile(TEMP_FOLDER + "passcodes/" + performerPasscode.toString(), "", (e: any) => {
+            //     if (e) { throw new Error("Saving passcode failed."); }
+            // });
 
             console_log("Passcode saved to file.\n");
             return res.status(200).send({ message: "No errors caught. Passcode saved to file." });

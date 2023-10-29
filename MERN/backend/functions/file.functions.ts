@@ -18,4 +18,13 @@ const removeDirectoryFiles = function (directoryPath: string) {
     });
 }
 
-export { removeDirectoryFiles };
+const writeFileForce = function (path: string, file: string, data: any) {
+
+    if (!fs.existsSync(path)) { fs.mkdirSync(path, { recursive: true }); }
+
+    fs.writeFile(path + file, data, (e: any) => {
+        if (e) { console_log("Error: ", e, "\n"); }
+    });
+}
+
+export { removeDirectoryFiles, writeFileForce };
