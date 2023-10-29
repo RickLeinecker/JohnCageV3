@@ -21,7 +21,6 @@ const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: strin
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
 
     let maestro: Performer = { data: new ConcertParticipant(-1), socket: ws, nickname: name }; // This id needs to be 100% unique later.
-    //defineClose(ws, maestro);
     currentConcert.maestro = maestro;
     defineMaestroMessage(ws, currentConcert);
     defineMaestroClose(ws, currentConcert);
