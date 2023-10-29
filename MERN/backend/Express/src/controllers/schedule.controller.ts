@@ -185,7 +185,7 @@ class ScheduleController implements scheduleAPI {
             else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) { throw new Error("Maestro passcode does not match that of the currently scheduled recording."); }
 
             // Save passcode to file for the socket server to check.
-            fs.writeFile(TEMP_FOLDER + "passcodes/" + maestroPasscode.toString(), "", (e: any) => {
+            fs.writeFile(TEMP_FOLDER + "passcodes/" + maestroPasscode.toString(), (e: any) => {
                 if (e) { throw new Error("Saving maestro passcode failed."); }
             });
 
