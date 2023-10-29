@@ -27,7 +27,7 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
     // Mix samples: Add all samples together and divide by the number of samples.
     let sampleCount = bufferViews.length;
     for (let i = 0; i < outgoingAudioChunkSize / 2; ++i) {
-        var sampleSum: number = 0;
+        let sampleSum: number = 0;
         for (let j = 0; j < sampleCount; ++j) {
             let view = bufferViews.at(j);
             if (view != undefined) {

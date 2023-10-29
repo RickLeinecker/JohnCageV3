@@ -6,6 +6,7 @@ import WebSocket from "ws";
 const retrieveHeader = function (data: Buffer): CustomHeader {
     // Store message in Buffer and view through a DataView.
     let buffer: Buffer = Buffer.from(<Buffer>data);
+    if (buffer.byteLength == 0) { return { header: "", headerEnd: 0 }; }
     let thisView = new DataView(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength));
 
     // Get the event header in the form of 1 byte characters until the NULL character (0).
