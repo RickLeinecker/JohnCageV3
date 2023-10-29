@@ -8,33 +8,47 @@ import { MUSIC_FOLDER } from "../../config/express.config";
 import { Op } from "sequelize";
 
 // NEEDS TO CATCH INVA:ID INPUTS BETTER.
+// Since this is reading arbitrary data from file, it needs more careful input validation.
 // Appears to work on first testing.
 const saveConcert = function () {
 
     // Read from json
     const path = TEMP_FOLDER + "data";
-    const concertData: any = fs.existsSync(path) ? fs.readFileSync(path).toString() : "";
+    const concertData: any = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path).toString()) : "";
+
+    const performerNames: string[] = concertData.performerNames as string[] || [];
+    const groupId: number = concertData.groupId as number || -1;
+    const fileName: string = concertData.fileName as string || "default";
+    const maestroName: string = concertData.maestroName as string || "John Cage";
 
     console_log("Concert data: ", concertData);
+    console_log("performerNames: ", performerNames);
+    console_log("groupId: ", groupId);
+    console_log("fileName: ", fileName);
+    console_log("maestroName: ", maestroName);
 
-    if (concertData) {
+    if (concertData != "") {
         console_log("Starting save concert..");
+
         // // Convert raw audio file wav. 
-        let wav = new WaveFile();
-        const mixedBuffer: Buffer = readFileSync(TEMP_FOLDER + "recording.bin");
-        const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
-        wav.fromScratch(1, 32000, '16', samples16);
+        const path = TEMP_FOLDER + "recording.bin";
+        const mixedBuffer: Buffer | undefined = fs.existsSync(path) ? readFileSync(path) : undefined;
         const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
-        fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
-        console_log("Audio converted.\n");
+        if (mixedBuffer) {
+            let wav = new WaveFile();
+            const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
+            wav.fromScratch(1, 32000, '16', samples16);
+            fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
+            console_log("Audio converted.\n");
+        }
 
         // Update performer names in DB.
-        updateNames(concertData.maestroName, concertData.performerNames, concertData.groupId);
+        updateNames(maestroName, performerNames, groupId);
 
         // Create recording.
         recordings.create({
-            GroupID: concertData.groupId,
-            RecordingFileName: fileName
+            GroupID: groupId,
+            RecordingFileName: fileName // NEED TO FIX TO MAKE UNIQWUE GARUNTEED
         }).then((recording) => {
             let newRecording = recording.dataValues;
 
@@ -46,7 +60,7 @@ const saveConcert = function () {
         // Delete current schedule record.
         schedules.destroy({
             where: {
-                GroupID: concertData.groupId
+                GroupID: groupId
             }
         }).then((schedule) => {
             console_log("Schedule deleted: ", schedule, "\n");
@@ -57,7 +71,7 @@ const saveConcert = function () {
 }
 
 const updateNames = async function (maestro: string, names: string[], groupId: number): Promise<boolean> {
-    if (names.length > 4) {
+    if (names && names.length && names.length > 4) {
         return false;
     }
 
