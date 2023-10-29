@@ -27,6 +27,7 @@ class expressServer {
       );
       next();
     });
+
     this.cleanupTimerStart(minutesToMilliseconds(20));
   }
 
@@ -48,12 +49,16 @@ class expressServer {
   }
 
   private cleanupTimerStart(msPerInterval: number): void {
+    const now = new Date();
+    console_log("Cleaning up at " + now.toString());
+
     // Handle concert data in DB before deleting the data.
     saveConcert();
 
-    // Remove group info and passcodes from temporary file folder.
+    // Remove concert group info and passcodes from temporary file folder.
     removeDirectoryFiles(TEMP_FOLDER);
-    removeDirectoryFiles(TEMP_FOLDER + "passcodes/");
+    removeDirectoryFiles(TEMP_FOLDER + "passcodes/maestro/");
+    removeDirectoryFiles(TEMP_FOLDER + "passcodes/performers/");
 
     // Difficult to comprehensively test at intended interval 20 minutes each. 
     // Look at this function if there are temp file problems.

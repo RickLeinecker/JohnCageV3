@@ -1,6 +1,5 @@
 import { schedulesAttributes } from "../src/models/schedules";
 import console_log from "../../functions/logging/console_log";
-const fs = require("fs");
 
 const getPerformerPasscodes = function (schedule: schedulesAttributes): number[] {
     // Does not get maestro's, since that was required to even get here.
@@ -10,19 +9,6 @@ const getPerformerPasscodes = function (schedule: schedulesAttributes): number[]
     if (schedule.User3Passcode) { passcodes.push(schedule.User3Passcode); }
     if (schedule.User4Passcode) { passcodes.push(schedule.User4Passcode); }
     return passcodes;
-}
-
-const storePasscodes = function (passcodes: number[]): boolean {
-    passcodes.forEach((passcode, index) => {
-        fs.writeFile("./temp/passcode" + (index + 1), passcode.toString(), { flag: 'a' }, (err: any) => {
-            if (err) {
-                console_log(err.message);
-                return false;
-            }
-        });
-    })
-
-    return true
 }
 
 // Probably works every time but might need some testing.
@@ -44,4 +30,4 @@ const generatePasscodes = function (count: number): number[] {
     return passCodes;
 }
 
-export { getPerformerPasscodes, storePasscodes, generatePasscodes };
+export { getPerformerPasscodes, generatePasscodes };
