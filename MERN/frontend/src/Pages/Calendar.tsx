@@ -29,7 +29,14 @@ const CalendarPage: React.FC = () => {
         password: ""
     }
 
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const inputFieldStyle:React.CSSProperties = {
+        display:'block',
+        padding: '10px',
+        width:'100%',
+        borderRadius: '1em',
+    }
+
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
@@ -55,15 +62,15 @@ const CalendarPage: React.FC = () => {
         console.log("in date click, Date: " + date.toISOString().split('T')[0]);
         
         setSelectedDate(date);
-        setShowForm(true);
+        // setShowForm(true);
 
         const takenTimes = CalendarDateRegister(date.toISOString().split('T')[0],ReadTakenTimes)
 
     };
 
     const closeForm = () => {
-        setSelectedDate(null);
-        setShowForm(false);
+        // setSelectedDate(null);
+        // setShowForm(false);
         setSelectedTime('');
     };
 
@@ -124,7 +131,6 @@ const CalendarPage: React.FC = () => {
             scheduleData.password = event.password;
             schedule(scheduleData);
         }
-        closeForm();
     }
 
 
@@ -138,9 +144,9 @@ const CalendarPage: React.FC = () => {
                 /> 
             </div>
 
-            {showForm && (
-                <div className='popup-overlay'>
-                    <div className='popup-form'>
+            
+                <div className=''>
+                    <div className=''>
                         <h2>Event form for {selectedDate?.toLocaleDateString()}</h2>
                         <div>
 
@@ -153,12 +159,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-name'
                                 onChange={handleChange}
                                 value={event.eventName}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
 
                             <label htmlFor='time' style={{fontSize: 'calc(5px + 2vmin)'}}>Time Slots</label>
@@ -181,12 +182,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-tags'
                                 onChange={handleChange}
                                 value={event.eventTags}
-                                style={{
-                                    display: 'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                             <label htmlFor='Collaborators' style={{fontSize: 'calc(5px + 2vmin)'}}>Collaborators</label>
                             <input
@@ -195,12 +191,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-collaborators'
                                 onChange={handleChange}
                                 value={event.Collaborators}
-                                style={{
-                                    display: 'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />  
                             <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Username
@@ -211,12 +202,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-Ident'
                                 onChange={handleChange}
                                 value={event.identifier}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                             <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Password
@@ -227,21 +213,15 @@ const CalendarPage: React.FC = () => {
                                 id='event-Pass'
                                 onChange={handleChange}
                                 value={event.password}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                         </div>
                         <div className='popup-btns'>
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
-                            <button onClick={closeForm} className='form-btn'>Close</button>
                         </div>
                     </div>
                 </div>
-            )}
+            
         </div>
     );
 };
