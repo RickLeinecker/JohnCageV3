@@ -14,13 +14,16 @@ import { getDateUTC, getTimeUTC, floorTime } from "../../functions/date.function
 
 const fs = require("fs");
 
+const defaultPasscode: string = "None";
+
 var currentConcert: Concert = {
     performers: [],
     maestro: undefined,
     waitingPerformers: [],
     active: false,
     mixedAudio: Buffer.alloc(2),
-    listener: undefined
+    listener: undefined,
+    attendance: {}
 };
 
 const validateDateTime = function (): boolean {
@@ -69,51 +72,45 @@ const validateMaestroPasscode = function (passcode: string): boolean {
 }
 
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
-    let route = String(req.url);
+    const route = String(req.url);
 
-    if (route.includes("/concert/performer/maestroINSECURE")) {
-        let argument = route.split("=");
-
-        addMaestro(ws, currentConcert, argument[1]);
-        console_log("performer/maestroINSECURE connected.");
-        broadcastNames(currentConcert);
-    }
-    else if (route.includes("/concert/performer/maestro")) {
-        let argument = route.split("=");
+    if (route.includes("/concert/performer/maestro")) {
+        const argument = route.split("=");
+        const passcode: string = argument.at(3) ? argument.at(3) as string : defaultPasscode;
+        const nickname: string = argument.at(1) ? argument.at(1) as string : "Maestro";
 
         // Authenticate
-        if (!(validateDateTime() && validateMaestroPasscode(argument[3]))) {
+        if (!(validateDateTime() && validateMaestroPasscode(passcode)) && !currentConcert.attendance[passcode]) {
             ws.close();
         }
         else {
-            addMaestro(ws, currentConcert, argument[1]);
+            addMaestro(ws, currentConcert, nickname);
+            currentConcert.attendance[passcode] = "Maestro: " + nickname;
             console_log("performer/maestro connected.");
             broadcastNames(currentConcert);
         }
     }
-    else if (route.includes("/concert/performerINSECURE")) {
-        let argument = route.split("=");
-
-        enqueuePerformer(ws, currentConcert, argument[1]);
-        console_log("performerINSECURE connected.");
-        broadcastNames(currentConcert);
-    }
     else if (route.includes("/concert/performer")) {
-        let argument = route.split("=");
+        const argument = route.split("=");
+        const passcode: string = argument.at(3) ? argument.at(3) as string : defaultPasscode;
+        const nickname: string = argument.at(1) ? argument.at(1) as string : "Performer";
 
         // Authenticate
-        if (!(validateDateTime() && validatePerformerPasscode(argument[3]))) {
+        if (!(validateDateTime() && validatePerformerPasscode(passcode)) && !currentConcert.attendance[passcode]) {
             ws.close();
         }
         else {
-            enqueuePerformer(ws, currentConcert, argument[1]);
+            enqueuePerformer(ws, currentConcert, nickname);
+            currentConcert.attendance[passcode] = "Performer: " + nickname;
             console_log("performer connected.");
             broadcastNames(currentConcert);
         }
     }
     else if (route.includes("/concert/listener")) {
         // Authenticate first
-        let argument = route.split("=");
+        const argument = route.split("=");
+        const passcode: string = argument.at(3) ? argument.at(3) as string : "None";
+        const nickname: string = argument.at(1) ? argument.at(1) as string : "Listener";
 
         // Authenticate
         if (false) {

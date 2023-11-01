@@ -13,6 +13,7 @@ type Concert = {
     active: boolean;
     mixedAudio: Buffer;
     listener: Listener | undefined;
+    attendance: { [passcode: string]: string; };
 }
 
 type Listener = {
@@ -28,10 +29,11 @@ type Performer = {
     data: ConcertParticipant;
     socket: WebSocket;
     nickname: string;
+    passcode: string;
 }
 
 class ConcertParticipant {
-    id: number = -1;
+    //id: number = -1;
     bytesProcessed: number = 0;
     bytesLefttoProcess: number = 0;
     bufferSize: number = 0;
@@ -39,7 +41,7 @@ class ConcertParticipant {
 
     constructor(id: number) {
         this.audioBuffer = Buffer.alloc(maxAudioBufferSize * 1.1);
-        this.id = id;
+        //this.id = id;
     }
 }
 
