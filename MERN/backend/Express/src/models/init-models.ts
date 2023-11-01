@@ -7,16 +7,8 @@ import { tags as _tags } from "./tags";
 import type { tagsAttributes, tagsCreationAttributes } from "./tags";
 import { users as _users } from "./users";
 import type { usersAttributes, usersCreationAttributes } from "./users";
-import { groups as _groups } from "./groups";
-import type { groupsAttributes, groupsCreationAttributes } from "./groups";
-import { recordings as _recordings } from "./recordings";
-import type { recordingsAttributes, recordingsCreationAttributes } from "./recordings";
 import { schedules as _schedules } from "./schedules";
 import type { schedulesAttributes, schedulesCreationAttributes } from "./schedules";
-import { tags as _tags } from "./tags";
-import type { tagsAttributes, tagsCreationAttributes } from "./tags";
-import { users as _users } from "./users";
-import type { usersAttributes, usersCreationAttributes } from "./users";
 import { verification as _verification } from "./verification";
 import type { verificationAttributes, verificationCreationAttributes } from "./verification";
 

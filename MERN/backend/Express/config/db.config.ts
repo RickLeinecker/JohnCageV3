@@ -1,6 +1,6 @@
 // Models
 import { SequelizeOptions } from "sequelize-typescript";
-import { initModels } from "../models/init-models";
+//import { initModels } from "../models/init-models";
 
 const isServerEnvironment = process.env.NODE_ENV === 'production';
 
