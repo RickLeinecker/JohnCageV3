@@ -45,8 +45,7 @@ function SocketTest() {
 
     // Connects to websocket role for testing. Incomplete currently.
     const connect = function () {
-        let connectionString = ":8080" + connectionText;
-        let connectionURL = websocketURL + connectionString;
+        let connectionURL = websocketURL + connectionText;
         console.log(connectionURL);
         ws = new WebSocket(connectionURL);
         ws.binaryType = "arraybuffer";

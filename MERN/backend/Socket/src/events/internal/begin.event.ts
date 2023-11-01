@@ -12,7 +12,7 @@ const beginConcert = function (currentConcert: Concert): void {
     for (let i = 0; i < numWaiting; ++i) {
         let waitingPerformer: waitingPerformer | undefined = waitingPerformers.pop();
         if (waitingPerformer) {
-            addPerformer(waitingPerformer.socket, currentConcert, waitingPerformer.nickname);
+            addPerformer(waitingPerformer.socket, currentConcert, waitingPerformer.nickname, waitingPerformer.passcode);
         }
     }
 

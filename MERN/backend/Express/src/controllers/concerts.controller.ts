@@ -201,12 +201,12 @@ class ConcertsController implements concertsAPI {
             ]
           },
           // // Find date and time
-          // {
-          //   [Op.and]: [
-          //     { Date: { [Op.between]: [fromDate, toDate] } },
-          //     { Time: { [Op.between]: [fromTime, toTime] } }
-          //   ]
-          // }
+          {
+            [Op.and]: [
+              { Date: { [Op.between]: [fromDate, toDate] } },
+              { Time: { [Op.between]: [fromTime, toTime] } }
+            ]
+          }
         ]
       }
     }).then((groups) => {

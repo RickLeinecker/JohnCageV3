@@ -1,5 +1,5 @@
 import console_log from "../../../functions/logging/console_log";
-import { maxCustomHeaderSize } from "../socket.config";
+import { maxCustomHeaderSize } from "../../config/socket.config";
 import { Concert, waitingPerformer, Performer, CustomHeader, Listener } from "../socket.types";
 import WebSocket from "ws";
 

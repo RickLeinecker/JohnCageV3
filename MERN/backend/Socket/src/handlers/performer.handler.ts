@@ -2,7 +2,7 @@
 import console_log from "../../../functions/logging/console_log";
 
 // Globals
-import { maxAudioBufferSize } from "../socket.config";
+import { maxAudioBufferSize } from "../../config/socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";
@@ -17,9 +17,9 @@ import { retrieveHeader, retrieveMessageContents } from "../utilities/socket.bin
 
 var ids: number = 0;
 
-const addPerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
+const addPerformer = function (ws: WebSocket, currentConcert: Concert, name: string, passcode: string) {
     // Initialize new performer object.
-    let performer: Performer = { data: new ConcertParticipant(ids++), socket: ws, nickname: name }; // This id needs to be 100% unique later.
+    let performer: Performer = { passcode: passcode, data: new ConcertParticipant(ids++), socket: ws, nickname: name }; // This id needs to be 100% unique later.
     currentConcert.performers.push(performer);
 
     definePerformerClose(performer, currentConcert);
@@ -65,17 +65,6 @@ const definePerformerMessage = function (performer: Performer, currentConcert: C
             console_log(header);
             console_log("\n");
         }
-
-        /*
-        handleMessage(ws, data, wss, performer, currentConcert.performers);
-
-        concertTick(currentConcert);
-
-        // Close the connection if the buffer exceeds roughly 10 minutes.
-        if (performer.data.bufferSize > maxAudioBufferSize) {
-            ws.close();
-        }
-        */
     });
 }
 
@@ -86,6 +75,10 @@ const definePerformerClose = function (performer: Performer, currentConcert: Con
             if (currentConcert.performers.at(i) === performer) {
                 performer.socket.close();
                 currentConcert.performers.splice(i, 1);
+
+                const activePasscodeIndex = currentConcert.activePasscodes.indexOf(performer.passcode);
+                if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); }
+
                 console_log("Performer removed. Current performers: "); // CHECK IF DUPLICATE WITH SOCKET ONCLOSE CODE.
                 console_log(currentConcert.performers);
             }
@@ -94,54 +87,3 @@ const definePerformerClose = function (performer: Performer, currentConcert: Con
 }
 
 export { addPerformer };
-
-
-
-
-
-
-
-
-
-// Backup
-
-// const handleMessage = function (ws: WebSocket, data: WebSocket.RawData, wss: WebSocketServer, performer: Performer, performers: Performer[]) {
-//     console_log("Received message data: ");
-//     console_log(data);
-//     console_log("\n");
-
-//     let message: Buffer = <Buffer>data;
-//     let headerData: CustomHeader = retrieveHeader(<Buffer>data);
-
-//     let headerEnd: number = headerData.headerEnd;
-//     let header: string = headerData.header;
-
-//     if (header == "") {
-//         // Receive audio.
-//     }
-//     else if (header == "Stop") {
-
-//     }
-
-//     if (headerEnd + 1 < message.byteLength) {
-//         receiveAudio(performer, retrieveMessageContents(message, headerEnd));
-//     }
-
-//     /* Waiting for Stephen to make progress before adding another thing,
-//     // If event name is formatted properly, signal reception.
-//     if (isTerminated && eventHeader != "") {
-//         console_log("Detected Event: ");
-//         console_log(eventHeader);
-//         console_log("\n");
-
-//         // If event exists, pass the data buffer.
-//         let rawBuffer = buffer.buffer.slice(buffer.byteOffset + headerEnd + 1, buffer.byteOffset + buffer.byteLength);
-//         console.log(rawBuffer);
-//         receiveAudio(performer, performers, rawBuffer, wss);
-//     }
-//     else {
-//         console_log("No Event Detected.");
-//         console_log("\n");
-//     }
-//     */
-// }

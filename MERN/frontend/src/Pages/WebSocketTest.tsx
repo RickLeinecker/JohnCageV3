@@ -17,7 +17,7 @@ function WebSocketTest() {
 
     // Connects to websocket role for testing. Incomplete currently.
     const connect = function () {
-        ws = new WebSocket(websocketURL + ":8080/concert/performer");
+        ws = new WebSocket(websocketURL + "/concert/performer");
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {

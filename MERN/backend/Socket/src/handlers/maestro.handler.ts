@@ -2,7 +2,7 @@
 import console_log from "../../../functions/logging/console_log";
 
 // Globals
-import { maxAudioBufferSize } from "../socket.config";
+import { maxAudioBufferSize } from "../../config/socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";
@@ -17,10 +17,10 @@ import { retrieveMessageContents, retrieveHeader } from "../utilities/socket.bin
 import { broadcastStart } from "../events/outgoing/start.broadcast";
 import { broadcastStop } from "../events/outgoing/stop.broadcast";
 
-const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string) {
+const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string, passcode: string) {
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
 
-    let maestro: Performer = { data: new ConcertParticipant(-1), socket: ws, nickname: name }; // This id needs to be 100% unique later.
+    let maestro: Performer = { passcode: passcode, data: new ConcertParticipant(-1), socket: ws, nickname: name }; // This id needs to be 100% unique later.
     currentConcert.maestro = maestro;
     defineMaestroMessage(ws, currentConcert);
     defineMaestroClose(ws, currentConcert);
@@ -74,10 +74,11 @@ const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
 }
 
 const defineMaestroClose = function (ws: WebSocket, currentConcert: Concert) {
-    let maestroSocket: WebSocket | undefined = currentConcert.maestro?.socket;
-
-    if (maestroSocket) {
+    const maestro: Performer | undefined = currentConcert.maestro;
+    if (maestro) {
+        const maestroSocket: WebSocket | undefined = maestro.socket;
         maestroSocket.on('close', function message(data) {
+            delete currentConcert.attendance[maestro.passcode];
             removeMaestro(currentConcert);
         });
     }
