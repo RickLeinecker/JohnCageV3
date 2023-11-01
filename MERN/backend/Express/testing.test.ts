@@ -2,7 +2,7 @@
 
 // Testing
 const supertest = require('supertest');
-const { expressServerInstance } = require('./backend.ts');
+const { expressServerInstance } = require('./express.ts');
 const api = supertest(expressServerInstance.expressApp);
 
 // Tests
@@ -48,30 +48,19 @@ describe('searchSongs', () => {
     });
 });
 
-
-
-
-
-
-
-
-
-
-
-/*
 describe('Login with invalid credentials.', () => {
     test('Login', async () => {
         //To send
         const validLogin = {
-            login: "Kyle",
-            password: "11111111"
+            identifier: "tester",
+            password: "greg2"
         }
 
         //API call and expectations
         var response = await api
-            .post('/api/login')
+            .post('/api/users/login')
             .send(validLogin)
-            .expect(200)
+            .expect(401)
             .expect('Content-Type', /application\/json/)
 
 
@@ -80,11 +69,10 @@ describe('Login with invalid credentials.', () => {
         var rawJSON = JSON.parse(stringifiedJSON);
         var stringifiedResponse = rawJSON.text;
         var JSONResponse = JSON.parse(stringifiedResponse);
-        console.log(JSONResponse["id"]);
 
         //JSON response expectations
         expect(response).toBeDefined();
-        expect(JSONResponse["id"]).toBe(-1);
+        expect(JSONResponse).toEqual({message: "Invalid Password."});
 
     })
 })
@@ -93,38 +81,47 @@ describe('Login with valid credentials.', () => {
     test('Login', async () => {
         //To send
         const validLogin = {
-            login: "zxc",
-            password: "11111111"
+            identifier: "tester",
+            password: "greg"
         }
 
         //API call and expectations
         var response = await api
-            .post('/api/login')
+            .post('/api/users/login')
             .send(validLogin)
             .expect(200)
             .expect('Content-Type', /application\/json/)
-
-
-        //Convert response to readable JSON
-        var stringifiedJSON = JSON.stringify(response);
-        var rawJSON = JSON.parse(stringifiedJSON);
-        var stringifiedResponse = rawJSON.text;
-        var JSONResponse = JSON.parse(stringifiedResponse);
-        console.log(JSONResponse["id"]);
-
-        //JSON response expectations
-        expect(response).toBeDefined();
-        expect(JSONResponse["id"]).not.toBe(-1);
-
     })
 })
 
-test('Search Exercises', async () => {
-    await api
-        .post('/api/register')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+describe('Returns all users.', () => {
+    test('Search Exercises', async () => {
+        await api
+            .get('/api/users/findAll')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+    })
 })
+
+describe('Create a new user.', () => {
+    test('Create User', async () => {
+        //To send
+        const validUser = {
+            UserName: "tester2",
+            Email: "tester2@gmail.com",
+            Password: "greg2"
+        }
+
+        //API call and expectations
+        var response = await api
+            .post('/api/users/register')
+            .send(validUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+    })
+})
+
+/*
 
 test('Replace Exercises', async () => {
     await api
@@ -160,5 +157,4 @@ test('Autofill Routines', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 })
-
 */
