@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import '../Style/register.css';
 import '../Style/CalendarStyle.css';
 import CalendarDateRegister from '../API/CalendarDateRegister';
 import schedule from '../API/scheduleAPI';
@@ -36,8 +37,9 @@ const CalendarPage: React.FC = () => {
         borderRadius: '1em',
     }
 
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
+    const [formErrors, setFormErrors] = useState(initialValues);
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
     const [takenTimesList,setTakenTime] = useState(takenTimes);
@@ -118,6 +120,18 @@ const CalendarPage: React.FC = () => {
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
         setMaestroID(maestroID + 1);
+        const userName = localStorage.getItem("Username");
+
+        if (!userName)
+        {
+            formErrors.identifier = "Please Login before scheduling."
+            return;
+        }
+        else
+        {
+            formErrors.identifier = "";
+        }
+
         if (selectedDate && selectedTime)
         {
             console.log("Sending in schedule data");
@@ -127,7 +141,7 @@ const CalendarPage: React.FC = () => {
             scheduleData.title = event.eventName;
             scheduleData.date = convertedTimeArr[0];
             scheduleData.time = convertedTimeArr[1];
-            scheduleData.identifier = event.identifier;
+            scheduleData.identifier = userName;
             scheduleData.password = event.password;
             schedule(scheduleData);
         }
@@ -161,6 +175,7 @@ const CalendarPage: React.FC = () => {
                                 value={event.eventName}
                                 style={inputFieldStyle}
                             />
+                            <p className='error'>{formErrors.eventName}</p>
 
                             <label htmlFor='time' style={{fontSize: 'calc(5px + 2vmin)'}}>Time Slots</label>
                             <br/>
@@ -193,7 +208,8 @@ const CalendarPage: React.FC = () => {
                                 value={event.Collaborators}
                                 style={inputFieldStyle}
                             />  
-                            <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
+                            <p className='error'>{formErrors.Collaborators}</p>
+                            {/* <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Username
                             </label>
                             <input 
@@ -203,7 +219,7 @@ const CalendarPage: React.FC = () => {
                                 onChange={handleChange}
                                 value={event.identifier}
                                 style={inputFieldStyle}
-                            />
+                            /> */}
                             <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Password
                             </label>
@@ -215,7 +231,9 @@ const CalendarPage: React.FC = () => {
                                 value={event.password}
                                 style={inputFieldStyle}
                             />
+                            <p className='error'>{formErrors.password}</p>
                         </div>
+                        <p className='error'>{formErrors.identifier}</p>
                         <div className='popup-btns'>
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
                         </div>
