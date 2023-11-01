@@ -1,4 +1,4 @@
-import { outgoingAudioChunkSize } from "../socket.config";
+import { outgoingAudioChunkSize } from "../../config/socket.config";
 import console_log from "../../../functions/logging/console_log";
 
 const defaultMix = function (buffers: Buffer[]): Buffer {

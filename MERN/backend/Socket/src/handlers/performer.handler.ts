@@ -2,7 +2,7 @@
 import console_log from "../../../functions/logging/console_log";
 
 // Globals
-import { maxAudioBufferSize } from "../socket.config";
+import { maxAudioBufferSize } from "../../config/socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";
@@ -75,7 +75,10 @@ const definePerformerClose = function (performer: Performer, currentConcert: Con
             if (currentConcert.performers.at(i) === performer) {
                 performer.socket.close();
                 currentConcert.performers.splice(i, 1);
-                delete currentConcert.attendance[performer.passcode];
+
+                const activePasscodeIndex = currentConcert.activePasscodes.indexOf(performer.passcode);
+                if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); }
+
                 console_log("Performer removed. Current performers: "); // CHECK IF DUPLICATE WITH SOCKET ONCLOSE CODE.
                 console_log(currentConcert.performers);
             }

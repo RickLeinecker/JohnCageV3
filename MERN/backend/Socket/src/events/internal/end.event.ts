@@ -62,7 +62,8 @@ const endConcert = function (currentConcert: Concert): void {
             active: false,
             mixedAudio: Buffer.alloc(2),
             listener: undefined,
-            attendance: {}
+            attendance: {},
+            activePasscodes: []
         };
         console_log("Concert ended\n");
     }

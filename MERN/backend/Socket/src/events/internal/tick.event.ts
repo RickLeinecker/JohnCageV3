@@ -2,12 +2,12 @@ import WebSocket, { WebSocketServer } from "ws";
 import console_log from "../../../../functions/logging/console_log";
 import defaultMix from "../../mixers/default.mix";
 import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../../socket.types";
-import { outgoingAudioChunkSize } from "../../socket.config";
+import { outgoingAudioChunkSize } from "../../../config/socket.config";
 import { addPerformer } from "../../handlers/performer.handler";
 import { broadcastMessage } from "../../utilities/socket.binary";
 import { broadcastStart } from "../outgoing/start.broadcast";
 import { broadcastNames } from "../outgoing/names.broadcast";
-import { maxAudioBufferSize } from "../../socket.config";
+import { maxAudioBufferSize } from "../../../config/socket.config";
 const fs = require("fs");
 
 const updatePerformers = function (currentConcert: Concert): void {
@@ -120,7 +120,7 @@ const concertTick = function (currentConcert: Concert) {
             for (let i = 0; i < waitingPerformers.length; ++i) {
                 let waiter: waitingPerformer | undefined = waitingPerformers.pop();
                 if (waiter) {
-                    addPerformer(waiter.socket, currentConcert, waiter.nickname);
+                    addPerformer(waiter.socket, currentConcert, waiter.nickname, waiter.passcode);
                     broadcastStart(currentConcert);
                 }
             }

@@ -2,7 +2,7 @@
 import console_log from "../../../functions/logging/console_log";
 
 // Globals
-import { maxAudioBufferSize } from "../socket.config";
+import { maxAudioBufferSize } from "../../config/socket.config";
 
 // Types/Classes
 import WebSocket, { WebSocketServer } from "ws";

@@ -23,7 +23,8 @@ var currentConcert: Concert = {
     active: false,
     mixedAudio: Buffer.alloc(2),
     listener: undefined,
-    attendance: {}
+    attendance: {},
+    activePasscodes: []
 };
 
 const validateDateTime = function (): boolean {
@@ -80,11 +81,12 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         const nickname: string = argument.at(1) ? argument.at(1) as string : "Maestro";
 
         // Authenticate
-        if (!(validateDateTime() && validateMaestroPasscode(passcode)) && !currentConcert.attendance[passcode]) {
+        if (!(validateDateTime() && validateMaestroPasscode(passcode)) && !currentConcert.activePasscodes.includes(passcode)) {
             ws.close();
         }
         else {
-            addMaestro(ws, currentConcert, nickname);
+            currentConcert.activePasscodes.push(passcode);
+            addMaestro(ws, currentConcert, nickname, passcode);
             currentConcert.attendance[passcode] = "Maestro: " + nickname;
             console_log("performer/maestro connected.");
             broadcastNames(currentConcert);
@@ -96,11 +98,12 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         const nickname: string = argument.at(1) ? argument.at(1) as string : "Performer";
 
         // Authenticate
-        if (!(validateDateTime() && validatePerformerPasscode(passcode)) && !currentConcert.attendance[passcode]) {
+        if (!(validateDateTime() && validatePerformerPasscode(passcode)) && !currentConcert.activePasscodes.includes(passcode)) {
             ws.close();
         }
         else {
-            enqueuePerformer(ws, currentConcert, nickname);
+            currentConcert.activePasscodes.push(passcode);
+            enqueuePerformer(ws, currentConcert, nickname, passcode);
             currentConcert.attendance[passcode] = "Performer: " + nickname;
             console_log("performer connected.");
             broadcastNames(currentConcert);
@@ -109,7 +112,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
     else if (route.includes("/concert/listener")) {
         // Authenticate first
         const argument = route.split("=");
-        const passcode: string = argument.at(3) ? argument.at(3) as string : "None";
+        const passcode: string = argument.at(3) ? argument.at(3) as string : defaultPasscode;
         const nickname: string = argument.at(1) ? argument.at(1) as string : "Listener";
 
         // Authenticate

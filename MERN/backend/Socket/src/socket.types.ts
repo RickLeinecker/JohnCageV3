@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { maxAudioBufferSize } from "./socket.config";
+import { maxAudioBufferSize } from "../config/socket.config";
 
 type CustomHeader = {
     header: string;
@@ -14,6 +14,7 @@ type Concert = {
     mixedAudio: Buffer;
     listener: Listener | undefined;
     attendance: { [passcode: string]: string; };
+    activePasscodes: string[];
 }
 
 type Listener = {
@@ -23,6 +24,7 @@ type Listener = {
 type waitingPerformer = {
     socket: WebSocket;
     nickname: string;
+    passcode: string;
 }
 
 type Performer = {

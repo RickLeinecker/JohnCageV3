@@ -3,8 +3,8 @@ import console_log from "../../../../functions/logging/console_log";
 import { Concert, waitingPerformer } from "../../socket.types";
 
 // Add performer to waitlist before concert.
-const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert, name: string) {
-    let waiting: waitingPerformer = { socket: ws, nickname: name }
+const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert, name: string, passcode: string) {
+    let waiting: waitingPerformer = { socket: ws, nickname: name, passcode: passcode }
     currentConcert.waitingPerformers.push(waiting);
 
     // Define onclose event for waiter sockets.
