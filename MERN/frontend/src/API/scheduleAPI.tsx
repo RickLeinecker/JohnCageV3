@@ -1,14 +1,5 @@
 import { buildPath } from "../Variables/expressServer";
-
-type scheduleArgs = {
-    title: string;
-    tags: string[];
-    description: string;
-    date: string;
-    time: string;
-    identifier: string;
-    password: string;
-}
+import scheduleArgs from '../Types/scheduleArgs';
 
 const exampleInput = {
     title: "Example Input",
