@@ -61,6 +61,11 @@ const CalendarPage: React.FC = () => {
         });
     }
 
+    function ErrorSetter()
+    {
+        formErrors.identifier = "Invalid password";
+    }
+
     const handleDateClick = (date: Date) => {
         console.log("in date click, Date: " + date.toISOString().split('T')[0]);
         
@@ -179,6 +184,7 @@ const CalendarPage: React.FC = () => {
             scheduleData.password = event.password;
             scheduleData.tags = tagSplitter(event.eventTags);
             console.log("Tags list is "+scheduleData.tags);
+            scheduleData.setterFunc = ErrorSetter;
             schedule(scheduleData);
         }
     }
