@@ -128,6 +128,14 @@ class ScheduleController implements scheduleAPI {
             });
     }
 
+    async getMixMethods(req: Request, res: Response) {
+        // REPLACE THIS STRING WITH A CONFIG VARIABLE
+        const tepmtep = fs.readdirSync("../Socket/build/socketServer/Socket/src/mixers");
+        console.log(tepmtep);
+
+        return res.status(200).send({});
+    }
+
     async getNextConcert(req: Request, res: Response) {
         const date = getDateUTC();
         const time = floorTime(getTimeUTC());
