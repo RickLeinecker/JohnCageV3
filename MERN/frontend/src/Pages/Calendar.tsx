@@ -29,7 +29,14 @@ const CalendarPage: React.FC = () => {
         password: ""
     }
 
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const inputFieldStyle:React.CSSProperties = {
+        display:'block',
+        padding: '10px',
+        width:'100%',
+        borderRadius: '1em',
+    }
+
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
@@ -55,15 +62,15 @@ const CalendarPage: React.FC = () => {
         console.log("in date click, Date: " + date.toISOString().split('T')[0]);
         
         setSelectedDate(date);
-        setShowForm(true);
+        // setShowForm(true);
 
         const takenTimes = CalendarDateRegister(date.toISOString().split('T')[0],ReadTakenTimes)
 
     };
 
     const closeForm = () => {
-        setSelectedDate(null);
-        setShowForm(false);
+        // setSelectedDate(null);
+        // setShowForm(false);
         setSelectedTime('');
     };
 
@@ -89,25 +96,22 @@ const CalendarPage: React.FC = () => {
         setSelectedTime(newTime);
     }
 
-    function convertTime(timeString:string)
-    {
-        const [time, modifier] = timeString.split(' ');
-        let [hours, minutes] = time.split(':');
-        if (hours === '12') {
-           hours = '00';
-        }
-        if (modifier === 'PM') {
-           hours = (parseInt(hours, 10) + 12).toString();
-        }
-        return `${hours}:${minutes}`+":00";
+     function monthString(mon:string){
+        return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
 
-     function convertTimeDate(timeString:string,dateString:string):string
+     function formattedUTCString(timeString:string,dateString:string):string[]
      {
-        const utcString:string = (new Date(dateString+""+timeString)).toUTCString();
-        const stringArray:string[] = utcString.split(" ");
+        dateString = dateString.replace(/-/gi,"/");
+        console.log("Passing in time: "+timeString+" and date: "+dateString);
+        const utcString:string[] = (new Date(dateString+" "+timeString)).toUTCString().split(" ");
+        const reformmatedDateString:string = utcString[3]+"-"+monthString(utcString[2])+"-"+utcString[1];
+        console.log("reformattedDate string is "+utcString);
+        const utcTimeString = utcString[4];
+        const utcFinalString:string[] = [reformmatedDateString,utcTimeString];
+        console.log("Final string content "+utcFinalString)
 
-        return stringArray[4];
+        return utcFinalString;
      }
 
     const useSelectedTime = () =>{
@@ -118,17 +122,15 @@ const CalendarPage: React.FC = () => {
         {
             console.log("Sending in schedule data");
             const dateString:string = selectedDate.toISOString().split('T')[0];
-            //const convertedTime:string = convertTimeDate(selectedTime,dateString);
-            const convertedTime:string = convertTime(selectedTime);
-            console.log("Returning time "+convertedTime);
+            const convertedTimeArr:string[] = formattedUTCString(selectedTime,dateString);
+            console.log("Returning time "+convertedTimeArr);
             scheduleData.title = event.eventName;
-            scheduleData.date = dateString;
-            scheduleData.time = convertedTime;
+            scheduleData.date = convertedTimeArr[0];
+            scheduleData.time = convertedTimeArr[1];
             scheduleData.identifier = event.identifier;
             scheduleData.password = event.password;
             schedule(scheduleData);
         }
-        closeForm();
     }
 
 
@@ -142,9 +144,9 @@ const CalendarPage: React.FC = () => {
                 /> 
             </div>
 
-            {showForm && (
-                <div className='popup-overlay'>
-                    <div className='popup-form'>
+            
+                <div className=''>
+                    <div className=''>
                         <h2>Event form for {selectedDate?.toLocaleDateString()}</h2>
                         <div>
 
@@ -157,12 +159,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-name'
                                 onChange={handleChange}
                                 value={event.eventName}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
 
                             <label htmlFor='time' style={{fontSize: 'calc(5px + 2vmin)'}}>Time Slots</label>
@@ -185,12 +182,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-tags'
                                 onChange={handleChange}
                                 value={event.eventTags}
-                                style={{
-                                    display: 'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                             <label htmlFor='Collaborators' style={{fontSize: 'calc(5px + 2vmin)'}}>Collaborators</label>
                             <input
@@ -199,12 +191,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-collaborators'
                                 onChange={handleChange}
                                 value={event.Collaborators}
-                                style={{
-                                    display: 'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />  
                             <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Username
@@ -215,12 +202,7 @@ const CalendarPage: React.FC = () => {
                                 id='event-Ident'
                                 onChange={handleChange}
                                 value={event.identifier}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                             <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Password
@@ -231,21 +213,15 @@ const CalendarPage: React.FC = () => {
                                 id='event-Pass'
                                 onChange={handleChange}
                                 value={event.password}
-                                style={{
-                                    display:'block',
-                                    padding: '10px',
-                                    width:'100%',
-                                    borderRadius: '1em',
-                                }}
+                                style={inputFieldStyle}
                             />
                         </div>
                         <div className='popup-btns'>
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
-                            <button onClick={closeForm} className='form-btn'>Close</button>
                         </div>
                     </div>
                 </div>
-            )}
+            
         </div>
     );
 };
