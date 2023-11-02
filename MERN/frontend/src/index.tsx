@@ -17,7 +17,7 @@ import WebSocketTest from "./Pages/WebSocketTest";
 
 const Compiled = () => {
 
-  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile", "Login", "Register"];
 
   const [userName, setUserName] = useState("");
   const [buttonList,setButtonList] = useState(baseButtonList);
