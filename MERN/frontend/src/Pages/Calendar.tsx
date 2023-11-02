@@ -21,6 +21,14 @@ const CalendarPage: React.FC = () => {
         eventDate: ""
     }
 
+    const formErrorValues = {
+        eventName: "",
+        Collaborators: "",
+        identifier: "",
+        password: "",
+        eventDate: ""
+    }
+
     const inputData:scheduleArgs = {
         title: "",
         tags: [],
@@ -40,7 +48,7 @@ const CalendarPage: React.FC = () => {
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
-    const [formErrors, setFormErrors] = useState(initialValues);
+    const [formErrors, setFormErrors] = useState(formErrorValues);
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
     const [takenTimesList,setTakenTime] = useState(takenTimes);
@@ -132,12 +140,47 @@ const CalendarPage: React.FC = () => {
         return utcFinalString;
      }
 
+     function CheckNoBlank()
+     {
+        var triggeredError:boolean = false;
+        if (event.password == "")
+        {
+            formErrors.password = "Please enter a password";
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.password = ""
+        }
+
+        if (selectedTime == "")
+        {
+            formErrors.eventDate = "Please select a time slot."
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.eventDate = ""
+        }
+
+        if (event.eventName == "")
+        {
+            formErrors.eventName = "Please set an event name."
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.eventName = "";
+        }
+
+        return triggeredError;
+     }
+
     const useSelectedTime = () =>{
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
         setMaestroID(maestroID + 1);
         const userName = localStorage.getItem("Username");
-        var triggeredError:boolean = false;
 
         if (!userName)
         {
@@ -149,27 +192,8 @@ const CalendarPage: React.FC = () => {
             formErrors.identifier = "";
         }
 
-        if (event.password == "")
-        {
-            formErrors.password = "Please enter a password";
-            triggeredError = true;
-        }
-        else
-        {
-            formErrors.password = ""
-        }
-
-        if (scheduleData.date === "")
-        {
-            formErrors.eventDate = "Please select a date."
-        }
-        else
-        {
-            formErrors.eventDate = ""
-        }
-
-        if(triggeredError)
-            return;
+        if (CheckNoBlank())
+            return
 
         if (selectedDate && selectedTime)
         {
@@ -250,7 +274,6 @@ const CalendarPage: React.FC = () => {
                                 value={event.Collaborators}
                                 style={inputFieldStyle}
                             />  
-                            <p className='error'>{formErrors.Collaborators}</p>
                             {/* <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Username
                             </label>
