@@ -6,6 +6,7 @@ type scheduleArgs = {
     time: string;
     identifier: string;
     password: string;
+    setterFunc?:Function;
 }
 
 export default scheduleArgs;

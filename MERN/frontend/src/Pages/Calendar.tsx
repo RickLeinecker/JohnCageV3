@@ -17,13 +17,22 @@ const CalendarPage: React.FC = () => {
         eventTags: "",
         Collaborators: "",
         identifier: "",
-        password: ""
+        password: "",
+        eventDate: ""
+    }
+
+    const formErrorValues = {
+        eventName: "",
+        Collaborators: "",
+        identifier: "",
+        password: "",
+        eventDate: ""
     }
 
     const inputData:scheduleArgs = {
         title: "",
-        tags: ["Wookie","Cookie"],
-        description: "thisi s a test",
+        tags: [],
+        description: "",
         date: "",
         time: "",
         identifier: "",
@@ -32,14 +41,14 @@ const CalendarPage: React.FC = () => {
 
     const inputFieldStyle:React.CSSProperties = {
         display:'block',
-        padding: '10px',
+        padding: '0.75em',
         width:'100%',
         borderRadius: '1em',
     }
 
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [selectedTime, setSelectedTime] = useState('');
-    const [formErrors, setFormErrors] = useState(initialValues);
+    const [formErrors, setFormErrors] = useState(formErrorValues);
     const [showForm, setShowForm] = useState(false);
     const [event, setEvent] = useState(initialValues);
     const [takenTimesList,setTakenTime] = useState(takenTimes);
@@ -58,6 +67,11 @@ const CalendarPage: React.FC = () => {
         timesTable.forEach(element => {
             takenTimesList.push(element);
         });
+    }
+
+    function ErrorSetter()
+    {
+        formErrors.identifier = "Invalid password";
     }
 
     const handleDateClick = (date: Date) => {
@@ -98,6 +112,16 @@ const CalendarPage: React.FC = () => {
         setSelectedTime(newTime);
     }
 
+    function tagSplitter(tagsList:string):string[]
+    {
+        if (tagsList.length > 0)
+        {
+            return tagsList.split(" ");
+        }
+
+        return [tagsList]
+    }
+
      function monthString(mon:string){
         return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1
      }
@@ -116,6 +140,42 @@ const CalendarPage: React.FC = () => {
         return utcFinalString;
      }
 
+     function CheckNoBlank()
+     {
+        var triggeredError:boolean = false;
+        if (event.password == "")
+        {
+            formErrors.password = "Please enter a password";
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.password = ""
+        }
+
+        if (selectedTime == "")
+        {
+            formErrors.eventDate = "Please select a time slot."
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.eventDate = ""
+        }
+
+        if (event.eventName == "")
+        {
+            formErrors.eventName = "Please set an event name."
+            triggeredError = true;
+        }
+        else
+        {
+            formErrors.eventName = "";
+        }
+
+        return triggeredError;
+     }
+
     const useSelectedTime = () =>{
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
@@ -132,6 +192,9 @@ const CalendarPage: React.FC = () => {
             formErrors.identifier = "";
         }
 
+        if (CheckNoBlank())
+            return
+
         if (selectedDate && selectedTime)
         {
             console.log("Sending in schedule data");
@@ -143,6 +206,9 @@ const CalendarPage: React.FC = () => {
             scheduleData.time = convertedTimeArr[1];
             scheduleData.identifier = userName;
             scheduleData.password = event.password;
+            scheduleData.tags = tagSplitter(event.eventTags);
+            console.log("Tags list is "+scheduleData.tags);
+            scheduleData.setterFunc = ErrorSetter;
             schedule(scheduleData);
         }
     }
@@ -189,8 +255,8 @@ const CalendarPage: React.FC = () => {
                                     </option>
                                 ))}
                             </select>
-                            <br/>
-                            <label htmlFor='tags' style={{fontSize: 'calc(5px + 2vmin)'}}>Tags</label>
+                            <p className='error'>{formErrors.eventDate}</p>
+                            <label htmlFor='tags' style={{fontSize: 'calc(5px + 2vmin)'}}>Tags (Separate tags by space)</label>
                             <input 
                                 type='text'
                                 name='eventTags'
@@ -208,7 +274,6 @@ const CalendarPage: React.FC = () => {
                                 value={event.Collaborators}
                                 style={inputFieldStyle}
                             />  
-                            <p className='error'>{formErrors.Collaborators}</p>
                             {/* <label htmlFor='event' style={{fontSize: 'calc(5px + 2vmin)'}}>
                                 Username
                             </label>
@@ -234,7 +299,7 @@ const CalendarPage: React.FC = () => {
                             <p className='error'>{formErrors.password}</p>
                         </div>
                         <p className='error'>{formErrors.identifier}</p>
-                        <div className='popup-btns'>
+                        <div className='btns'>
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
                         </div>
                     </div>
