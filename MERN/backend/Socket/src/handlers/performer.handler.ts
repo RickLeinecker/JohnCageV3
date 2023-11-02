@@ -77,7 +77,10 @@ const definePerformerClose = function (performer: Performer, currentConcert: Con
                 currentConcert.performers.splice(i, 1);
 
                 const activePasscodeIndex = currentConcert.activePasscodes.indexOf(performer.passcode);
-                if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); }
+                if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); console_log(currentConcert.activePasscodes); }
+                else {
+                    console_log("Passcoderemovalfailed");
+                }
 
                 console_log("Performer removed. Current performers: "); // CHECK IF DUPLICATE WITH SOCKET ONCLOSE CODE.
                 console_log(currentConcert.performers);
