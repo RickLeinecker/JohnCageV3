@@ -81,7 +81,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         const nickname: string = argument.at(1) ? argument.at(1) as string : "Maestro";
 
         // Authenticate
-        if (!(validateDateTime() && validateMaestroPasscode(passcode)) && !currentConcert.activePasscodes.includes(passcode)) {
+        if (!(validateDateTime() && validateMaestroPasscode(passcode) && !currentConcert.activePasscodes.includes(passcode))) {
             ws.close();
         }
         else {
@@ -98,7 +98,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         const nickname: string = argument.at(1) ? argument.at(1) as string : "Performer";
 
         // Authenticate
-        if (!(validateDateTime() && validatePerformerPasscode(passcode)) && !currentConcert.activePasscodes.includes(passcode)) {
+        if (!(validateDateTime() && validatePerformerPasscode(passcode) && !currentConcert.activePasscodes.includes(passcode))) {
             ws.close();
         }
         else {
