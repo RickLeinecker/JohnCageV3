@@ -166,7 +166,7 @@ class ConcertsController implements concertsAPI {
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
     const fromDateTime = validDate(req.query.fromDateTime as string) ? formatDateTime(Date.parse(req.query.fromDateTime as string)) : "2000-01-01T00:00:00";
     const toDateTime = validDate(req.query.toDateTime as string) ? formatDateTime(Date.parse(req.query.toDateTime as string)) : "9999-12-31T23:59:59";
-    let page: number = parseInt(req.query.page as string);
+    let page: number = parseInt(req.query.page as string) >= 0 ? parseInt(req.query.page as string) : 0;
 
     const fromDate: string = fromDateTime.split('T').at(0) as string;
     const fromTime: string = fromDateTime.split('T').at(1) as string;
@@ -202,9 +202,34 @@ class ConcertsController implements concertsAPI {
           },
           // // Find date and time
           {
-            [Op.and]: [
-              { Date: { [Op.between]: [fromDate, toDate] } },
-              { Time: { [Op.between]: [fromTime, toTime] } }
+            [Op.or]: [
+              {
+                [Op.and]: [
+                  { Date: { [Op.eq]: fromDate } },
+                  { Date: { [Op.eq]: toDate } },
+                  { Time: { [Op.between]: [fromTime, toTime] } }
+                ]
+              },
+              {
+                [Op.and]: [
+                  { Date: { [Op.eq]: fromDate } },
+                  { Date: { [Op.lt]: toDate } },
+                  { Time: { [Op.gte]: fromTime } }
+                ]
+              },
+              {
+                [Op.and]: [
+                  { Date: { [Op.gt]: fromDate } },
+                  { Date: { [Op.eq]: toDate } },
+                  { Time: { [Op.lte]: toTime } }
+                ]
+              },
+              {
+                [Op.and]: [
+                  { Date: { [Op.gt]: fromDate } },
+                  { Date: { [Op.lt]: toDate } }
+                ]
+              }
             ]
           }
         ]
