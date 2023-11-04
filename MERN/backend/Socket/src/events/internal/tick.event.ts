@@ -1,6 +1,5 @@
 import WebSocket, { WebSocketServer } from "ws";
 import console_log from "../../../../functions/logging/console_log";
-import defaultMix from "../../mixers/default.mix";
 import { Concert, ConcertParticipant, MixerInput, MixerOutput, Performer, waitingPerformer } from "../../socket.types";
 import { outgoingAudioChunkSize } from "../../../config/socket.config";
 import { addPerformer } from "../../handlers/performer.handler";
@@ -94,7 +93,7 @@ const concertTick = function (currentConcert: Concert) {
 
         // Mix audio chunks.
         const mixerInput: MixerInput = { buffers: chunkBuffers, state: currentConcert.mixerState };
-        const mixerOutput: MixerOutput = defaultMix(mixerInput);
+        const mixerOutput: MixerOutput = currentConcert.mixer.mix(mixerInput);
         currentConcert.mixerState = mixerOutput.state;
         currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixerOutput.mixedBuffer]);
         console_log("Audio mixed.");

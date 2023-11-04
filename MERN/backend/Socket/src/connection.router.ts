@@ -13,6 +13,7 @@ import { broadcastNames } from "./events/outgoing/names.broadcast";
 import { getDateUTC, getTimeUTC, floorTime } from "../../functions/date.functions";
 import { addListener } from "process";
 import { addConcertListener } from "./handlers/listener.handler";
+//import  from "./mixers/default.mix";
 
 const fs = require("fs");
 
@@ -27,7 +28,8 @@ var currentConcert: Concert = {
     listener: undefined,
     attendance: {},
     activePasscodes: [],
-    mixerState: null
+    mixerState: null,
+    mixer: require("./mixers/default.mix")
 };
 
 const validateDateTime = function (): boolean {

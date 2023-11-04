@@ -49,7 +49,8 @@ const endConcert = function (currentConcert: Concert): void {
             listener: undefined,
             attendance: {},
             activePasscodes: [],
-            mixerState: null
+            mixerState: null,
+            mixer: currentConcert.mixer
         };
         console_log("Concert ended\n");
     }

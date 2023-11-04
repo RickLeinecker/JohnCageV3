@@ -26,6 +26,7 @@ type Concert = {
     attendance: { [passcode: string]: string; };
     activePasscodes: string[];
     mixerState: any;
+    mixer: { mix: (i: MixerInput) => MixerOutput };
 }
 
 type Listener = {
