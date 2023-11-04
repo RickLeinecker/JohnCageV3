@@ -27,6 +27,8 @@ const gatherNames = function (currentConcert: Concert): string[] {
         names.push(currentConcert.attendance[passcode]);
     }
 
+    console_log("Names gathered: ", names, "\n");
+
     // Return all.
     return names;
 }

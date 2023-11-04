@@ -81,9 +81,7 @@ const defineMaestroClose = function (ws: WebSocket, currentConcert: Concert) {
 
             const activePasscodeIndex = currentConcert.activePasscodes.indexOf(maestro.passcode);
             if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); console_log(currentConcert.activePasscodes); }
-            else {
-                console_log("Passcoderemovalfailed");
-            }
+            else { console_log("Passcoderemovalfailed"); }
 
             removeMaestro(currentConcert);
         });

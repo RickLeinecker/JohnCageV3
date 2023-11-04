@@ -22,7 +22,6 @@ interface concertsAPI {
 }
 
 class ConcertsController implements concertsAPI {
-  // IMPORTNAT: THIS CURRENTLY USES THE GROUP ID TO SEARCH. IDEALLY WE USE THE PK FROM THE TABLE. IT SHOULD STILL WORK.
   async findAndPipeAudio(req: Request, res: Response) {
     let groupId: number = parseInt(req.query.id as string);
     if (!groupId) {
@@ -179,7 +178,7 @@ class ConcertsController implements concertsAPI {
     const currentTime: string = getTimeUTC();
 
     // Search
-    await groups.findAll({
+    await groups.findAndCountAll({
       limit: pageLength,
       offset: pageLength * page,
       attributes: ['GroupID', 'GroupLeaderName', 'Title', 'Tags', 'Date', 'Time'],
@@ -234,8 +233,9 @@ class ConcertsController implements concertsAPI {
           }
         ]
       }
-    }).then((groups) => {
-      res.status(200).send({ searchResults: groups });
+    }).then((result) => {
+      if (!result || result.count == undefined || !result.rows) { throw new Error("Query failed."); }
+      res.status(200).send({ searchResults: result.rows, pages: Math.ceil(result.count / pageLength) });
     }).catch((e) => {
       console_log("Error: ", e.message, "\n");
       res.status(500).send({ error: e.message });

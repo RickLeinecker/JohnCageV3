@@ -88,6 +88,8 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
             currentConcert.activePasscodes.push(passcode);
             addMaestro(ws, currentConcert, nickname, passcode);
             currentConcert.attendance[passcode] = "Maestro: " + nickname;
+            console_log("Attendance: ", currentConcert.attendance, "\n");
+
             console_log("performer/maestro connected.");
             broadcastNames(currentConcert);
         }
@@ -105,6 +107,9 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
             currentConcert.activePasscodes.push(passcode);
             enqueuePerformer(ws, currentConcert, nickname, passcode);
             currentConcert.attendance[passcode] = "Performer: " + nickname;
+
+            console_log("Attendance: ", currentConcert.attendance, "\n");
+
             console_log("performer connected.");
             broadcastNames(currentConcert);
         }
