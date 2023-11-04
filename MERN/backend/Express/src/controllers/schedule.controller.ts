@@ -10,24 +10,101 @@ import { users, groups, schedules, groupsAttributes, usersAttributes, schedulesA
 // Functions
 import console_log from "../../../functions/logging/console_log";
 import { concatTags } from "../functions/tag.functions";
-import { getDateUTC, getTimeUTC, floorTime, validDate, formatDateTime } from "../../../functions/date.functions";
+import { getDateUTC, getTimeUTC, floorTime } from "../../../functions/date.functions";
 import { getPerformerPasscodes, generatePasscodes, getListenerPasscode } from "../passcode.functions";
 import { TEMP_FOLDER } from "../../config/express.config";
 import { writeFileForce } from "../../../functions/file.functions";
 
 interface scheduleAPI {
     getSchedule(req: Request, res: Response): Promise<void>;
-    getNextConcert(res: Response): Promise<void>;
-    getMixMethods(res: Response): any;
+    getNextConcert(req: Request, res: Response): Promise<void>;
+    getMixMethods(req: Request, res: Response): any;
 
     scheduleConcert(req: Request, res: Response): Promise<void>;
-
     prepareConcert(req: Request, res: Response): Promise<void>;
     validatePerformer(req: Request, res: Response): Promise<void>;
     validateListener(req: Request, res: Response): Promise<void>;
 }
 
 class ScheduleController implements scheduleAPI {
+    async getSchedule(req: Request, res: Response) {
+        const date = typeof req.query.date === "string" ? req.query.date : "";
+
+        let schedule: Set<string> = new Set();
+        await schedules.findAll(
+            {
+                attributes: ["Time"],
+                where: { Date: { [Op.eq]: date } }
+            }).then((scheduled) => {
+                scheduled.forEach((scheduleData) => {
+                    let time: string | undefined = scheduleData.dataValues.Time;
+                    if (time) { schedule.add(time); }
+                })
+
+                console_log("Scheduled times: ", schedule, "\n\n");
+                return res.status(200).send({ scheduledTimes: Array.from(schedule) });
+            }).catch((e) => {
+                console_log("Error: ", e.message, "\n\n");
+                return res.status(500).send({ error: e.message });
+            });
+    }
+
+    async getMixMethods(req: Request, res: Response) {
+        type MixerDescriptor = {
+            fileName: string;
+            displayName: string;
+        }
+        let mixers: MixerDescriptor[] = [];
+        let mixerFiles: string[] = [];
+
+        // REPLACE THIS STRING WITH A CONFIG VARIABLE
+        try {
+            mixerFiles = fs.readdirSync("../Socket/build/socketServer/Socket/src/mixers");
+        }
+        catch (e) {
+            mixerFiles = ["Default"];
+            console_log(e);
+        }
+
+        mixerFiles.forEach((file: string) => {
+            let shortenedName: string | undefined = file.split(".").at(0);
+            mixers.push({ fileName: file, displayName: shortenedName ? shortenedName : "Default" });
+        })
+
+        console_log("Mixers detected: ", mixers, "\n");
+        return res.status(200).send({ mixers: mixers });
+    }
+
+    async getNextConcert(req: Request, res: Response) {
+        const date = getDateUTC();
+        const time = floorTime(getTimeUTC());
+        await groups.findAll(
+            {
+                order: [
+                    ['Date', 'ASC'],
+                    ['Time', 'ASC']
+                ],
+                where: {
+                    [Op.or]:
+                        [
+                            {
+                                Date: { [Op.eq]: date },
+                                Time: { [Op.gte]: time }
+                            },
+                            { Date: { [Op.gt]: date } }
+                        ]
+                }
+            }).then((group) => {
+                if (!group.at(0)) { throw new Error("No future concert found.") }
+
+                console_log("Next concert group: ", group.at(0), "\n\n");
+                return res.status(200).send({ nextConcertGroup: group.at(0) });
+            }).catch((e) => {
+                console_log("Error: ", e.message, "\n\n");
+                return res.status(500).send({ error: e.message });
+            });
+    }
+
     // IMPORTANT: DOES NOT REQUIRE ACCOUNT EMAIL VERIFICATION CURRENTLY.
     async scheduleConcert(req: Request, res: Response) {
         console_log("Scheduling concert. Current time: ", "\n");
@@ -38,15 +115,15 @@ class ScheduleController implements scheduleAPI {
         const tags: string = concatTags(concertTags);
 
         // Check if timeslot is taken.
+        // Date Time as a pair in MySQL should be unique.
+        // That means MySQL should throw an error if the sime slot is already reserved.
+        // Just in case, we also check here in this first query.
         schedules.findOne({
             where: {
                 Date: { [Op.eq]: date },
                 Time: { [Op.eq]: floorTime(time) }
             }
         }).then((schedule) => {
-            // Date Time as a pair in MySQL should be unique.
-            // That means MySQL should throw an error if the sime slot is already reserved.
-            // Just in case, we also check here in this first query.
             console_log("\nSchedule: ", schedule, "\n");
             if (schedule) { throw new Error("This date and time has already been reserved."); }
             // if (date + "T" + time < getDateUTC() + "T" + getTimeUTC()) { throw new Error("Concert must be scheduled for the future."); }
@@ -107,65 +184,6 @@ class ScheduleController implements scheduleAPI {
             console_log("Error: ", e, "\n");
             return res.status(500).send({ error: e.message });
         }
-    }
-
-    async getSchedule(req: Request, res: Response) {
-        const date = typeof req.query.date === "string" ? req.query.date : "";
-
-        let schedule: Set<string> = new Set();
-        await schedules.findAll(
-            {
-                attributes: ["Time"],
-                where: { Date: { [Op.eq]: date } }
-            }).then((scheduled) => {
-                scheduled.forEach((scheduleData) => {
-                    let time: string | undefined = scheduleData.dataValues.Time;
-                    if (time) { schedule.add(time); }
-                })
-
-                console_log("Scheduled times: ", schedule, "\n\n");
-                return res.status(200).send({ scheduledTimes: Array.from(schedule) });
-            }).catch((e) => {
-                console_log("Error: ", e.message, "\n\n");
-                return res.status(500).send({ error: e.message });
-            });
-    }
-
-    async getMixMethods(res: Response) {
-        // REPLACE THIS STRING WITH A CONFIG VARIABLE
-        const mixers = fs.readdir("../Socket/build/socketServer/Socket/src/mixers");
-        console.log(mixers);
-        return res.status(200).send({ mixers: mixers });
-    }
-
-    async getNextConcert(res: Response) {
-        const date = getDateUTC();
-        const time = floorTime(getTimeUTC());
-        await groups.findAll(
-            {
-                order: [
-                    ['Date', 'ASC'],
-                    ['Time', 'ASC']
-                ],
-                where: {
-                    [Op.or]:
-                        [
-                            {
-                                Date: { [Op.eq]: date },
-                                Time: { [Op.gte]: time }
-                            },
-                            { Date: { [Op.gt]: date } }
-                        ]
-                }
-            }).then((group) => {
-                if (!group.at(0)) { throw new Error("No future concert found.") }
-
-                console_log("Next concert group: ", group.at(0), "\n\n");
-                return res.status(200).send({ nextConcertGroup: group.at(0) });
-            }).catch((e) => {
-                console_log("Error: ", e.message, "\n\n");
-                return res.status(500).send({ error: e.message });
-            });
     }
 
     async prepareConcert(req: Request, res: Response) {
