@@ -4,24 +4,8 @@ import { Concert, Performer, waitingPerformer } from "../../socket.types";
 import console_log from "../../../../functions/logging/console_log";
 const fs = require("fs");
 
-// MUST KEEP TRACK OF PERFORMERS THAT LEFT EARLY. THIS IS INCOMPLETE.
 const gatherNames = function (currentConcert: Concert): string[] {
     let names: string[] = [];
-
-    // // Add maestro's name first.
-    // let maestro = currentConcert.maestro;
-    // if (maestro) {
-    //     names.push(maestro.nickname);
-    // }
-
-    // //  Add performers' names after.
-    // let performers = currentConcert.performers;
-    // for (let i = 0; i < performers.length; ++i) {
-    //     let performer: Performer | undefined = performers.pop();
-    //     if (performer) {
-    //         names.push(performer.nickname);
-    //     }
-    // }
 
     for (let passcode in currentConcert.attendance) {
         names.push(currentConcert.attendance[passcode]);
@@ -29,7 +13,6 @@ const gatherNames = function (currentConcert: Concert): string[] {
 
     console_log("Names gathered: ", names, "\n");
 
-    // Return all.
     return names;
 }
 
