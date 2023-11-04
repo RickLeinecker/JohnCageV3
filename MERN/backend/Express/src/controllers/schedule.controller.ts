@@ -10,23 +10,25 @@ import { users, groups, schedules, groupsAttributes, usersAttributes, schedulesA
 // Functions
 import console_log from "../../../functions/logging/console_log";
 import { concatTags } from "../functions/tag.functions";
-import { getDateUTC, getTimeUTC, floorTime } from "../../../functions/date.functions";
+import { getDateUTC, getTimeUTC, floorTime, validDate, formatDateTime } from "../../../functions/date.functions";
 import { getPerformerPasscodes, generatePasscodes, getListenerPasscode } from "../passcode.functions";
 import { TEMP_FOLDER } from "../../config/express.config";
-import { saveConcert } from "../functions/saveConcert.functions";
 import { writeFileForce } from "../../../functions/file.functions";
 
 interface scheduleAPI {
-    scheduleConcert(req: Request, res: Response): Promise<void>;
     getSchedule(req: Request, res: Response): Promise<void>;
+    getNextConcert(res: Response): Promise<void>;
+    getMixMethods(res: Response): any;
+
+    scheduleConcert(req: Request, res: Response): Promise<void>;
+
     prepareConcert(req: Request, res: Response): Promise<void>;
     validatePerformer(req: Request, res: Response): Promise<void>;
-    getNextConcert(req: Request, res: Response): Promise<void>;
+    validateListener(req: Request, res: Response): Promise<void>;
 }
 
 class ScheduleController implements scheduleAPI {
-    // IMPORTANT: HAVE NOT TESTED IF THE CHECK FOR TIME SLOT RESERVATION WORKS.
-    // IMPORTANT: DOES NOT REQUIRE EMAIL VERIFICATION CURRENTLY.
+    // IMPORTANT: DOES NOT REQUIRE ACCOUNT EMAIL VERIFICATION CURRENTLY.
     async scheduleConcert(req: Request, res: Response) {
         console_log("Scheduling concert. Current time: ", "\n");
         console_log(getTimeUTC(), "\n");
@@ -34,21 +36,23 @@ class ScheduleController implements scheduleAPI {
 
         const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
-
-        // TODO: Validate requested Date and Time and reject if invalid format, or in the past.
+        const dateOnly: string = formatDateTime(Date.parse(date as string));
 
         // Check if timeslot is taken.
         schedules.findOne({
             where: {
-                Date: { [Op.eq]: date },
+                Date: { [Op.eq]: dateOnly },
                 Time: { [Op.eq]: floorTime(time) }
             }
         }).then((schedule) => {
-            // TODO: Might be improved by makeing date time pair unique in groups, meaning no search or check needed.
+            // Date Time as a pair in MySQL should be unique.
+            // That means MySQL should throw an error if the sime slot is already reserved.
+            // Just in case, we also check here in this first query.
             console_log("\nSchedule: ", schedule, "\n");
             if (schedule) { throw new Error("This date and time has already been reserved."); }
+            if (dateOnly + "T" + time < getDateUTC() + "T" + getTimeUTC()) { throw new Error("Concert must be scheduled for the future."); }
 
-            // Find user who requested the schedule.
+            // Find user who requested the schedule (login).
             let user: usersAttributes | undefined = undefined;
             users.findAll({
                 attributes: { exclude: ['VerificationCode'] },
@@ -58,7 +62,7 @@ class ScheduleController implements scheduleAPI {
                 if (users.length > 1) { console_log("Warning: Multiple users with same username and password detected.\n"); }
                 if (!first) { throw new Error("User not found.") }
                 user = first.dataValues;
-                // if (user.IsVerified != 0) { throw new Error("Please verify email befoer scheduling.") } // Add back once email verification works.
+                // if (user.IsVerified != 0) { throw new Error("Please verify email before scheduling.") } // Add back once email verification works.
 
                 bcryptjs.compare(password, user.Password).then((result: any) => {
                     if (!result) { throw new Error("Incorrect password."); }
@@ -78,7 +82,7 @@ class ScheduleController implements scheduleAPI {
                         newGroup = group.dataValues;
 
                         // Schedule the recording.
-                        const passcodes: number[] = generatePasscodes(5);
+                        const passcodes: number[] = generatePasscodes(6);
                         schedules.create({
                             GroupID: newGroup.GroupID,
                             Date: newGroup["Date"],
@@ -87,7 +91,8 @@ class ScheduleController implements scheduleAPI {
                             User1Passcode: passcodes.at(1),
                             User2Passcode: passcodes.at(2),
                             User3Passcode: passcodes.at(3),
-                            User4Passcode: passcodes.at(4)
+                            User4Passcode: passcodes.at(4),
+                            ListenerPasscode: passcodes.at(5)
                         }).then((schedule) => {
                             newSchedule = schedule.dataValues;
 
@@ -107,7 +112,6 @@ class ScheduleController implements scheduleAPI {
 
     async getSchedule(req: Request, res: Response) {
         const date = typeof req.query.date === "string" ? req.query.date : "";
-        // TODO: Verify date format YYYY-MM-DD and reject if invalid.
 
         let schedule: Set<string> = new Set();
         await schedules.findAll(
@@ -128,15 +132,14 @@ class ScheduleController implements scheduleAPI {
             });
     }
 
-    async getMixMethods(req: Request, res: Response) {
+    async getMixMethods(res: Response) {
         // REPLACE THIS STRING WITH A CONFIG VARIABLE
-        const tepmtep = fs.readdirSync("../Socket/build/socketServer/Socket/src/mixers");
-        console.log(tepmtep);
-
-        return res.status(200).send({});
+        const mixers = fs.readdir("../Socket/build/socketServer/Socket/src/mixers");
+        console.log(mixers);
+        return res.status(200).send({ mixers: mixers });
     }
 
-    async getNextConcert(req: Request, res: Response) {
+    async getNextConcert(res: Response) {
         const date = getDateUTC();
         const time = floorTime(getTimeUTC());
         await groups.findAll(

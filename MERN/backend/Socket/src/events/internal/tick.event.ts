@@ -33,9 +33,9 @@ const updatePerformers = function (currentConcert: Concert): void {
 const gatherAudioBuffers = function (currentConcert: Concert): Buffer[] {
     let performers: Performer[] = currentConcert.performers;
     let maestro: Performer | undefined = currentConcert.maestro;
+    let rawBuffers: Buffer[] = [];
 
     // Collect participant buffers to pass them to the mixer if they are of the required size.
-    let rawBuffers: Buffer[] = [];
     for (let i = 0; i < performers.length; ++i) {
         let performer: ConcertParticipant | undefined = performers.at(i)?.data;
         if (performer != undefined) {
@@ -80,7 +80,7 @@ const validatePerformerBuffers = function (currentConcert: Concert): boolean {
 }
 
 const concertTick = function (currentConcert: Concert) {
-    // Tick happens whenever an audio buffer is received, at least as of writing this.
+    // Tick happens whenever an audio buffer is received, as of writing this.
     // If there is enough data in each participant's buffer, mix and send.
     if (validatePerformerBuffers(currentConcert) === true) {
         console_log("Performer buffers validated.");
