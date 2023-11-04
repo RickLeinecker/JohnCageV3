@@ -19,6 +19,7 @@ type Concert = {
 
 type Listener = {
     socket: WebSocket;
+    passcode: string;
 }
 
 type waitingPerformer = {

@@ -10,12 +10,14 @@ class SchedulesRoutees {
     }
 
     intializeRoutes() {
-        this.router.post("/schedule", this.controller.scheduleConcert);
         this.router.get("/getSchedule", this.controller.getSchedule);
-        this.router.post("/prepareConcert", this.controller.prepareConcert);
-        this.router.post("/validatePerformer", this.controller.validatePerformer);
         this.router.get("/getNextConcert", this.controller.getNextConcert);
         this.router.get("/getMixMethods", this.controller.getMixMethods);
+
+        this.router.post("/schedule", this.controller.scheduleConcert);
+        this.router.post("/prepareConcert", this.controller.prepareConcert);
+        this.router.post("/validatePerformer", this.controller.validatePerformer);
+        this.router.post("/validateListener", this.controller.validatePerformer);
     }
 }
 

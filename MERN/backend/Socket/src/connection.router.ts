@@ -11,6 +11,8 @@ import enqueuePerformer from "./events/internal/enqueue.event";
 import { addMaestro } from "./handlers/maestro.handler";
 import { broadcastNames } from "./events/outgoing/names.broadcast";
 import { getDateUTC, getTimeUTC, floorTime } from "../../functions/date.functions";
+import { addListener } from "process";
+import { addConcertListener } from "./handlers/listener.handler";
 
 const fs = require("fs");
 
@@ -72,6 +74,18 @@ const validateMaestroPasscode = function (passcode: string): boolean {
     return false;
 }
 
+const validateListenerPasscode = function (passcode: string): boolean {
+    console_log("Validating listener passcode...");
+
+    const passcodes = fs.readdirSync("../temp/passcodes/listener/") ? fs.readdirSync("../temp/passcodes/listener/") : [];
+    console_log("Listener passcodes: ", passcodes, "\n");
+
+    if (passcodes.includes(passcode)) { return true; }
+
+    console_log("Passcode not valid.");
+    return false;
+}
+
 const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebSocketServer) {
     const route = String(req.url);
 
@@ -115,16 +129,16 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
         }
     }
     else if (route.includes("/concert/listener")) {
-        // Authenticate first
         const argument = route.split("=");
         const passcode: string = argument.at(3) ? argument.at(3) as string : defaultPasscode;
-        const nickname: string = argument.at(1) ? argument.at(1) as string : "Listener";
 
         // Authenticate
-        if (false) {
+        if (!(validateDateTime() && validateListenerPasscode(passcode) && !currentConcert.activePasscodes.includes(passcode))) {
             ws.close();
         }
         else {
+            currentConcert.activePasscodes.push(passcode);
+            addConcertListener(ws, currentConcert, passcode);
             console_log("listener connected.");
             broadcastNames(currentConcert);
         }
