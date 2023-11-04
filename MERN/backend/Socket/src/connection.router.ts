@@ -26,7 +26,8 @@ var currentConcert: Concert = {
     mixedAudio: Buffer.alloc(2),
     listener: undefined,
     attendance: {},
-    activePasscodes: []
+    activePasscodes: [],
+    mixerState: null
 };
 
 const validateDateTime = function (): boolean {

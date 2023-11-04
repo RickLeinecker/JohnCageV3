@@ -36,12 +36,11 @@ class ScheduleController implements scheduleAPI {
 
         const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
-        const dateOnly: string = formatDateTime(Date.parse(date as string));
 
         // Check if timeslot is taken.
         schedules.findOne({
             where: {
-                Date: { [Op.eq]: dateOnly },
+                Date: { [Op.eq]: date },
                 Time: { [Op.eq]: floorTime(time) }
             }
         }).then((schedule) => {
@@ -50,7 +49,7 @@ class ScheduleController implements scheduleAPI {
             // Just in case, we also check here in this first query.
             console_log("\nSchedule: ", schedule, "\n");
             if (schedule) { throw new Error("This date and time has already been reserved."); }
-            if (dateOnly + "T" + time < getDateUTC() + "T" + getTimeUTC()) { throw new Error("Concert must be scheduled for the future."); }
+            // if (date + "T" + time < getDateUTC() + "T" + getTimeUTC()) { throw new Error("Concert must be scheduled for the future."); }
 
             // Find user who requested the schedule (login).
             let user: usersAttributes | undefined = undefined;

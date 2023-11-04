@@ -1,20 +1,31 @@
 import { outgoingAudioChunkSize } from "../../config/socket.config";
 import console_log from "../../../functions/logging/console_log";
+import { MixerInput, MixerOutput } from "../socket.types";
 
-const defaultMix = function (buffers: Buffer[]): Buffer {
+type DefaultMixerState = {
+    intervalsMixed: number;
+}
+
+const defaultMix = function (mixerInput: MixerInput): MixerOutput {
+    const buffers: Buffer[] = mixerInput.buffers;
+    const oldState: any = mixerInput.state;
+    let newState: DefaultMixerState = oldState;
+    if (!newState || newState.intervalsMixed == undefined) { newState = { intervalsMixed: 0 } };
+
     let mixedAudio: Buffer = Buffer.alloc(outgoingAudioChunkSize);
 
-    // Error checking: all buffers should be same size.
+    // Error checking: all buffers should be same size when they are passed.
     for (let i = 0; i < buffers.length; ++i) {
         let buffer = buffers.at(i);
         if (buffer == undefined || buffer.byteLength != outgoingAudioChunkSize) {
             console_log("Error: Buffer not correct size, or it doesn't exist: ");
             console_log(buffers.at(i));
-            return mixedAudio;
+            const result: MixerOutput = { mixedBuffer: mixedAudio, state: null };
+            return result;
         }
     }
 
-    // Create data views from buffers to do 16 bit calculations.
+    // Create data views on top of buffers to do 16 bit calculations.
     let bufferViews: DataView[] = [];
     for (let i = 0; i < buffers.length; ++i) {
         let buffer = buffers.at(i);
@@ -40,7 +51,10 @@ const defaultMix = function (buffers: Buffer[]): Buffer {
         mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);
     }
 
-    return mixedAudio;
+    newState.intervalsMixed++;
+    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed, " intervals have been mixed.\n"); }
+    const result: MixerOutput = { mixedBuffer: mixedAudio, state: newState };
+    return result;
 }
 
 export default defaultMix;

@@ -1,7 +1,7 @@
 import WebSocket, { WebSocketServer } from "ws";
 import console_log from "../../../../functions/logging/console_log";
 import defaultMix from "../../mixers/default.mix";
-import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../../socket.types";
+import { Concert, ConcertParticipant, MixerInput, MixerOutput, Performer, waitingPerformer } from "../../socket.types";
 import { outgoingAudioChunkSize } from "../../../config/socket.config";
 import { addPerformer } from "../../handlers/performer.handler";
 import { broadcastMessage } from "../../utilities/socket.binary";
@@ -93,16 +93,18 @@ const concertTick = function (currentConcert: Concert) {
         console_log("\n");
 
         // Mix audio chunks.
-        let mixedBuffer: Buffer = defaultMix(chunkBuffers);
-        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixedBuffer]);
+        const mixerInput: MixerInput = { buffers: chunkBuffers, state: currentConcert.mixerState };
+        const mixerOutput: MixerOutput = defaultMix(mixerInput);
+        currentConcert.mixerState = mixerOutput.state;
+        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixerOutput.mixedBuffer]);
         console_log("Audio mixed.");
-        console_log(mixedBuffer);
+        console_log(mixerOutput.mixedBuffer);
         console_log("\n");
 
         // Add null byte header to audio message.
         let header: Uint8Array = new Uint8Array(1);
         header[0] = 0;
-        let audioMessage: Buffer = Buffer.concat([header, mixedBuffer]);
+        let audioMessage: Buffer = Buffer.concat([header, mixerOutput.mixedBuffer]);
         // Broadcast mixed chunk.
         broadcastMessage(currentConcert, audioMessage, true, false, true, true);
         console_log("Audio broadcast.");
