@@ -28,13 +28,14 @@ const endConcert = function (currentConcert: Concert): void {
         console_log("Data gathered.\n");
 
         // Save data to files for express server to add into the DB.
-        const concertDate = {
+        const concertData = {
             groupId: groupId,
             fileName: "recording.bin",
             maestroName: performerNames.shift(),
             performerNames: performerNames
         }
-        fs.writeFileSync("../temp/data", JSON.stringify(concertDate), (e: any) => { if (e) { console_log(e); } });
+        console_log("Concert Data saving to file: ", concertData);
+        fs.writeFileSync("../temp/data", JSON.stringify(concertData), (e: any) => { if (e) { console_log(e); } });
 
         // Save raw audio to file for express server to format.
         fs.writeFileSync("../temp/recording.bin", currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
