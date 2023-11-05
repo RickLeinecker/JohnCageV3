@@ -7,10 +7,13 @@ import { Request, Response } from "express";
 // Models
 import { users, groups, schedules, groupsAttributes, usersAttributes, schedulesAttributes } from "../models/init-models";
 
+// Repositories
+import schedulesRepository from "../repositories/schedules.repository";
+
 // Functions
 import console_log from "../../../functions/logging/console_log";
 import { concatTags } from "../functions/tag.functions";
-import { getDateUTC, getTimeUTC, floorTime } from "../../../functions/date.functions";
+import { getDateUTC, getTimeUTC, floorTime, validDate, formatDateTime } from "../../../functions/date.functions";
 import { getPerformerPasscodes, generatePasscodes, getListenerPasscode } from "../passcode.functions";
 import { TEMP_FOLDER } from "../../config/express.config";
 import { writeFileForce } from "../../../functions/file.functions";
@@ -28,25 +31,65 @@ interface scheduleAPI {
 
 class ScheduleController implements scheduleAPI {
     async getSchedule(req: Request, res: Response) {
-        const date = typeof req.query.date === "string" ? req.query.date : "";
+        const fromDateTime = validDate(req.query.fromDateTime as string) ? formatDateTime(Date.parse(req.query.fromDateTime as string)) : "2000-01-01T00:00:00";
+        const toDateTime = validDate(req.query.toDateTime as string) ? formatDateTime(Date.parse(req.query.toDateTime as string)) : "2000-01-01T00:00:00";
+        const fromDate: string = fromDateTime.split('T').at(0) as string;
+        const fromTime: string = fromDateTime.split('T').at(1) as string;
+        const toDate: string = toDateTime.split('T').at(0) as string;
+        const toTime: string = toDateTime.split('T').at(1) as string;
 
         let schedule: Set<string> = new Set();
-        await schedules.findAll(
+        await schedulesRepository.find(
             {
-                attributes: ["Time"],
-                where: { Date: { [Op.eq]: date } }
-            }).then((scheduled) => {
-                scheduled.forEach((scheduleData) => {
-                    let time: string | undefined = scheduleData.dataValues.Time;
-                    if (time) { schedule.add(time); }
-                })
+                attributes: ["Date", "Time"],
+                where: {
+                    [Op.or]: [
+                        {
+                            [Op.and]: [
+                                { Date: { [Op.eq]: fromDate } },
+                                { Date: { [Op.eq]: toDate } },
+                                { Time: { [Op.between]: [fromTime, toTime] } }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { Date: { [Op.eq]: fromDate } },
+                                { Date: { [Op.lt]: toDate } },
+                                { Time: { [Op.gte]: fromTime } }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { Date: { [Op.gt]: fromDate } },
+                                { Date: { [Op.eq]: toDate } },
+                                { Time: { [Op.lte]: toTime } }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { Date: { [Op.gt]: fromDate } },
+                                { Date: { [Op.lt]: toDate } }
+                            ]
+                        }
+                    ]
 
-                console_log("Scheduled times: ", schedule, "\n\n");
-                return res.status(200).send({ scheduledTimes: Array.from(schedule) });
-            }).catch((e) => {
-                console_log("Error: ", e.message, "\n\n");
-                return res.status(500).send({ error: e.message });
-            });
+                }
+            }
+        ).then((scheduled) => {
+            if (!scheduled) { throw new Error("There was an error in the query.") };
+
+            scheduled.forEach((data) => {
+                let date: string | undefined = data.Date;
+                let time: string | undefined = data.Time;
+                if (time && date) { schedule.add(date + "T" + time); }
+            })
+
+            console_log("Scheduled times: ", schedule, "\n\n");
+            return res.status(200).send({ scheduledTimes: Array.from(schedule) });
+        }).catch((e) => {
+            console_log("Error: ", e.message, "\n\n");
+            return res.status(500).send({ error: e.message });
+        });
     }
 
     async getMixMethods(req: Request, res: Response) {
