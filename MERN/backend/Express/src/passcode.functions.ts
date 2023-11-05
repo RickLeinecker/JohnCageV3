@@ -11,6 +11,10 @@ const getPerformerPasscodes = function (schedule: schedulesAttributes): number[]
     return passcodes;
 }
 
+const getListenerPasscode = function (schedule: schedulesAttributes): number {
+    return schedule.ListenerPasscode ? schedule.ListenerPasscode : 0;
+}
+
 // Probably works every time but might need some testing.
 // Each code must be unique and there must be exactly the number that is passed.
 // Also must be 6 digit, although it shouldn't break anything if it isn't.
@@ -30,4 +34,4 @@ const generatePasscodes = function (count: number): number[] {
     return passCodes;
 }
 
-export { getPerformerPasscodes, generatePasscodes };
+export { getPerformerPasscodes, generatePasscodes, getListenerPasscode };

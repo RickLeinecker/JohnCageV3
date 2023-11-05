@@ -55,7 +55,7 @@ const broadcastMessage = function (currentConcert: Concert, message: Uint8Array,
 }
 
 const broadcastListener = function (listener: Listener | undefined, message: Uint8Array): void {
-    // Send to Maestro
+    // Send to Listener
     if (listener) {
         let listenerSocket = listener.socket;
         if (listenerSocket) {

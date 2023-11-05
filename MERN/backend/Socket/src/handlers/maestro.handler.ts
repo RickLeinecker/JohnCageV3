@@ -16,6 +16,7 @@ import { receiveAudio } from "../events/internal/receive.event";
 import { retrieveMessageContents, retrieveHeader } from "../utilities/socket.binary";
 import { broadcastStart } from "../events/outgoing/start.broadcast";
 import { broadcastStop } from "../events/outgoing/stop.broadcast";
+import { removePasscode } from "../functions/removepasscode";
 
 const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string, passcode: string) {
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
@@ -78,13 +79,7 @@ const defineMaestroClose = function (ws: WebSocket, currentConcert: Concert) {
     if (maestro) {
         const maestroSocket: WebSocket | undefined = maestro.socket;
         maestroSocket.on('close', function message(data) {
-
-            const activePasscodeIndex = currentConcert.activePasscodes.indexOf(maestro.passcode);
-            if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); console_log(currentConcert.activePasscodes); }
-            else {
-                console_log("Passcoderemovalfailed");
-            }
-
+            removePasscode(currentConcert, maestro.passcode);
             removeMaestro(currentConcert);
         });
     }

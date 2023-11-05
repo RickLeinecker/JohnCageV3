@@ -7,19 +7,21 @@ import { CustomHeader, Concert, Listener } from "../socket.types";
 
 // Functions
 import { retrieveHeader } from "../utilities/socket.binary";
+import { Literal } from "sequelize/types/utils";
+import { removePasscode } from "../functions/removepasscode";
 
-const addListener = function (ws: WebSocket, currentConcert: Concert, name: string) {
-    let listener: Listener = { socket: ws };
+const addConcertListener = function (ws: WebSocket, currentConcert: Concert, passcode: string) {
+    let listener: Listener = { socket: ws, passcode: passcode };
     currentConcert.listener = listener;
-    defineListenerMessage(currentConcert);
-    defineListenerClose(currentConcert);
+    defineConcertListenerMessage(currentConcert);
+    defineConcertListenerClose(currentConcert);
 
     console_log("Listener joined concert: ");
     console_log(currentConcert.listener);
     console_log("\n");
 }
 
-const defineListenerMessage = function (currentConcert: Concert) {
+const defineConcertListenerMessage = function (currentConcert: Concert) {
     let listenerSocket: WebSocket | undefined = currentConcert.listener?.socket;
 
     // Handle messages.
@@ -38,20 +40,22 @@ const defineListenerMessage = function (currentConcert: Concert) {
     }
 }
 
-const defineListenerClose = function (currentConcert: Concert) {
-    let listenerSocket: WebSocket | undefined = currentConcert.listener?.socket;
+const defineConcertListenerClose = function (currentConcert: Concert) {
+    let listener: Listener | undefined = currentConcert.listener;
+    const passcode: string = listener?.passcode ? listener?.passcode : "0";
 
-    if (listenerSocket) {
-        listenerSocket.on('close', function message(data) {
-            removeListener(currentConcert);
+    if (listener) {
+        listener.socket.on('close', function message(data) {
+            removePasscode(currentConcert, passcode);
+            removeConcertListener(currentConcert);
         });
     }
 }
 
-const removeListener = function (currentConcert: Concert) {
+const removeConcertListener = function (currentConcert: Concert) {
     currentConcert.listener = undefined;
     console_log("Listener removed.");
     console_log(currentConcert.listener);
 }
 
-export { addListener };
+export { addConcertListener };

@@ -3,9 +3,18 @@ import { addPerformer } from "../../handlers/performer.handler";
 import { Concert, waitingPerformer } from "../../socket.types";
 import endConcert from "./end.event";
 import { getNextTimeslot, minutesToMilliseconds } from "../../../../functions/date.functions";
+import console_log from "../../../../functions/logging/console_log";
+const defaultMix = require("../../mixers/default.mix.js")
 
-// MISSING: GET GROUP FROM MYSQL. NEEDED TO MODIFY NAME AND READ ID FOR RECORDING CREATION.
 const beginConcert = function (currentConcert: Concert): void {
+    try {
+        currentConcert.mixer = require("../../mixers/new.mix.js");
+    }
+    catch (e) {
+        console_log(e);
+        currentConcert.mixer = defaultMix;
+    }
+
     let waitingPerformers = currentConcert.waitingPerformers;
     let numWaiting = waitingPerformers.length;
 
