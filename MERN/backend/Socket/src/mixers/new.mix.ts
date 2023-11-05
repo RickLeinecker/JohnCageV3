@@ -36,6 +36,9 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
         }
     }
 
+    let factor = 1;
+    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
+
     // Mix samples: Add all samples together and divide by the number of samples.
     let sampleCount = bufferViews.length;
     for (let i = 0; i < outgoingAudioChunkSize / 2; ++i) {
@@ -49,11 +52,10 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
         }
 
         // MUST BE LITTLE ENDIAN
-        mixedAudio.writeInt16LE((sampleSum - 32768), 2 * i);
+        mixedAudio.writeInt16LE((sampleSum - 32768) * factor, 2 * i);
     }
 
     newState.intervalsMixed++;
-    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed + " intervals have been mixed.\n"); }
     const result: MixerOutput = { mixedBuffer: mixedAudio, state: newState };
     return result;
 }
