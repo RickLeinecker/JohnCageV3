@@ -23,22 +23,23 @@ const endConcert = function (currentConcert: Concert): void {
         // Gather data for saving concert to database.
         const performerNames: string[] = gatherNames(currentConcert);
         const idContents: any = fs.existsSync("../temp/groupId") ? fs.readFileSync("../temp/groupId") : -1;
+        const tempAudioFile: any = fs.existsSync("../temp/title") ? fs.readFileSync("../temp/title") : "Default Title";
         const groupId = parseInt(idContents.toString());
         console_log("groupId: ", groupId);
         console_log("Data gathered.\n");
 
+        // Save raw audio to file for express server to format.
+        fs.writeFileSync("../temp/" + tempAudioFile, currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
+
         // Save data to files for express server to add into the DB.
         const concertData = {
             groupId: groupId,
-            fileName: "recording.bin",
+            fileName: tempAudioFile,
             maestroName: performerNames.shift(),
             performerNames: performerNames
         }
         console_log("Concert Data saving to file: ", concertData);
         fs.writeFileSync("../temp/data", JSON.stringify(concertData), (e: any) => { if (e) { console_log(e); } });
-
-        // Save raw audio to file for express server to format.
-        fs.writeFileSync("../temp/recording.bin", currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
 
         // Reset concert data.
         currentConcert = {
