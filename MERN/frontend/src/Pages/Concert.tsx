@@ -90,7 +90,7 @@ class SongCard extends Component<ButtonState>
     render() {
         return (
             <a onClick={this.handleClick} className="btn btn-warning">
-                <div className="card" style={{ width: "18rem" }}>
+                <div className="card" style={{ width: "9rem" }}>
                     <div className="card-body">
                         <h5 className="card-title" style={{ textAlign: "center" }}>
                             {this.props.songName}
@@ -155,7 +155,7 @@ function ConcertPage() {
     }, [searchList, activeSelection]);
 
     return (
-        <div className="container" style={{ height: "100vh" }}>
+        <div className="container">
             <div className="row">
                 <br />
             </div>
@@ -171,7 +171,7 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col">
-                    <div className="scroller">
+                    
                         <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                             <div className="row">
                                 <div className="col">
@@ -196,6 +196,7 @@ function ConcertPage() {
                                 <br />
                                 <br />
                             </div>
+                            <div className = "row">
                             {
                                 searchList.map((key, i) => {
                                     return (
@@ -207,9 +208,10 @@ function ConcertPage() {
                                     )
                                 })
                             }
+                            </div>
                             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData}></Modal>
                         </div>
-                    </div >
+                    
                 </div >
 
             </div >
