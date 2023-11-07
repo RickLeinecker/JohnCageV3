@@ -10,7 +10,6 @@ const console_log = (...text: any[]) => {
         log_file.write(util.format(arg) + "\n");
         log_stdout.write(util.format(arg) + "\n");
     })
-
 }
 
 export default console_log;

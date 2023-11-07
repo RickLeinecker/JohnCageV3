@@ -268,6 +268,8 @@ class ScheduleController implements scheduleAPI {
                 writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID?.toString());
                 // Save timestamp to file.
                 writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
+                // Save mixer to file.
+                writeFileForce(TEMP_FOLDER, "mixer", "new.mix.js"); // Replace with mixer file name string.
 
                 console_log("Maestro passcode and concert data saved to files.\n");
                 return res.status(200).send({ message: "No errors caught. Maestro passcode and concert data saved to files." });

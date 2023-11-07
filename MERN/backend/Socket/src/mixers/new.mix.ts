@@ -1,26 +1,38 @@
-import { outgoingAudioChunkSize } from "../../config/socket.config";
-import console_log from "../../../functions/logging/console_log";
-import { MixerInput, MixerOutput } from "../socket.types";
+// import { outgoingAudioChunkSize } from "../../config/socket.config";
+const outgoingAudioChunkSize = 64000;
 
-type DefaultMixerState = {
+// import { MixerInput, MixerOutput } from "../socket.types";
+type MixerInput = {
+    buffers: Buffer[];
+    state: any;
+}
+type MixerOutput = {
+    mixedBuffer: Buffer;
+    state: any;
+}
+
+type NewMixerState = {
     intervalsMixed: number;
 }
 
 const newMix = (mixerInput: MixerInput): MixerOutput => {
-    console_log("ENTERTING NEW MIXER AAAAAAAA");
+    console.log("ENTERTING NEW MIXER AAAAAAAA");
+
+    // Unwrapping inputs and preparing new state.
     const buffers: Buffer[] = mixerInput.buffers;
     const oldState: any = mixerInput.state;
-    let newState: DefaultMixerState = oldState;
+    let newState: NewMixerState = oldState;
     if (!newState || newState.intervalsMixed == undefined) { newState = { intervalsMixed: 0 } };
 
+    // Goal audio buffer.
     let mixedAudio: Buffer = Buffer.alloc(outgoingAudioChunkSize);
 
     // Error checking: all buffers should be same size when they are passed.
     for (let i = 0; i < buffers.length; ++i) {
         let buffer = buffers.at(i);
         if (buffer == undefined || buffer.byteLength != outgoingAudioChunkSize) {
-            console_log("Error: Buffer not correct size, or it doesn't exist: ");
-            console_log(buffers.at(i));
+            console.log("Error: Buffer not correct size, or it doesn't exist: ");
+            console.log(buffers.at(i));
             const result: MixerOutput = { mixedBuffer: mixedAudio, state: null };
             return result;
         }
@@ -37,10 +49,11 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
     }
 
     let factor = 1;
-    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
+    if (newState.intervalsMixed % 2 == 0) { console.log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
 
     // Mix samples: Add all samples together and divide by the number of samples.
     let sampleCount = bufferViews.length;
+    // Divide by 2 since size is in bytes, audio is in 16 bit PCM.
     for (let i = 0; i < outgoingAudioChunkSize / 2; ++i) {
         let sampleSum: number = 0;
         for (let j = 0; j < sampleCount; ++j) {
