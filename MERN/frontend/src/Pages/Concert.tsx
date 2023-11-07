@@ -90,12 +90,13 @@ class SongCard extends Component<ButtonState>
     render() {
         return (
             <a onClick={this.handleClick} className="btn btn-warning">
-                <div className="card" style={{ width: "9rem" }}>
+                <div className="card" style={{ width: "7rem" }}>
                     <div className="card-body">
-                        <h5 className="card-title" style={{ textAlign: "center" }}>
+                        <h5 className="card-title" style={{ textAlign: "center",fontSize:"1rem" }}>
                             {this.props.songName}
                         </h5>
-                        <p className="card-text" style={{ textAlign: "center" }}>
+                        <br/>
+                        <p className="card-text" style={{ textAlign: "center", fontSize:"0.75rem" }}>
                             {TagsString(this.props.songTags)}
                         </p>
                     </div>
