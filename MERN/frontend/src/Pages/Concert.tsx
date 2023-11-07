@@ -90,7 +90,7 @@ class SongCard extends Component<ButtonState>
     render() {
         return (
             <a onClick={this.handleClick} className="btn btn-warning">
-                <div className="card" style={{ width: "7rem" }}>
+                <div className="card" style={{ width: "8rem" }}>
                     <div className="card-body">
                         <h5 className="card-title" style={{ textAlign: "center",fontSize:"1rem" }}>
                             {this.props.songName}
@@ -201,7 +201,7 @@ function ConcertPage() {
                             {
                                 searchList.map((key, i) => {
                                     return (
-                                        <div className="col">
+                                        <div className="col-3">
                                             <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} songTags={key.tags} onClick={() => { onClickCompound(i, true) }} />
                                             <br />
                                             <br />
