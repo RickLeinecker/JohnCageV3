@@ -4,24 +4,19 @@ import { websocketURL } from '../Variables/websocketServer';
 
 var ws: WebSocket;
 
-var counter = 65;
-
-// Functions
 function WebSocketTest() {
-
-    useEffect(() => {
-
-
-
-    }, []);
 
     // Connects to websocket role for testing. Incomplete currently.
     const connect = function () {
-        ws = new WebSocket(websocketURL + ":8080/concert/performer");
+        ws = new WebSocket(websocketURL + "/concert/performer");
         ws.binaryType = "arraybuffer";
 
         ws.onopen = () => {
             console.log("Socket connection opened.")
+        }
+
+        ws.onclose = () => {
+            console.log("Socket connection closed.")
         }
 
         ws.onmessage = (event: any) => {
