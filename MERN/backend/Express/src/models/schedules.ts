@@ -13,11 +13,12 @@ export interface schedulesAttributes {
   User3Passcode?: number;
   User4Passcode?: number;
   ListenerPasscode?: number;
+  Mixer?: string;
 }
 
 export type schedulesPk = "ID";
 export type schedulesId = schedules[schedulesPk];
-export type schedulesOptionalAttributes = "ID" | "GroupID" | "MaestroPasscode" | "User1Passcode" | "User2Passcode" | "User3Passcode" | "User4Passcode" | "ListenerPasscode";
+export type schedulesOptionalAttributes = "ID" | "GroupID" | "MaestroPasscode" | "User1Passcode" | "User2Passcode" | "User3Passcode" | "User4Passcode" | "ListenerPasscode" | "Mixer";
 export type schedulesCreationAttributes = Optional<schedulesAttributes, schedulesOptionalAttributes>;
 
 export class schedules extends Model<schedulesAttributes, schedulesCreationAttributes> implements schedulesAttributes {
@@ -31,6 +32,7 @@ export class schedules extends Model<schedulesAttributes, schedulesCreationAttri
   User3Passcode?: number;
   User4Passcode?: number;
   ListenerPasscode?: number;
+  Mixer?: string;
 
   // schedules belongsTo groups via GroupID
   Group!: groups;
@@ -84,6 +86,10 @@ export class schedules extends Model<schedulesAttributes, schedulesCreationAttri
     },
     ListenerPasscode: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    Mixer: {
+      type: DataTypes.STRING(45),
       allowNull: true
     }
   }, {
