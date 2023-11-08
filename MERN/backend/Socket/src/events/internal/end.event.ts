@@ -41,6 +41,16 @@ const endConcert = function (currentConcert: Concert): void {
         console_log("Concert Data saving to file: ", concertData);
         fs.writeFileSync("../temp/data", JSON.stringify(concertData), (e: any) => { if (e) { console_log(e); } });
 
+        // Disconnect everyone.
+        currentConcert.waitingPerformers?.forEach((perf) => {
+            perf.socket.close()
+        });
+        currentConcert.performers?.forEach((perf) => {
+            perf.socket.close()
+        });
+        currentConcert.listener?.socket.close();
+        currentConcert.maestro?.socket.close();
+
         // Reset concert data.
         currentConcert = {
             performers: [],
@@ -54,6 +64,7 @@ const endConcert = function (currentConcert: Concert): void {
             mixerState: null,
             mixer: currentConcert.mixer
         };
+
         console_log("Concert ended\n");
     }
 }
