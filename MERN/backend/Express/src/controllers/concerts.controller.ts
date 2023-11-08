@@ -24,9 +24,7 @@ interface concertsAPI {
 class ConcertsController implements concertsAPI {
   async findAndPipeAudio(req: Request, res: Response) {
     let groupId: number = parseInt(req.query.id as string);
-    if (!groupId) {
-      groupId = -1;
-    }
+    if (!groupId) { groupId = -1; }
 
     await recordings.findOne({
       where: { GroupID: groupId }
@@ -111,14 +109,14 @@ class ConcertsController implements concertsAPI {
 
     await groups.findOne({
       attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
-        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+        'GroupName', 'Title', 'Tags', 'Description', 'Date', 'Time'],
       where: {
         GroupID: groupId
       }
     }).then((group) => {
       if (!group) { throw new Error("Group not found.") }
 
-      res.status(200).json({ group });
+      res.status(200).json({ group: group });
     }).catch((e) => {
       console_log("Error: ", e.message, "\n");
       res.status(500).send({ error: e.message });
