@@ -12,6 +12,7 @@ const gatherNames = function (currentConcert: Concert): string[] {
     }
 
     console_log("Names gathered: ", names, "\n");
+    console_log("Attendance: ", currentConcert.attendance, "\n");
 
     return names;
 }
@@ -23,7 +24,7 @@ const endConcert = function (currentConcert: Concert): void {
         // Gather data for saving concert to database.
         const performerNames: string[] = gatherNames(currentConcert);
         const idContents: any = fs.existsSync("../temp/groupId") ? fs.readFileSync("../temp/groupId") : -1;
-        const tempAudioFile: any = fs.existsSync("../temp/title") ? fs.readFileSync("../temp/title") : "Default Title";
+        const tempAudioFile: any = fs.existsSync("../temp/title") ? fs.readFileSync("../temp/title").toString() : "Default Title";
         const groupId = parseInt(idContents.toString());
         console_log("groupId: ", groupId);
         console_log("Data gathered.\n");
@@ -43,13 +44,15 @@ const endConcert = function (currentConcert: Concert): void {
 
         // Disconnect everyone.
         currentConcert.waitingPerformers?.forEach((perf) => {
-            perf.socket.close()
+            perf.socket.close();
         });
         currentConcert.performers?.forEach((perf) => {
-            perf.socket.close()
+            perf.socket.close();
         });
         currentConcert.listener?.socket.close();
         currentConcert.maestro?.socket.close();
+
+        console_log("\n Concert Before: ", currentConcert);
 
         // Reset concert data.
         currentConcert = {
@@ -64,6 +67,8 @@ const endConcert = function (currentConcert: Concert): void {
             mixerState: null,
             mixer: currentConcert.mixer
         };
+
+        console_log("\n Concert After: ", currentConcert);
 
         console_log("Concert ended\n");
     }

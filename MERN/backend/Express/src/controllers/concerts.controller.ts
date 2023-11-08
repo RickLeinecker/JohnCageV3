@@ -11,7 +11,9 @@ import { getDateUTC, getTimeUTC, formatDateTime, validDate } from "../../../func
 import { recordings, groups } from "../models/init-models";
 
 // Config
-import { MUSIC_FOLDER } from "../../config/express.config";
+import { MUSIC_FOLDER, TEMP_FOLDER } from "../../config/express.config";
+import { saveConcert } from "../functions/saveConcert.functions";
+import { removeDirectoryFiles } from "../../../functions/file.functions";
 
 interface concertsAPI {
   findAndPipeAudio(req: Request, res: Response): Promise<void>;
@@ -158,6 +160,7 @@ class ConcertsController implements concertsAPI {
   }
 
   async searchConcerts(req: Request, res: Response) {
+
     // Store and validate input.
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";
