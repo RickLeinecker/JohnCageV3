@@ -59,6 +59,7 @@ class expressServer {
     removeDirectoryFiles(TEMP_FOLDER);
     removeDirectoryFiles(TEMP_FOLDER + "passcodes/maestro/");
     removeDirectoryFiles(TEMP_FOLDER + "passcodes/performers/");
+    removeDirectoryFiles(TEMP_FOLDER + "passcodes/listener/");
 
     // Difficult to comprehensively test at intended interval 20 minutes each. 
     // Look at this function if there are temp file problems.
