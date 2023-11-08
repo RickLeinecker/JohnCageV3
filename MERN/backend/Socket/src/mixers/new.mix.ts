@@ -1,15 +1,6 @@
-// import { outgoingAudioChunkSize } from "../../config/socket.config";
-const outgoingAudioChunkSize = 64000;
+import { outgoingAudioChunkSize } from "../../config/socket.config";
 
-// import { MixerInput, MixerOutput } from "../socket.types";
-type MixerInput = {
-    buffers: Buffer[];
-    state: any;
-}
-type MixerOutput = {
-    mixedBuffer: Buffer;
-    state: any;
-}
+import { MixerInput, MixerOutput } from "../socket.types";
 
 type NewMixerState = {
     intervalsMixed: number;

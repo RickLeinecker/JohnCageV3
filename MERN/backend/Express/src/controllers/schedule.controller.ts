@@ -154,7 +154,7 @@ class ScheduleController implements scheduleAPI {
         console_log(getTimeUTC(), "\n");
         console_log(getDateUTC(), "\n");
 
-        const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
+        const { concertTitle, concertTags, concertDescription, mixer, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
 
         // Check if timeslot is taken.
@@ -211,7 +211,8 @@ class ScheduleController implements scheduleAPI {
                             User2Passcode: passcodes.at(2),
                             User3Passcode: passcodes.at(3),
                             User4Passcode: passcodes.at(4),
-                            ListenerPasscode: passcodes.at(5)
+                            ListenerPasscode: passcodes.at(5),
+                            Mixer: mixer
                         }).then((schedule) => {
                             newSchedule = schedule.dataValues;
 
@@ -269,7 +270,7 @@ class ScheduleController implements scheduleAPI {
                 // Save timestamp to file.
                 writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
                 // Save mixer to file.
-                writeFileForce(TEMP_FOLDER, "mixer", "new.mix.js"); // Replace with mixer file name string.
+                writeFileForce(TEMP_FOLDER, "mixer", firstSchedule.Mixer ? firstSchedule.Mixer : "Default"); // Replace with mixer file name string.
 
                 console_log("Maestro passcode and concert data saved to files.\n");
                 return res.status(200).send({ message: "No errors caught. Maestro passcode and concert data saved to files." });
