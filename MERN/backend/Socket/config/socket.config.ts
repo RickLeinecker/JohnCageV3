@@ -9,8 +9,8 @@ const sampleRate = 32000;
 const bitDepth = 16;
 const channels = 1;
 
-// const outgoingAudioChunkSize = 6;
-// const maxAudioBufferSize = 50;
+//const outgoingAudioChunkSize = 6;
+//const maxAudioBufferSize = 50;
 
 // Maximum size to check for custom headers in binary "message" socket events.
 const maxCustomHeaderSize = 64;

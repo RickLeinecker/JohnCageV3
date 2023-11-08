@@ -4,7 +4,7 @@ import { Link, useLocation, useMatch } from "react-router-dom";
 import PropTypes from 'prop-types';
 import '../Style/text.css';
 import navBarData from "../Types/navBarData";
-
+import ProfileButton from "./ProfileDropDown";
 
 type NavButton = {
   buttonName: string;
@@ -47,11 +47,10 @@ function LogoutDisplay(userName:string, logOutFunc:Function, )
   </div>
 }
 
-
 const NavBar =({userName, setterFunction, buttonList}:navBarData) => {
     const [LoginMode,setLoginMode] = useState(userName);
 
-    // const buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Login", "Register"];
+     //const buttonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Register"];
     
 
     return (
@@ -76,6 +75,8 @@ const NavBar =({userName, setterFunction, buttonList}:navBarData) => {
                 buttonList.map((key, i) => {
                   if (key === "Logout")
                     return LogoutDisplay(userName,setterFunction as Function);
+                  else if(key === "Profile")
+                    return <ProfileButton key={i} />;
                   else
                     return <NavButtons key={i} buttonName={key} />
                 }
