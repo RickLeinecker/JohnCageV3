@@ -266,7 +266,7 @@ class ScheduleController implements scheduleAPI {
                 // Save passcode to file for the socket server to check.
                 writeFileForce(TEMP_FOLDER + "passcodes/maestro/", maestroPasscode.toString(), "maestro");
                 // Save groupId to file for socket server to read.
-                writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID?.toString());
+                writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID ? firstSchedule.GroupID.toString() : "-1");
                 // Save timestamp to file.
                 writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
                 // Save mixer to file.
