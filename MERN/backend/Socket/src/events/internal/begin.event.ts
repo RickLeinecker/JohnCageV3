@@ -14,7 +14,7 @@ const beginConcert = function (currentConcert: Concert): void {
         const mixerFileName: any = fs.existsSync("../temp/mixer") ? fs.readFileSync("../temp/mixer") : "DefaultMixer.mix.js";
         currentConcert.mixer = require("../../mixers/" + mixerFileName);
     }
-    catch (e) { console_log(e); }
+    catch (e) { console_log(e); currentConcert.mixer = defaultMix; }
 
     // Change waiting performers to performers with the related socket handler.
     let waitingPerformers = currentConcert.waitingPerformers;
