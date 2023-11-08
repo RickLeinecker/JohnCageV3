@@ -56,8 +56,8 @@ const NavBar =({userName, setterFunction, buttonList}:navBarData) => {
     return (
       <Navbar
         className="navbar navbar-expand-sm navbar-light"
-        style={{ backgroundColor: "#d3b035" }}
         expand="lg"
+        style ={{backgroundColor: "#85dcfc"}}
       >
         <Container>
           <Navbar.Brand>

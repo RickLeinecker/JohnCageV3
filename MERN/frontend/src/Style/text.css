@@ -1,3 +1,14 @@
+
+
 .text {
     color: black;
+}
+
+.balthazartext{
+    font-family: 'Balthazar','Times New Roman', Times, serif;
+}
+
+.JohnCageColor{
+    background-color: #85dcfc;
+    
 }
