@@ -11,7 +11,9 @@ import { getDateUTC, getTimeUTC, formatDateTime, validDate } from "../../../func
 import { recordings, groups } from "../models/init-models";
 
 // Config
-import { MUSIC_FOLDER } from "../../config/express.config";
+import { MUSIC_FOLDER, TEMP_FOLDER } from "../../config/express.config";
+import { saveConcert } from "../functions/saveConcert.functions";
+import { removeDirectoryFiles } from "../../../functions/file.functions";
 
 interface concertsAPI {
   findAndPipeAudio(req: Request, res: Response): Promise<void>;
@@ -24,9 +26,7 @@ interface concertsAPI {
 class ConcertsController implements concertsAPI {
   async findAndPipeAudio(req: Request, res: Response) {
     let groupId: number = parseInt(req.query.id as string);
-    if (!groupId) {
-      groupId = -1;
-    }
+    if (!groupId) { groupId = -1; }
 
     await recordings.findOne({
       where: { GroupID: groupId }
@@ -111,14 +111,14 @@ class ConcertsController implements concertsAPI {
 
     await groups.findOne({
       attributes: ['GroupID', 'GroupLeaderName', 'User1Name', 'User2Name', 'User3Name', 'User4Name',
-        'GroupName', 'Title', 'Tags', 'Description', 'Date'],
+        'GroupName', 'Title', 'Tags', 'Description', 'Date', 'Time'],
       where: {
         GroupID: groupId
       }
     }).then((group) => {
       if (!group) { throw new Error("Group not found.") }
 
-      res.status(200).json({ group });
+      res.status(200).json({ group: group });
     }).catch((e) => {
       console_log("Error: ", e.message, "\n");
       res.status(500).send({ error: e.message });
@@ -160,6 +160,7 @@ class ConcertsController implements concertsAPI {
   }
 
   async searchConcerts(req: Request, res: Response) {
+
     // Store and validate input.
     const pageLength = 8;
     const searchString = typeof req.query.search === "string" ? req.query.search : "";

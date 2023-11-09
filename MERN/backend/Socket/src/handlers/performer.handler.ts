@@ -33,10 +33,7 @@ const addPerformer = function (ws: WebSocket, currentConcert: Concert, name: str
 const definePerformerMessage = function (performer: Performer, currentConcert: Concert) {
     // Handle messages, including audio data.
     performer.socket.on('message', function message(data) {
-
-        console_log("Received message data: ");
-        console_log(data);
-        console_log("\n");
+        //console_log("Received message data: ", data, "\n");
 
         let message: Buffer = <Buffer>data;
         let headerData: CustomHeader = retrieveHeader(message);

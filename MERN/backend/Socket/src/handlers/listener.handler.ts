@@ -7,7 +7,6 @@ import { CustomHeader, Concert, Listener } from "../socket.types";
 
 // Functions
 import { retrieveHeader } from "../utilities/socket.binary";
-import { Literal } from "sequelize/types/utils";
 import { removePasscode } from "../functions/removepasscode";
 
 const addConcertListener = function (ws: WebSocket, currentConcert: Concert, passcode: string) {
@@ -27,7 +26,7 @@ const defineConcertListenerMessage = function (currentConcert: Concert) {
     // Handle messages.
     if (listenerSocket) {
         listenerSocket.on('message', function message(data) {
-            console_log("Received message data: ", data, "\n");
+            console_log("Received Listener message data: ", data, "\n");
 
             let message: Buffer = <Buffer>data;
             let headerData: CustomHeader = retrieveHeader(message);

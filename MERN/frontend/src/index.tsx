@@ -1,9 +1,9 @@
-import { Component , useState, useEffect} from "react";
+import { Component, useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
-import ListenPage from "./Pages/Listen";
-import RecordPage from "./Pages/Record";
+import ListenPage from "./Pages/_Listen";
+import RecordPage from "./Pages/_Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
@@ -11,19 +11,17 @@ import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
 import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
-import { BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
-import WebSocketTest from "./Pages/WebSocketTest";
 
 const Compiled = () => {
 
   var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile"];
 
   const [userName, setUserName] = useState("");
-  const [buttonList,setButtonList] = useState(baseButtonList);
-  
-  function LoggingIn(name:string)
-  {
+  const [buttonList, setButtonList] = useState(baseButtonList);
+
+  function LoggingIn(name: string) {
     setUserName(name);
     if (name === "" && buttonList.length < 5)
     {
@@ -35,53 +33,50 @@ const Compiled = () => {
       console.log("Logging in....");
       buttonList.push("Logout");
     }
-    console.log("All components will have "+name);
+    console.log("All components will have " + name);
   }
 
-  useEffect(() =>{
+  useEffect(() => {
     const loggedInUser = localStorage.getItem("Username");
-    if (userName === "" && loggedInUser)
-    {
+    if (userName === "" && loggedInUser) {
       console.log("Use effect logging in ");
       setUserName(loggedInUser);
       LoggingIn(loggedInUser);
     }
-    else if (loggedInUser === null)
-    {
+    else if (loggedInUser === null) {
       console.log("Use effect logging out ");
       setUserName("");
       LoggingIn("");
     }
-  },[])
+  }, [])
 
-    return (
-      <div>
-        <BrowserRouter>
-          <div className="row">
-            <NavBar userName={userName} setterFunction={LoggingIn} buttonList={buttonList}/>
+  return (
+    <div>
+      <BrowserRouter>
+        <div className="row">
+          <NavBar userName={userName} setterFunction={LoggingIn} buttonList={buttonList} />
+        </div>
+        <div className="row">
+          <div className="col-2"></div>
+          <div className="col-8" style={{ backgroundColor: "white" }}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/Home" element={<HomePage />} />
+              <Route path="/Concerts" element={<ConcertPage />} />
+              <Route path="/Record" element={<RecordPage />} />
+              <Route path="/Listen" element={<ListenPage />} />
+              <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
+              <Route path="/About" element={<AboutPage />} />
+              <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
+              <Route path="/Socket" element={<SocketTest />} />
+              <Route path="/Calendar" element={<CalendarPage />} />
+            </Routes>
           </div>
-          <div className="row">
-            <div className="col-2"></div>
-            <div className="col-8" style={{ backgroundColor: "white" }}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/Home" element={<HomePage />} />
-                <Route path="/Concerts" element={<ConcertPage />} />
-                <Route path="/Record" element={<RecordPage />} />
-                <Route path="/Listen" element={<ListenPage />} />
-                <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
-                <Route path="/About" element={<AboutPage />} />
-                <Route path="/Register" element={<RegisterPage setUserName={LoggingIn}/>} />
-                <Route path="/WebSocket" element={<SocketTest />} />
-                <Route path="/Calendar" element={<CalendarPage />} />
-                <Route path="/WebSocketTest" element={<WebSocketTest />} />
-              </Routes>
-            </div>
-            <div className="col-2"></div>
-          </div>
-        </BrowserRouter>
-      </div>
-    );
+          <div className="col-2"></div>
+        </div>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 const musicElement = document.getElementById("musicMenu");

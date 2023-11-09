@@ -11,9 +11,7 @@ import enqueuePerformer from "./events/internal/enqueue.event";
 import { addMaestro } from "./handlers/maestro.handler";
 import { broadcastNames } from "./events/outgoing/names.broadcast";
 import { getDateUTC, getTimeUTC, floorTime } from "../../functions/date.functions";
-import { addListener } from "process";
 import { addConcertListener } from "./handlers/listener.handler";
-//import  from "./mixers/default.mix";
 
 const fs = require("fs");
 
@@ -105,6 +103,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
             currentConcert.activePasscodes.push(passcode);
             addMaestro(ws, currentConcert, nickname, passcode);
             currentConcert.attendance[passcode] = "Maestro: " + nickname;
+
             console_log("Attendance: ", currentConcert.attendance, "\n");
 
             console_log("performer/maestro connected.");

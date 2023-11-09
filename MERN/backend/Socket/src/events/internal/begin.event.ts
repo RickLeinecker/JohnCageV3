@@ -4,20 +4,21 @@ import { Concert, waitingPerformer } from "../../socket.types";
 import endConcert from "./end.event";
 import { getNextTimeslot, minutesToMilliseconds } from "../../../../functions/date.functions";
 import console_log from "../../../../functions/logging/console_log";
-const defaultMix = require("../../mixers/default.mix.js")
+const defaultMix = require("../../mixers/default.mix");
+const fs = require("fs");
 
 const beginConcert = function (currentConcert: Concert): void {
+    // Set mixer.
+    currentConcert.mixer = defaultMix;
     try {
-        currentConcert.mixer = require("../../mixers/new.mix.js");
+        const mixerFileName: any = fs.existsSync("../temp/mixer") ? fs.readFileSync("../temp/mixer") : "DefaultMixer.mix.js";
+        currentConcert.mixer = require("../../mixers/" + mixerFileName);
     }
-    catch (e) {
-        console_log(e);
-        currentConcert.mixer = defaultMix;
-    }
+    catch (e) { console_log(e); currentConcert.mixer = defaultMix; }
 
+    // Change waiting performers to performers with the related socket handler.
     let waitingPerformers = currentConcert.waitingPerformers;
     let numWaiting = waitingPerformers.length;
-
     for (let i = 0; i < numWaiting; ++i) {
         let waitingPerformer: waitingPerformer | undefined = waitingPerformers.pop();
         if (waitingPerformer) {
@@ -25,12 +26,12 @@ const beginConcert = function (currentConcert: Concert): void {
         }
     }
 
+    // Reset some concert data.
     currentConcert.mixedAudio = Buffer.alloc(2);
     currentConcert.active = true;
 
     // End concert automatically after a certain time.
     const msUntilNextSlot = getNextTimeslot(minutesToMilliseconds(20));
-
     if (msUntilNextSlot - minutesToMilliseconds(1) > minutesToMilliseconds(10)) {
         setInterval(() => endConcert(currentConcert), minutesToMilliseconds(10));
     }

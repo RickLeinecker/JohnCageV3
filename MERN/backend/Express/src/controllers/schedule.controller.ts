@@ -154,7 +154,7 @@ class ScheduleController implements scheduleAPI {
         console_log(getTimeUTC(), "\n");
         console_log(getDateUTC(), "\n");
 
-        const { concertTitle, concertTags, concertDescription, date, time, username, password } = req.body;
+        const { concertTitle, concertTags, concertDescription, mixer, date, time, username, password } = req.body;
         const tags: string = concatTags(concertTags);
 
         // Check if timeslot is taken.
@@ -211,7 +211,8 @@ class ScheduleController implements scheduleAPI {
                             User2Passcode: passcodes.at(2),
                             User3Passcode: passcodes.at(3),
                             User4Passcode: passcodes.at(4),
-                            ListenerPasscode: passcodes.at(5)
+                            ListenerPasscode: passcodes.at(5),
+                            Mixer: mixer
                         }).then((schedule) => {
                             newSchedule = schedule.dataValues;
 
@@ -256,15 +257,27 @@ class ScheduleController implements scheduleAPI {
             if (!firstSchedule) { throw new Error("No concert found scheduled for the current time slot."); }
             else if (parseInt(maestroPasscode) != firstSchedule.MaestroPasscode) { throw new Error("Maestro passcode does not match that of the currently scheduled recording."); }
 
-            // Save passcode to file for the socket server to check.
-            writeFileForce(TEMP_FOLDER + "passcodes/maestro/", maestroPasscode.toString(), "maestro");
-            // Save groupId to file for socket server to read.
-            writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID?.toString());
-            // Save timestamp to file.
-            writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
+            groups.findOne({ where: { GroupID: firstSchedule.GroupID } }).then((group) => {
+                if (!firstSchedule) { throw new Error("No concert found scheduled for the current time slot."); }
+                if (!group || !group.dataValues) { throw new Error("No group found for the scheduled session."); }
 
-            console_log("Maestro passcode and concert data saved to files.\n");
-            return res.status(200).send({ message: "No errors caught. Maestro passcode and concert data saved to files." });
+                // Save title to file.
+                writeFileForce(TEMP_FOLDER, "title", group.dataValues.Title);
+                // Save passcode to file for the socket server to check.
+                writeFileForce(TEMP_FOLDER + "passcodes/maestro/", maestroPasscode.toString(), "maestro");
+                // Save groupId to file for socket server to read.
+                writeFileForce(TEMP_FOLDER, "groupId", firstSchedule.GroupID ? firstSchedule.GroupID.toString() : "-1");
+                // Save timestamp to file.
+                writeFileForce(TEMP_FOLDER, "timestamp", firstSchedule.Date + "T" + firstSchedule.Time);
+                // Save mixer to file.
+                writeFileForce(TEMP_FOLDER, "mixer", firstSchedule.Mixer ? firstSchedule.Mixer : "Default"); // Replace with mixer file name string.
+
+                console_log("Maestro passcode and concert data saved to files.\n");
+                return res.status(200).send({ message: "No errors caught. Maestro passcode and concert data saved to files." });
+            }).catch((e) => {
+                console_log("Error: ", e.message, "\n");
+                return res.status(500).send({ error: e.message });
+            })
         }).catch((e) => {
             console_log("Error: ", e.message, "\n");
             return res.status(500).send({ error: e.message });

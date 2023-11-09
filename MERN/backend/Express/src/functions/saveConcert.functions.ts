@@ -7,7 +7,7 @@ const fs = require("fs");
 import { MUSIC_FOLDER } from "../../config/express.config";
 import { Op } from "sequelize";
 
-// NEEDS TO CATCH INVA:ID INPUTS BETTER.
+// NEEDS TO CATCH INVALID INPUTS BETTER.
 // Since this is reading arbitrary data from file, it needs more careful input validation.
 // Appears to work on first testing.
 const saveConcert = function () {
@@ -18,8 +18,8 @@ const saveConcert = function () {
 
     const performerNames: string[] = concertData.performerNames as string[] || [];
     const groupId: number = concertData.groupId as number || -1;
-    const fileName: string = concertData.fileName as string || "default";
     const maestroName: string = concertData.maestroName as string || "John Cage";
+    const fileName: string = concertData.fileName as string || groupId + maestroName + "default" + Math.floor((Math.random() * 800000) + 100000).toString();
 
     console_log("Concert data: ", concertData);
     console_log("performerNames: ", performerNames);
@@ -31,14 +31,15 @@ const saveConcert = function () {
         console_log("Starting save concert..");
 
         // // Convert raw audio file wav. 
-        const path = TEMP_FOLDER + "recording.bin";
+        const path = TEMP_FOLDER + fileName;
+        const formattedAudioFile = fileName + ".wav";
         const mixedBuffer: Buffer | undefined = fs.existsSync(path) ? readFileSync(path) : undefined;
-        const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
+        // const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
         if (mixedBuffer) {
             let wav = new WaveFile();
             const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
             wav.fromScratch(1, 32000, '16', samples16);
-            fs.writeFileSync(MUSIC_FOLDER + fileName, wav.toBuffer());
+            fs.writeFileSync(MUSIC_FOLDER + formattedAudioFile, wav.toBuffer());
             console_log("Audio converted.\n");
         }
 
@@ -48,7 +49,7 @@ const saveConcert = function () {
         // Create recording.
         recordings.create({
             GroupID: groupId,
-            RecordingFileName: fileName // NEED TO FIX TO MAKE UNIQWUE GARUNTEED
+            RecordingFileName: formattedAudioFile
         }).then((recording) => {
             let newRecording = recording.dataValues;
 
