@@ -34,7 +34,7 @@ const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: strin
 const defineMaestroMessage = function (ws: WebSocket, currentConcert: Concert) {
     // Handle messages, including audio data.
     ws.on('message', function message(data) {
-        console_log("Received message data: ", data, "\n");
+        //console_log("Received message data: ", data, "\n");
 
         let message: Buffer = <Buffer>data;
         let headerData: CustomHeader = retrieveHeader(message);
