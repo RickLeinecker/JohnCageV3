@@ -216,7 +216,8 @@ const CalendarPage: React.FC = () => {
 
     return (
         <div className='calendar-page-container'>
-            <div className='calendar-container' style={calendarStyle}>
+            <div className="row">
+            <div className='calendar-container col' style={calendarStyle}>
                 <Calendar
                     className='calendar'
                     onClickDay={handleDateClick}
@@ -225,7 +226,7 @@ const CalendarPage: React.FC = () => {
             </div>
 
             
-                <div className=''>
+                <div className='col'>
                     <div className=''>
                         <h2>Event form for {selectedDate?.toLocaleDateString()}</h2>
                         <div>
@@ -304,7 +305,7 @@ const CalendarPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            
+                </div>
         </div>
     );
 };
