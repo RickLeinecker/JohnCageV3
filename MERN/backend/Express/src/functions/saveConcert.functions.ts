@@ -32,13 +32,14 @@ const saveConcert = function () {
 
         // // Convert raw audio file wav. 
         const path = TEMP_FOLDER + fileName;
+        const formattedAudioFile = fileName + ".wav";
         const mixedBuffer: Buffer | undefined = fs.existsSync(path) ? readFileSync(path) : undefined;
         // const fileName: string = Math.floor((Math.random() * 800000) + 100000).toString() + ".wav";
         if (mixedBuffer) {
             let wav = new WaveFile();
             const samples16 = new Int16Array(mixedBuffer.buffer, mixedBuffer.byteOffset, mixedBuffer.byteLength / Int16Array.BYTES_PER_ELEMENT);
             wav.fromScratch(1, 32000, '16', samples16);
-            fs.writeFileSync(MUSIC_FOLDER + fileName + ".wav", wav.toBuffer());
+            fs.writeFileSync(MUSIC_FOLDER + formattedAudioFile, wav.toBuffer());
             console_log("Audio converted.\n");
         }
 
@@ -48,7 +49,7 @@ const saveConcert = function () {
         // Create recording.
         recordings.create({
             GroupID: groupId,
-            RecordingFileName: fileName // NEED TO FIX TO MAKE UNIQWUE GARUNTEED
+            RecordingFileName: formattedAudioFile
         }).then((recording) => {
             let newRecording = recording.dataValues;
 

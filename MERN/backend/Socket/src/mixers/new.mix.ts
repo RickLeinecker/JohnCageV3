@@ -1,5 +1,5 @@
 import { outgoingAudioChunkSize } from "../../config/socket.config";
-
+import console_log from "../../../functions/logging/console_log";
 import { MixerInput, MixerOutput } from "../socket.types";
 
 type NewMixerState = {
@@ -7,7 +7,7 @@ type NewMixerState = {
 }
 
 const newMix = (mixerInput: MixerInput): MixerOutput => {
-    console.log("ENTERTING NEW MIXER AAAAAAAA");
+    console_log("ENTERTING NEW MIXER AAAAAAAA");
 
     // Unwrapping inputs and preparing new state.
     const buffers: Buffer[] = mixerInput.buffers;
@@ -22,8 +22,8 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
     for (let i = 0; i < buffers.length; ++i) {
         let buffer = buffers.at(i);
         if (buffer == undefined || buffer.byteLength != outgoingAudioChunkSize) {
-            console.log("Error: Buffer not correct size, or it doesn't exist: ");
-            console.log(buffers.at(i));
+            console_log("Error: Buffer not correct size, or it doesn't exist: ");
+            console_log(buffers.at(i));
             const result: MixerOutput = { mixedBuffer: mixedAudio, state: null };
             return result;
         }
@@ -40,7 +40,7 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
     }
 
     let factor = 1;
-    if (newState.intervalsMixed % 2 == 0) { console.log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
+    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
 
     // Mix samples: Add all samples together and divide by the number of samples.
     let sampleCount = bufferViews.length;

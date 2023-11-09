@@ -4,7 +4,7 @@ import { Concert, waitingPerformer } from "../../socket.types";
 import endConcert from "./end.event";
 import { getNextTimeslot, minutesToMilliseconds } from "../../../../functions/date.functions";
 import console_log from "../../../../functions/logging/console_log";
-const defaultMix = require("../../mixers/default.mix.js");
+const defaultMix = require("../../mixers/default.mix");
 const fs = require("fs");
 
 const beginConcert = function (currentConcert: Concert): void {
