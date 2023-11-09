@@ -4,6 +4,7 @@ import Kyle_img from '../Images/Kyle.png';
 import Paul_img from '../Images/Paul.png';
 import Himil_img from '../Images/Himil.jpg';
 import Demetri_img from '../Images/demetri.jpg';
+import Stephen_img from '../Images/Stephen.jpg';
 import imageToUse from '../Images/default-image.jpg';
 import '../Style/AboutUs.css';
 
@@ -57,7 +58,7 @@ export default function MeetOurTeamV3(){
 
                 <div className='dev-container'>
                     <div className='dev-image-container'>
-                        <img className='team-pic' src={imageToUse} alt='Stephen'></img>
+                        <img className='team-pic' src={Stephen_img} alt='Stephen'></img>
                     </div>
                     <div className='dev-details-container'>
                         <h2 className='dev-name'>Stephen</h2>
