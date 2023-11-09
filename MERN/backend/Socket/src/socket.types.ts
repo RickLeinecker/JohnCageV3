@@ -29,6 +29,19 @@ type Concert = {
     mixer: { mix: (i: MixerInput) => MixerOutput };
 }
 
+const resetConcert = (concert: Concert) => {
+    concert.performers = [];
+    concert.maestro = undefined;
+    concert.waitingPerformers = [];
+    concert.active = false;
+    concert.mixedAudio = Buffer.alloc(2);
+    concert.listener = undefined;
+    concert.attendance = {};
+    concert.activePasscodes = [];
+    concert.mixerState = null;
+    concert.mixer = concert.mixer;
+}
+
 type Listener = {
     socket: WebSocket;
     passcode: string;
@@ -60,4 +73,4 @@ class ConcertParticipant {
     }
 }
 
-export { Concert, ConcertParticipant, CustomHeader, waitingPerformer, Performer, Listener, MixerInput, MixerOutput };
+export { resetConcert, Concert, ConcertParticipant, CustomHeader, waitingPerformer, Performer, Listener, MixerInput, MixerOutput };
