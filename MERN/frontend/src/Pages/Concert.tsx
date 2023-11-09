@@ -1,6 +1,7 @@
 // Style
 import "../Style/App.css";
-import "../Style/button.css"
+import "../Style/button.css";
+import "../Style/search.css";
 
 // Components
 import { Component, useEffect, useState } from "react";
@@ -201,7 +202,7 @@ function ConcertPage() {
                             {
                                 searchList.map((key, i) => {
                                     return (
-                                        <div className="col-3">
+                                        <div className="col-3 track-col">
                                             <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} songTags={key.tags} onClick={() => { onClickCompound(i, true) }} />
                                             <br />
                                             <br />
