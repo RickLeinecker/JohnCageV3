@@ -17,7 +17,7 @@ import WebSocketTest from "./Pages/WebSocketTest";
 
 const Compiled = () => {
 
-  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile", "Login", "Register"];
+  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile"];
 
   const [userName, setUserName] = useState("");
   const [buttonList,setButtonList] = useState(baseButtonList);
@@ -25,19 +25,14 @@ const Compiled = () => {
   function LoggingIn(name:string)
   {
     setUserName(name);
-    if (name === "" && buttonList.length < 7)
+    if (name === "" && buttonList.length < 5)
     {
       console.log("Logging out....");
       localStorage.removeItem("Username");
-      buttonList.pop();
-      buttonList.push("Login");
-      buttonList.push("Register");
     }
-    else if (buttonList.length > 6)
+    else if (buttonList.length > 5)
     {
       console.log("Logging in....");
-      buttonList.pop();
-      buttonList.pop();
       buttonList.push("Logout");
     }
     console.log("All components will have "+name);
