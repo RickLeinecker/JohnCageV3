@@ -90,8 +90,8 @@ class SongCard extends Component<ButtonState>
 
     render() {
         return (
-            <a onClick={this.handleClick} className="btn btn-warning" style ={{backgroundColor:"#85dcfc",borderColor:"#85dcfc"}}>
-                <div className="card" style={{ width: "8rem" }}>
+            <a onClick={this.handleClick}>
+                <div className="searchCard">
                     <div className="card-body">
                         <h5 className="card-title" style={{ textAlign: "center",fontSize:"1rem" }}>
                             {this.props.songName}
