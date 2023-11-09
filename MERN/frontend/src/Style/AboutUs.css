@@ -65,7 +65,7 @@
 
 *, ::after, ::before {
     box-sizing: border-box;
-    //margin: auto;
+    /* margin: auto; */
     padding: 0;
 }
 .team-pic{
