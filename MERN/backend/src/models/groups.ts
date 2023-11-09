@@ -136,11 +136,11 @@ export class groups extends Model<groupsAttributes, groupsCreationAttributes> im
       allowNull: true
     },
     Date: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.DATEONLY,
       allowNull: true
     },
     Time: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.TIME,
       allowNull: true
     }
   }, {

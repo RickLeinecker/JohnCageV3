@@ -51,11 +51,9 @@ export default class UserController {
           // Optional field(s)
           Phone: Phone
         },
-
           // Define which attributes can be set based on a form (restrict the User model to set only these fields)
-          { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] });
-
-        console.log(newUser);
+          { fields: ['Name', 'UserName', 'Email', 'Password', 'Phone'] })
+          .catch((error) => { });
 
         if (newUser) {
           // Return the (registered) user as response.
@@ -84,6 +82,7 @@ export default class UserController {
     try {
       // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
       const allUsers = await users.findAll({
+        attributes: { exclude: ['VerificationCode'] },
         where: {
           UserName: {
             [Op.eq]: username
@@ -94,7 +93,7 @@ export default class UserController {
         console.log(allUsers.every(allUsers => allUsers instanceof users)); // true
 
         // Log all the users (that the 'allUsers' variable is pointing to) that were retrieved.
-        console.log("All users:", JSON.stringify(allUsers, null, 2));
+        console.log("All users:", allUsers, null, 2);
 
         bcryptjs.compare(password, allUsers[0].Password, (error, result) => {
           if (error) {
@@ -116,7 +115,6 @@ export default class UserController {
 
                   // return token to the user
                   token,
-
                   // return user for frontend to make use of any of the users information.
                   user: allUsers[0]
                 });
@@ -126,6 +124,7 @@ export default class UserController {
         });
       });
     } catch (err) {
+      console.log(err);
       res.status(500).send({
         message: "Some error occurred while logging in a user."
       });
