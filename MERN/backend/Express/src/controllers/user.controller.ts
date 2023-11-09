@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { users, usersAttributes } from "../models/init-models";
 import usersRepository from "../repositories/users.repository";
-import bcryptjs from 'bcryptjs';
+import bcryptjs, { hash } from 'bcryptjs';
 import logging from "../../config/logging";
 import signJWT from "../functions.signJWT";
 const { Op } = require("sequelize");
 import console_log from "../../../functions/logging/console_log";
+import crypto from 'crypto';
+import { sendEmail } from "../functions/sendEmail";
 
 const NAMESPACE = "User";
 
@@ -38,20 +40,48 @@ class UserController {
         }
 
         // Create a new user
-        await users.create(
+        const user = await users.create(
           {
             UserName: UserName,
             Email: Email,
             Password: hash,
           },
           { fields: ['UserName', 'Email', 'Password'] })
-          .then((newUser) => {
-            if (!newUser) { throw new Error("Failed to create user.") }
+          .then((user) => {
+            if (!user) { throw new Error("Failed to create user.") }
+
+            // Create a token for this users email verification.
+            const verifyEmailToken = Math.floor(100000 + Math.random() * 900000);
+            
+            // Store the random code/string in the database with a reference to the User ID.
+            user.VerificationCode = verifyEmailToken;
+
+            // the verification code is still "null" in the database
+            user.save();
+            // Now the verification code was updated to "temp_verifyEmailToken" in the database!
+
+
+            const protocol = req.protocol; // e.g. 'http'
+            const host = req.get('host'); // e.g. 'localhost:5003'
+            const route = "/api/users/verify-email/";
+
+            const ref = `${protocol}://${host}${route}${verifyEmailToken}`;
+            var linkText = "Visit JohnCageTribute.org!"
+
+            // Set the options for the email.
+            var mailOptions = {
+              email: user.Email,
+              subject: "Please verify your email",
+              html: "<h1>Welcome to JohnCageTribute!</h1><p>Please verify your email address by clicking below:</p>" + `<p><a href=${ref}>${linkText}</a></p>`
+            }
+
+            // Send email to the supplied email address with the hash as part of a link pointing back to a route on the server.
+            sendEmail(mailOptions);
 
             // Return the (registered) user as response.
             return res.status(201).json({
               message: "User registered successfully!",
-              user: newUser
+              user: user
             });
           })
           .catch((e) => {
@@ -68,10 +98,103 @@ class UserController {
     };
   }; // Register
 
+  // @desc    The route that the email provided a link for to verify user email address
+  // @route   GET /api/users/verify-email/:token
+  // @access  Public
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    // If the hash exists in the database, get the related user and set their 'isVerified' to true
+    const user = users.findOne({
+      where: {
+        VerificationCode: req.params.token
+      }
+    }).then((user) => {
+      if (!user) {
+        console.log("No user with that code");
+        return;
+      }
+
+      // The user is now verified
+      user.IsVerified = 1;
+
+      // Delete (set to -1) the hash from the database
+      user.VerificationCode = -1;
+
+      user.save();
+
+      return res.status(201).json({
+        success: true,
+        data: user
+      });
+    }).catch((error) => {
+      return res.status(500).send({
+        error: error.message
+      });
+    });
+  }
+
+  // @desc    Forgot password
+  // @route   POST /api/users/forgot-password
+  // @access  Public
+  async forgotPassword(req: Request, res: Response) {
+    // Get the email address from the user who wants to reset password
+    const emailAddress = req.body.email;
+
+    // Check if the email provided in the JSON request body exists in the table of users.
+    const user = users.findOne({
+      where: {
+        Email: emailAddress
+      }
+    }).then((user) => {
+      // Handle the case: No email in 'users' table matches the email address given in the JSON request body.
+      if (!user) {
+        return res.status(500).send({
+          success: false,
+          data: "No user with that email exists"
+        });
+      }
+
+      // Generate a new 'random' password for this user.
+      const new_password = crypto.randomBytes(10).toString('hex');
+
+      // Hash 'new password' using bcryptjs library and save in users 'Password' field in database.
+      bcryptjs.hash(new_password, 10, async (hashError, hash) => {
+        if (hashError) {
+          return res.status(500).json({
+            message: hashError.message,
+            error: hashError
+          });
+        }
+
+        // Set and Save a hashed version of the new password to the users 'Password' field in the database.
+        user.Password = hash;
+        user.save();
+
+        // Send the new password to the users email address
+        var mailOptions = {
+          email: user.Email,
+          subject: 'Reset Password',
+          html: `<h1>Use the password below to login to your account</h1><p>${new_password}</p>`
+        }
+
+        // Use 'nodemailer' library to send an email with the specified mail options.
+        sendEmail(mailOptions);
+      });
+      // // Respond with the token that is hashed.
+      return res.status(201).json({
+        success: true,
+        data: user
+      });
+    }).catch((error) => {
+      return res.status(500).send({
+        success: false,
+        error: error.message
+      });
+    })
+  }
+
   // To login the user and return token & user object
   async login(req: Request, res: Response, next: NextFunction) {
     let { identifier, password } = req.body;
-
 
     // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
     await users.findAll({
@@ -81,13 +204,6 @@ class UserController {
       }
     }).then((allUsers) => {
       console_log("Login query successful: ");
-      console_log(allUsers);
-
-      // Verify that the allUsers has type 'users' when retrieved
-      // console.log(allUsers.every(allUsers => allUsers instanceof users)); // true
-
-      // Log all the users (that the 'allUsers' variable is pointing to) that were retrieved.
-      // console.log("All users:", allUsers, null, 2);
 
       try {
         bcryptjs.compare(password, allUsers[0].Password, (error, result) => {

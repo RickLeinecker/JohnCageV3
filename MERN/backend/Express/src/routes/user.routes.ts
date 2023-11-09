@@ -37,6 +37,17 @@ class UserRoutes {
       this.controller.register
     );
 
+    this.router.get(
+      // Route
+      '/verify-email/:token',
+
+      this.controller.verifyEmail
+    );
+
+    this.router.post(
+      '/forgot-password', this.controller.forgotPassword
+    );
+
     this.router.post(
       '/login',
       this.controller.login

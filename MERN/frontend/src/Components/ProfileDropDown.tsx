@@ -9,16 +9,6 @@ function ProfileButton() {
     setShowDropdown(!showDropdown);
   }
 
-  const handleLogin = () =>{
-    return(
-      <li>
-        <Link className="nav-link" aria-current="page" to={"/Login"}>
-            Login
-        </Link>
-      </li>
-    )
-  }
-
   return (
     <div>
       <Image
