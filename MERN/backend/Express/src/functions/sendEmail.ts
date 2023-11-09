@@ -5,20 +5,20 @@ import { SMTP } from "../../config/config";
 const sendEmail = async (options: any) => {
     try {
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: SMTP.host,
+            port: SMTP.port,
             auth: {
               user: SMTP.email,
               pass: SMTP.password,
             },
         });
     
-        const msg = await transporter.sendMail({
-            from: `${SMTP.fromName} <${SMTP.fromEmail}>`, // sender address
+        const msg = {
+            from: `${SMTP.fromEmail}`, // sender address
             to: options.email, // list of receivers
             subject: options.subject, // Subject line
-            text: options.message, // plain text body
             html: options.html
-        });
+        };
     
         const info = await transporter.sendMail(msg);
     
