@@ -6,6 +6,14 @@ type NewMixerState = {
     intervalsMixed: number;
 }
 
+function clamp(num: number, min: number, max: number) {
+    return num <= min
+        ? min
+        : num >= max
+            ? max
+            : num
+}
+
 const newMix = (mixerInput: MixerInput): MixerOutput => {
     console_log("ENTERTING NEW MIXER AAAAAAAA");
 
@@ -56,7 +64,7 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
         }
 
         // MUST BE LITTLE ENDIAN
-        mixedAudio.writeInt16LE((sampleSum - 32768) * factor, 2 * i);
+        mixedAudio.writeInt16LE(clamp((sampleSum - 32768) * factor, -32760, 32760), 2 * i);
     }
 
     newState.intervalsMixed++;
