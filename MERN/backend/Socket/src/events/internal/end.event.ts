@@ -4,30 +4,15 @@ import { Concert, Performer, waitingPerformer } from "../../socket.types";
 import console_log from "../../../../functions/logging/console_log";
 const fs = require("fs");
 
-// MUST KEEP TRACK OF PERFORMERS THAT LEFT EARLY. THIS IS INCOMPLETE.
 const gatherNames = function (currentConcert: Concert): string[] {
     let names: string[] = [];
-
-    // // Add maestro's name first.
-    // let maestro = currentConcert.maestro;
-    // if (maestro) {
-    //     names.push(maestro.nickname);
-    // }
-
-    // //  Add performers' names after.
-    // let performers = currentConcert.performers;
-    // for (let i = 0; i < performers.length; ++i) {
-    //     let performer: Performer | undefined = performers.pop();
-    //     if (performer) {
-    //         names.push(performer.nickname);
-    //     }
-    // }
 
     for (let passcode in currentConcert.attendance) {
         names.push(currentConcert.attendance[passcode]);
     }
 
-    // Return all.
+    console_log("Names gathered: ", names, "\n");
+
     return names;
 }
 
@@ -43,13 +28,14 @@ const endConcert = function (currentConcert: Concert): void {
         console_log("Data gathered.\n");
 
         // Save data to files for express server to add into the DB.
-        const concertDate = {
+        const concertData = {
             groupId: groupId,
             fileName: "recording.bin",
             maestroName: performerNames.shift(),
             performerNames: performerNames
         }
-        fs.writeFileSync("../temp/data", JSON.stringify(concertDate), (e: any) => { if (e) { console_log(e); } });
+        console_log("Concert Data saving to file: ", concertData);
+        fs.writeFileSync("../temp/data", JSON.stringify(concertData), (e: any) => { if (e) { console_log(e); } });
 
         // Save raw audio to file for express server to format.
         fs.writeFileSync("../temp/recording.bin", currentConcert.mixedAudio, (e: any) => { if (e) { console_log(e); } });
@@ -63,7 +49,9 @@ const endConcert = function (currentConcert: Concert): void {
             mixedAudio: Buffer.alloc(2),
             listener: undefined,
             attendance: {},
-            activePasscodes: []
+            activePasscodes: [],
+            mixerState: null,
+            mixer: currentConcert.mixer
         };
         console_log("Concert ended\n");
     }

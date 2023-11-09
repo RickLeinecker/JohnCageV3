@@ -1,7 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
 import console_log from "../../../../functions/logging/console_log";
-import defaultMix from "../../mixers/default.mix";
-import { Concert, ConcertParticipant, Performer, waitingPerformer } from "../../socket.types";
+import { Concert, ConcertParticipant, MixerInput, MixerOutput, Performer, waitingPerformer } from "../../socket.types";
 import { outgoingAudioChunkSize } from "../../../config/socket.config";
 import { addPerformer } from "../../handlers/performer.handler";
 import { broadcastMessage } from "../../utilities/socket.binary";
@@ -33,9 +32,9 @@ const updatePerformers = function (currentConcert: Concert): void {
 const gatherAudioBuffers = function (currentConcert: Concert): Buffer[] {
     let performers: Performer[] = currentConcert.performers;
     let maestro: Performer | undefined = currentConcert.maestro;
+    let rawBuffers: Buffer[] = [];
 
     // Collect participant buffers to pass them to the mixer if they are of the required size.
-    let rawBuffers: Buffer[] = [];
     for (let i = 0; i < performers.length; ++i) {
         let performer: ConcertParticipant | undefined = performers.at(i)?.data;
         if (performer != undefined) {
@@ -80,7 +79,7 @@ const validatePerformerBuffers = function (currentConcert: Concert): boolean {
 }
 
 const concertTick = function (currentConcert: Concert) {
-    // Tick happens whenever an audio buffer is received, at least as of writing this.
+    // Tick happens whenever an audio buffer is received, as of writing this.
     // If there is enough data in each participant's buffer, mix and send.
     if (validatePerformerBuffers(currentConcert) === true) {
         console_log("Performer buffers validated.");
@@ -93,16 +92,18 @@ const concertTick = function (currentConcert: Concert) {
         console_log("\n");
 
         // Mix audio chunks.
-        let mixedBuffer: Buffer = defaultMix(chunkBuffers);
-        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixedBuffer]);
+        const mixerInput: MixerInput = { buffers: chunkBuffers, state: currentConcert.mixerState };
+        const mixerOutput: MixerOutput = currentConcert.mixer.mix(mixerInput);
+        currentConcert.mixerState = mixerOutput.state;
+        currentConcert.mixedAudio = Buffer.concat([currentConcert.mixedAudio, mixerOutput.mixedBuffer]);
         console_log("Audio mixed.");
-        console_log(mixedBuffer);
+        console_log(mixerOutput.mixedBuffer);
         console_log("\n");
 
         // Add null byte header to audio message.
         let header: Uint8Array = new Uint8Array(1);
         header[0] = 0;
-        let audioMessage: Buffer = Buffer.concat([header, mixedBuffer]);
+        let audioMessage: Buffer = Buffer.concat([header, mixerOutput.mixedBuffer]);
         // Broadcast mixed chunk.
         broadcastMessage(currentConcert, audioMessage, true, false, true, true);
         console_log("Audio broadcast.");

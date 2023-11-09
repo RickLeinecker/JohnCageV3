@@ -10,8 +10,17 @@ const enqueuePerformer = function (ws: WebSocket, currentConcert: Concert, name:
     // Define onclose event for waiter sockets.
     ws.on('close', function message(data) {
         for (let i = 0; i < currentConcert.waitingPerformers.length; ++i) {
-            if (currentConcert.waitingPerformers.at(i)?.socket === ws) {
+            const waiter = currentConcert.waitingPerformers.at(i);
+            if (waiter && waiter.socket === ws) {
+                // Close socket.
                 ws.close();
+
+                // Remove active passcode.
+                const activePasscodeIndex = currentConcert.activePasscodes.indexOf(waiter.passcode);
+                if (activePasscodeIndex > -1) { currentConcert.activePasscodes.splice(activePasscodeIndex, 1); console_log(currentConcert.activePasscodes); }
+                else { console_log("Passcode removal failed"); }
+
+                // Remove waiter.
                 currentConcert.waitingPerformers.splice(i, 1);
                 console_log("Waiting performer removed. Current waitlist: ");
                 console_log(currentConcert.waitingPerformers);

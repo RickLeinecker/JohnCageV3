@@ -6,7 +6,8 @@ type DefaultMixerState = {
     intervalsMixed: number;
 }
 
-const defaultMix = (mixerInput: MixerInput): MixerOutput => {
+const newMix = (mixerInput: MixerInput): MixerOutput => {
+    console_log("ENTERTING NEW MIXER AAAAAAAA");
     const buffers: Buffer[] = mixerInput.buffers;
     const oldState: any = mixerInput.state;
     let newState: DefaultMixerState = oldState;
@@ -57,4 +58,4 @@ const defaultMix = (mixerInput: MixerInput): MixerOutput => {
     return result;
 }
 
-exports.mix = defaultMix;
+exports.mix = newMix;
