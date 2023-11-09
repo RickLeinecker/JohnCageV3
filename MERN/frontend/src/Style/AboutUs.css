@@ -65,7 +65,7 @@
 
 *, ::after, ::before {
     box-sizing: border-box;
-    margin: auto;
+    //margin: auto;
     padding: 0;
 }
 .team-pic{
@@ -102,6 +102,6 @@
     color:white;
 }
 .button-container button.selected{
-    background-color: goldenrod;
-    color:white;
+    background-color: #85dcfc;
+    color:black;
 }

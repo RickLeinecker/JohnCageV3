@@ -89,13 +89,14 @@ class SongCard extends Component<ButtonState>
 
     render() {
         return (
-            <a onClick={this.handleClick} className="btn btn-warning">
-                <div className="card" style={{ width: "18rem" }}>
+            <a onClick={this.handleClick} className="btn btn-warning" style ={{backgroundColor:"#85dcfc",borderColor:"#85dcfc"}}>
+                <div className="card" style={{ width: "8rem" }}>
                     <div className="card-body">
-                        <h5 className="card-title" style={{ textAlign: "center" }}>
+                        <h5 className="card-title" style={{ textAlign: "center",fontSize:"1rem" }}>
                             {this.props.songName}
                         </h5>
-                        <p className="card-text" style={{ textAlign: "center" }}>
+                        <br/>
+                        <p className="card-text" style={{ textAlign: "center", fontSize:"0.75rem" }}>
                             {TagsString(this.props.songTags)}
                         </p>
                     </div>
@@ -155,7 +156,7 @@ function ConcertPage() {
     }, [searchList, activeSelection]);
 
     return (
-        <div className="container" style={{ height: "100vh" }}>
+        <div className="container">
             <div className="row">
                 <br />
             </div>
@@ -171,7 +172,7 @@ function ConcertPage() {
             </div>
             <div className="row">
                 <div className="col">
-                    <div className="scroller">
+                    
                         <div className="d-grid" role="group" aria-label="Toolbar with button groups">
                             <div className="row">
                                 <div className="col">
@@ -183,7 +184,7 @@ function ConcertPage() {
                                     </Button>
                                 </div>
                                 <div className="col" style={{ textAlign: "center" }}>
-                                    <p>Page: {page}</p>
+                                    <p>Page: {page + 1}</p>
                                 </div>
                                 <div className="col" style={{ textAlign: "right" }}>
                                     <Button onClick={nextPage}>
@@ -196,10 +197,11 @@ function ConcertPage() {
                                 <br />
                                 <br />
                             </div>
+                            <div className = "row">
                             {
                                 searchList.map((key, i) => {
                                     return (
-                                        <div className="col">
+                                        <div className="col-3">
                                             <SongCard key={i} songName={key["title"]} index={i} isActive={activeSelection == i} songTags={key.tags} onClick={() => { onClickCompound(i, true) }} />
                                             <br />
                                             <br />
@@ -207,9 +209,10 @@ function ConcertPage() {
                                     )
                                 })
                             }
+                            </div>
                             <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData}></Modal>
                         </div>
-                    </div >
+                    
                 </div >
 
             </div >

@@ -1,9 +1,9 @@
-import { Component } from "react";
+import { Component, useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
-import ListenPage from "./Pages/Listen";
-import RecordPage from "./Pages/Record";
+import ListenPage from "./Pages/_Listen";
+import RecordPage from "./Pages/_Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
@@ -13,39 +13,70 @@ import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
-import WebSocketTest from "./Pages/WebSocketTest";
 
-class Compiled extends Component {
-  render() {
-    return (
-      <div>
-        <BrowserRouter>
-          <div className="row">
-            <NavBar />
-          </div>
-          <div className="row">
-            <div className="col-2"></div>
-            <div className="col-8" style={{ backgroundColor: "white" }}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/Home" element={<HomePage />} />
-                <Route path="/Concerts" element={<ConcertPage />} />
-                <Route path="/Record" element={<RecordPage />} />
-                <Route path="/Listen" element={<ListenPage />} />
-                <Route path="/Login" element={<LoginPage />} />
-                <Route path="/About" element={<AboutPage />} />
-                <Route path="/Register" element={<RegisterPage />} />
-                <Route path="/WebSocket" element={<SocketTest />} />
-                <Route path="/Calendar" element={<CalendarPage />} />
-                <Route path="/WebSocketTest" element={<WebSocketTest />} />
-              </Routes>
-            </div>
-            <div className="col-2"></div>
-          </div>
-        </BrowserRouter>
-      </div>
-    );
+const Compiled = () => {
+
+  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile"];
+
+  const [userName, setUserName] = useState("");
+  const [buttonList, setButtonList] = useState(baseButtonList);
+
+  function LoggingIn(name: string) {
+    setUserName(name);
+    if (name === "" && buttonList.length < 5)
+    {
+      console.log("Logging out....");
+      localStorage.removeItem("Username");
+    }
+    else if (buttonList.length > 5)
+    {
+      console.log("Logging in....");
+      buttonList.push("Logout");
+    }
+    console.log("All components will have " + name);
   }
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("Username");
+    if (userName === "" && loggedInUser) {
+      console.log("Use effect logging in ");
+      setUserName(loggedInUser);
+      LoggingIn(loggedInUser);
+    }
+    else if (loggedInUser === null) {
+      console.log("Use effect logging out ");
+      setUserName("");
+      LoggingIn("");
+    }
+  }, [])
+
+  return (
+    <div>
+      <BrowserRouter>
+        <div className="row">
+          <NavBar userName={userName} setterFunction={LoggingIn} buttonList={buttonList} />
+        </div>
+        <div className="row">
+          <div className="col-2"></div>
+          <div className="col-8" style={{ backgroundColor: "white" }}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/Home" element={<HomePage />} />
+              <Route path="/Concerts" element={<ConcertPage />} />
+              <Route path="/Record" element={<RecordPage />} />
+              <Route path="/Listen" element={<ListenPage />} />
+              <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
+              <Route path="/About" element={<AboutPage />} />
+              <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
+              <Route path="/Socket" element={<SocketTest />} />
+              <Route path="/Calendar" element={<CalendarPage />} />
+            </Routes>
+          </div>
+          <div className="col-2"></div>
+        </div>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 const musicElement = document.getElementById("musicMenu");

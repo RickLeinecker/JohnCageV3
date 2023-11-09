@@ -1,7 +1,6 @@
 import searchResult from "../Types/searchResult";
 import { buildPath } from "../Variables/expressServer";
 
-
 const searchSongs = async function (searchText: string, page: number) {
     try {
         //Get recording metadata according to search text
