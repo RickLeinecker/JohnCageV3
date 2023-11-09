@@ -1,19 +1,17 @@
+// Module for Node.js apps to allow for easy email sending.
 import nodemailer from "nodemailer";
-import { SMTP } from "../config/config";
 
+import { SMTP } from "../../config/config";
 const sendEmail = async (options: any) => {
-
     try {
         const transporter = nodemailer.createTransport({
-            host: SMTP.host,
-            port: SMTP.port,
+            service: 'gmail',
             auth: {
               user: SMTP.email,
               pass: SMTP.password,
             },
         });
     
-        // send mail with defined transport object
         const msg = await transporter.sendMail({
             from: `${SMTP.fromName} <${SMTP.fromEmail}>`, // sender address
             to: options.email, // list of receivers
@@ -29,5 +27,4 @@ const sendEmail = async (options: any) => {
         console.log(error);
     }
 }
-
 export { sendEmail };
