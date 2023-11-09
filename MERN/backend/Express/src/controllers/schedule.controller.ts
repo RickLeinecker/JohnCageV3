@@ -38,7 +38,7 @@ class ScheduleController implements scheduleAPI {
         const toDate: string = toDateTime.split('T').at(0) as string;
         const toTime: string = toDateTime.split('T').at(1) as string;
 
-        let schedule: Set<string> = new Set();
+        let schedule: Set<{ DateTime: string, GroupID: number }> = new Set();
         await schedulesRepository.find(
             {
                 attributes: ["Date", "Time"],
@@ -81,11 +81,12 @@ class ScheduleController implements scheduleAPI {
             scheduled.forEach((data) => {
                 let date: string | undefined = data.Date;
                 let time: string | undefined = data.Time;
-                if (time && date) { schedule.add(date + "T" + time); }
+                let id: number | undefined = data.GroupID;
+                if (time && date && id) { schedule.add({ DateTime: date + "T" + time, GroupID: id }); }
             })
 
             console_log("Scheduled times: ", schedule, "\n\n");
-            return res.status(200).send({ scheduledTimes: Array.from(schedule) });
+            return res.status(200).send({ scheduledGroups: Array.from(schedule) });
         }).catch((e) => {
             console_log("Error: ", e.message, "\n\n");
             return res.status(500).send({ error: e.message });
