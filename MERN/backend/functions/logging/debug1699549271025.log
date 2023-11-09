@@ -1,0 +1,38 @@
+Cleaning up at Thu Nov 09 2023 12:01:13 GMT-0500 (Eastern Standard Time)
+Concert data: 
+
+performerNames: 
+[]
+groupId: 
+-1
+fileName: 
+-1John Cagedefault508414
+maestroName: 
+John Cage
+Express server is listening on port 5000.
+Error: 
+[Error: ENOENT: no such file or directory, scandir '../temp/passcodes/listener/'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '../temp/passcodes/listener/'
+}
+
+
+2000-01-01
+00:00:00
+9999-12-31
+23:59:59
+Sequelize: MySQL connection has been established.
+Login query successful: 
+[]
+Error: 
+Cannot read properties of undefined (reading 'Password')
+
+
+Login query successful: 
+[]
+Error: 
+Cannot read properties of undefined (reading 'Password')
+
+
