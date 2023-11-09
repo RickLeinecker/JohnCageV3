@@ -102,6 +102,6 @@
     color:white;
 }
 .button-container button.selected{
-    background-color: goldenrod;
-    color:white;
+    background-color: #85dcfc;
+    color:black;
 }
