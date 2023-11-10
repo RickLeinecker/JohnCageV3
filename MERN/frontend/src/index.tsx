@@ -16,7 +16,7 @@ import './Style/index.css';
 
 const Compiled = () => {
 
-  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "WebSocket", "WebSocketTest", "Profile"];
+  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "Profile"];
 
   const [userName, setUserName] = useState("");
   const [buttonList, setButtonList] = useState(baseButtonList);
