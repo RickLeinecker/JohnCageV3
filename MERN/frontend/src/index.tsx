@@ -30,7 +30,7 @@ const Compiled = () => {
       buttonList.pop();// Popout Logout
       buttonList.push("Profile");
     }
-    else if (buttonList[buttonList.length - 1] == "Logout")
+    else if (buttonList[buttonList.length - 1] == "Profile")
     {
       console.log("Logging in....");
       buttonList.pop();// Pop out profile then push in logout.

@@ -33,8 +33,8 @@ function RegisterPage({ setUserName }: any) {
         if (allErrorsClear(errors)) {
             //API call goes here;
             //takeCredentials(values.email, values.password);
+            RegisterAPI(values.screenName, values.username, values.email, values.password, values.phone, setUserName);
         }
-        RegisterAPI(values.screenName, values.username, values.email, values.password, values.phone, setUserName);
 
         return errors;
 
