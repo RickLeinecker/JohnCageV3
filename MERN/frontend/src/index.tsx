@@ -23,14 +23,17 @@ const Compiled = () => {
 
   function LoggingIn(name: string) {
     setUserName(name);
-    if (name === "" && buttonList.length < 5)
+    if (name === "" && buttonList[buttonList.length - 1] == "Logout")
     {
       console.log("Logging out....");
       localStorage.removeItem("Username");
+      buttonList.pop();// Popout Logout
+      buttonList.push("Profile");
     }
-    else if (buttonList.length > 5)
+    else if (buttonList[buttonList.length - 1] == "Profile")
     {
       console.log("Logging in....");
+      buttonList.pop();// Pop out profile then push in logout.
       buttonList.push("Logout");
     }
     console.log("All components will have " + name);

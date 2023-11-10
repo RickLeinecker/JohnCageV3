@@ -4,8 +4,8 @@ import { isServerEnvironment } from "./env.config";
 
 const developmentSequelizeConfig: SequelizeOptions = {
   database: "jct3",
-  username: "root",
-  password: "password1!",
+  username: "username",
+  password: "!2#4%qwert",
   host: "localhost",
   dialect: "mysql",
   //port: 3306,
