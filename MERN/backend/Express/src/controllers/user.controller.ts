@@ -11,6 +11,8 @@ import { sendEmail } from "../functions/sendEmail";
 
 const NAMESPACE = "User";
 
+import 'dotenv/config';
+
 class UserController {
   async validateToken(req: Request, res: Response, next: NextFunction) {
     logging.info(NAMESPACE, "Token validated, user authorized");

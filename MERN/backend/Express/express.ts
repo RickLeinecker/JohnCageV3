@@ -6,6 +6,10 @@ import expressServer from "./src/expressServer";
 const expressServerInstance: expressServer = new expressServer();
 const expressPort = 5003;
 
+import 'dotenv/config';
+
+console.log(`Hello ${process.env.HELLO}`);
+
 expressServerInstance
   .expressApp
   .listen(expressPort, () => console_log(`Express server is listening on port ${expressPort}.`))
