@@ -52,7 +52,7 @@ class UserController {
 
             // Create a token for this users email verification.
             const verifyEmailToken = Math.floor(100000 + Math.random() * 900000);
-            
+
             // Store the random code/string in the database with a reference to the User ID.
             user.VerificationCode = verifyEmailToken;
 
@@ -198,7 +198,6 @@ class UserController {
 
     // A query to select from 'users' where 'UserName' is equal to the username parsed from the request body.
     await users.findAll({
-      attributes: { exclude: ['VerificationCode'] },
       where: {
         UserName: { [Op.eq]: identifier },
       }
