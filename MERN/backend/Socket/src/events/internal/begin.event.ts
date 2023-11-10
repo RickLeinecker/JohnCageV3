@@ -33,10 +33,10 @@ const beginConcert = function (currentConcert: Concert): void {
     // End concert automatically after a certain time.
     const msUntilNextSlot = getNextTimeslot(minutesToMilliseconds(20));
     if (msUntilNextSlot - minutesToMilliseconds(1) > minutesToMilliseconds(10)) {
-        setInterval(() => endConcert(currentConcert), minutesToMilliseconds(10));
+        setTimeout(() => endConcert(currentConcert), minutesToMilliseconds(10));
     }
     else {
-        setInterval(() => endConcert(currentConcert), msUntilNextSlot - minutesToMilliseconds(1));
+        setTimeout(() => endConcert(currentConcert), msUntilNextSlot - minutesToMilliseconds(1));
     }
 }
 

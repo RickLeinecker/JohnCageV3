@@ -58,16 +58,18 @@ const saveConcert = function () {
             console_log("Error: ", e.message, "\n");
         });
 
-        // Delete current schedule record.
-        schedules.destroy({
-            where: {
-                GroupID: groupId
-            }
-        }).then((schedule) => {
-            console_log("Schedule deleted: ", schedule, "\n");
-        }).catch((e) => {
-            console_log("Error: ", e.message, "\n");
-        });
+        // Deleting immediately might allow someone to schedule for same timeslot if the concert ends early.
+        // Deleting schedules in the past every month or so with a simple MySQL query is a more safe solution.
+        // // Delete current schedule record.
+        // schedules.destroy({
+        //     where: {
+        //         GroupID: groupId
+        //     }
+        // }).then((schedule) => {
+        //     console_log("Schedule deleted: ", schedule, "\n");
+        // }).catch((e) => {
+        //     console_log("Error: ", e.message, "\n");
+        // });
     }
 }
 

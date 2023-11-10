@@ -7,6 +7,7 @@ import { getNextTimeslot, minutesToMilliseconds } from "../../functions/date.fun
 import { removeDirectoryFiles } from "../../functions/file.functions";
 import { TEMP_FOLDER } from "../config/express.config";
 import { saveConcert } from "./functions/saveConcert.functions";
+import { sendEmail } from "./functions/sendEmail";
 
 class expressServer {
   public expressApp: Application = express();
