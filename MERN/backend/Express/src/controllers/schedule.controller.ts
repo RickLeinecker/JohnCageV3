@@ -38,10 +38,10 @@ class ScheduleController implements scheduleAPI {
         const toDate: string = toDateTime.split('T').at(0) as string;
         const toTime: string = toDateTime.split('T').at(1) as string;
 
-        let schedule: Set<{ DateTime: string, GroupID: number }> = new Set();
+        let schedule: any = [];
         await schedulesRepository.find(
             {
-                attributes: ["Date", "Time"],
+                attributes: ["Date", "Time", "GroupID"],
                 where: {
                     [Op.or]: [
                         {
@@ -82,11 +82,11 @@ class ScheduleController implements scheduleAPI {
                 let date: string | undefined = data.Date;
                 let time: string | undefined = data.Time;
                 let id: number | undefined = data.GroupID;
-                if (time && date && id) { schedule.add({ DateTime: date + "T" + time, GroupID: id }); }
+                if (time && date && id) { console.log(date, time, id); schedule.push({ DateTime: date + "T" + time, GroupID: id }); }
             })
 
             console_log("Scheduled times: ", schedule, "\n\n");
-            return res.status(200).send({ scheduledGroups: Array.from(schedule) });
+            return res.status(200).send({ scheduledGroups: schedule });
         }).catch((e) => {
             console_log("Error: ", e.message, "\n\n");
             return res.status(500).send({ error: e.message });
