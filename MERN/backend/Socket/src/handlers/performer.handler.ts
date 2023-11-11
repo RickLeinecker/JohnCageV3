@@ -14,7 +14,7 @@ import { Concert } from "../socket.types";
 import { concertTick } from "../events/internal/tick.event";
 import { receiveAudio } from "../events/internal/receive.event";
 import { retrieveHeader, retrieveMessageContents } from "../utilities/socket.binary";
-import { removePasscode } from "../functions/removepasscode";
+import { removePasscode } from "../utilities/removepasscode";
 
 var ids: number = 0;
 

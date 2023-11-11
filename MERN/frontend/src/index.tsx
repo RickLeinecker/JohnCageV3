@@ -11,6 +11,7 @@ import AboutPage from "./Pages/About";
 import RegisterPage from "./Pages/Register";
 import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
+import LiveConcertCard from "./Components/LiveConcertCard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
 
@@ -23,15 +24,13 @@ const Compiled = () => {
 
   function LoggingIn(name: string) {
     setUserName(name);
-    if (name === "" && buttonList[buttonList.length - 1] == "Logout")
-    {
+    if (name === "" && buttonList[buttonList.length - 1] == "Logout") {
       console.log("Logging out....");
       localStorage.removeItem("Username");
       buttonList.pop();// Popout Logout
       buttonList.push("Profile");
     }
-    else if (buttonList[buttonList.length - 1] == "Profile")
-    {
+    else if (buttonList[buttonList.length - 1] == "Profile") {
       console.log("Logging in....");
       buttonList.pop();// Pop out profile then push in logout.
       buttonList.push("Logout");
@@ -73,6 +72,7 @@ const Compiled = () => {
               <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
               <Route path="/Socket" element={<SocketTest />} />
               <Route path="/Calendar" element={<CalendarPage />} />
+              <Route path="/Live" element={<LiveConcertCard />} />
             </Routes>
           </div>
           <div className="col-2"></div>
@@ -90,43 +90,3 @@ musicRoot.render(<Compiled />);
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
-
-
-
-
-/* Old index
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import ConcertPage from './Pages/ConcertPage';
-import Catalogue from './Pages/Catalogue';
-import Record from './Pages/Record';
-import Listen from './Pages/Listen';
-import Home from './Pages/Home';
-import reportWebVitals from './reportWebVitals';
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-
-root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<ConcertPage />} />
-      <Route path="/record" element={<Record />} />
-      <Route path="/listen" element={<Listen />} />
-      <Route path="/catalogue" element={<Catalogue />} />
-    </Routes>
-  </BrowserRouter>
-);
-
-//Remove strictmode to prevent useEffect hooks from triggering twice (it loads components twice to detect problems)
-//<React.StrictMode>
-//</React.StrictMode>
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
-*/
