@@ -9,6 +9,7 @@ import React from "react";
 import schedule from "../API/scheduleAPI";
 import download from "downloadjs";
 import downloadConcert from "../API/downloadConcertAPI";
+import LiveConcertCard from "../Components/LiveConcertCard";
 
 
 //Functions
