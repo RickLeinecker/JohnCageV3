@@ -57,15 +57,16 @@ var Results: searchResult[] = [{
 ];
 
 function TagsString(tags: string): string {
-    return tags;
 
     if (tags.length < 1)
-        return ""
-    let tagString: string = tags[0];
-
-    for (let i = 1; i < tags.length; i++) {
-        tagString += ", " + tags[i];
+        return "";
+    let tagsSplit:string[] = tags.split("`");
+    let tagString:string = tagsSplit[0];
+    for(let i = 1; i < tagsSplit.length; i++)
+    {
+        tagString += ","+tagsSplit[i];
     }
+
 
     return tagString;
 
@@ -97,7 +98,7 @@ class SongCard extends Component<ButtonState>
                             {this.props.songName}
                         </h5>
                         <br />
-                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem" }}>
+                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
                             {TagsString(this.props.songTags)}
                         </p>
                     </div>
@@ -172,32 +173,32 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
+                <div className="col-4">
+                    <Button onClick={prevPage}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                        </svg>
+                    </Button>
+                </div>
+                <div className="col-4" style={{ textAlign: "center" }}>
+                    <p>Page: {page + 1}</p>
+                </div>
+                <div className="col-4" style={{ textAlign: "right" }}>
+                    <Button onClick={nextPage}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z" />
+                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </Button>
+                </div>
+                <br />
+                <br />
+                </div>
+            <div className="row">
                 <div className="col">
 
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
-                        <div className="row">
-                            <div className="col">
-                                <Button onClick={prevPage}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-left" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                    </svg>
-                                </Button>
-                            </div>
-                            <div className="col" style={{ textAlign: "center" }}>
-                                <p>Page: {page + 1}</p>
-                            </div>
-                            <div className="col" style={{ textAlign: "right" }}>
-                                <Button onClick={nextPage}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z" />
-                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z" />
-                                    </svg>
-                                </Button>
-                            </div>
-                            <br />
-                            <br />
-                        </div>
                         <div className="row">
                             {
                                 searchList.map((key, i) => {
