@@ -54,7 +54,7 @@ const validateDateTime = function (): boolean {
 const validatePerformerPasscode = function (passcode: string): boolean {
     console_log("Validating performer passcode...");
 
-    const passcodes = fs.readdirSync("../temp/passcodes/performers/") ? fs.readdirSync("../temp/passcodes/performers/") : [];
+    const passcodes = fs.existsSync("../temp/passcodes/performers/") ? fs.readdirSync("../temp/passcodes/performers/") : [];
     console_log("Passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
@@ -66,7 +66,7 @@ const validatePerformerPasscode = function (passcode: string): boolean {
 const validateMaestroPasscode = function (passcode: string): boolean {
     console_log("Validating maestro passcode...");
 
-    const passcodes = fs.readdirSync("../temp/passcodes/maestro/") ? fs.readdirSync("../temp/passcodes/maestro/") : [];
+    const passcodes = fs.existsSync("../temp/passcodes/maestro/") ? fs.readdirSync("../temp/passcodes/maestro/") : [];
     console_log("Maestro passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
@@ -78,7 +78,7 @@ const validateMaestroPasscode = function (passcode: string): boolean {
 const validateListenerPasscode = function (passcode: string): boolean {
     console_log("Validating listener passcode...");
 
-    const passcodes = fs.readdirSync("../temp/passcodes/listener/") ? fs.readdirSync("../temp/passcodes/listener/") : [];
+    const passcodes = fs.existsSync("../temp/passcodes/listener/") ? fs.readdirSync("../temp/passcodes/listener/") : [];
     console_log("Listener passcodes: ", passcodes, "\n");
 
     if (passcodes.includes(passcode)) { return true; }
