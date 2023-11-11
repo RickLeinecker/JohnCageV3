@@ -14,14 +14,14 @@ function clamp(num: number, min: number, max: number) {
             : num
 }
 
-const newMix = (mixerInput: MixerInput): MixerOutput => {
-    console_log("ENTERTING NEW MIXER AAAAAAAA");
+const waveMix = (mixerInput: MixerInput): MixerOutput => {
+    console_log("ENTERTING WAVE MIXER");
 
     // Unwrapping inputs and preparing new state.
     const buffers: Buffer[] = mixerInput.buffers;
     const oldState: any = mixerInput.state;
-    let newState: NewMixerState = oldState;
-    if (!newState || newState.intervalsMixed == undefined) { newState = { intervalsMixed: 0 } };
+    let state: NewMixerState = oldState;
+    if (!state || state.intervalsMixed === undefined) { state = { intervalsMixed: 0 } };
 
     // Goal audio buffer.
     let mixedAudio: Buffer = Buffer.alloc(outgoingAudioChunkSize);
@@ -47,8 +47,9 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
         }
     }
 
-    let factor = 1;
-    if (newState.intervalsMixed % 2 == 0) { console_log(newState.intervalsMixed + " intervals have been mixed.\n"); factor = 1.5 }
+    // let factor = state.volumeFactor && state.volumeFactor >= 1 && state.volumeFactor <= 2 ? state.volumeFactor as number : 1;
+    let factor = (Math.sin(state.intervalsMixed * (Math.PI / 4)) / 2) + 1.5;
+    console_log(factor + " volume factor.\n");
 
     // Mix samples: Add all samples together and divide by the number of samples.
     let sampleCount = bufferViews.length;
@@ -67,9 +68,29 @@ const newMix = (mixerInput: MixerInput): MixerOutput => {
         mixedAudio.writeInt16LE(clamp((sampleSum - 32768) * factor, -32760, 32760), 2 * i);
     }
 
-    newState.intervalsMixed++;
-    const result: MixerOutput = { mixedBuffer: mixedAudio, state: newState };
+
+
+    // if (state.volumeDirection && state.volumeFactor < 2) {
+    //     state.volumeFactor += 0.2;
+    // }
+    // else if (!state.volumeDirection && state.volumeFactor > 1) {
+    //     state.volumeFactor += 0.2;
+    // }
+    // else if (state.volumeDirection && state.volumeFactor == 2) {
+    //     state.volumeDirection = false;
+    //     state.volumeFactor -= 0.2;
+    // }
+    // else if (!state.volumeDirection && state.volumeFactor == 1) {
+    //     state.volumeDirection = true;
+    //     state.volumeFactor += 0.2;
+    // }
+    // else {
+    //     state.volumeDirection = true;
+    //     state.volumeFactor = 1;
+    // }
+    state.intervalsMixed++;
+    const result: MixerOutput = { mixedBuffer: mixedAudio, state: state };
     return result;
 }
 
-exports.mix = newMix;
+exports.mix = waveMix;
