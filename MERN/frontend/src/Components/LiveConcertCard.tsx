@@ -62,7 +62,7 @@ function LiveConcertCard() {
   var nextStartTime = 0;
 
   const scheduleAudioChunk = (float32Samples: Float32Array) => {
-    let audioBuffer = audioCtx.createBuffer(1, float32Samples.length, 16000);
+    let audioBuffer = audioCtx.createBuffer(1, float32Samples.length, 32000);
     audioBuffer.getChannelData(0).set(float32Samples);
     let source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
