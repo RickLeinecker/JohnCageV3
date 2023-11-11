@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "../Style/button.css"
 import MusicPlayer from "./MusicPlayer";
 import concertData from "../Types/concertData";
+import downloadConcert from "../API/downloadConcertAPI";
 
 function MusicCard(thisConcert: concertData) {
 
@@ -60,8 +61,9 @@ function MusicCard(thisConcert: concertData) {
               {"Description: "}
               {data["description"]}
             </p>
-
-
+            <button onClick={() => downloadConcert(data["id"], data["title"])}>
+              Download
+            </button>
           </div>
         </div>
       </div>

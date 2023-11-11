@@ -1,8 +1,8 @@
-// Currently not in use.
+// NOT IN USE CURRENTLY
 import tag from "../Types/tag";
 import { buildPath } from "../Variables/expressServer";
 
-const getTags = async function () {
+const getTags = async function (): Promise<tag[]> {
 
     try {
         const URL = buildPath('/concerts/getTags');

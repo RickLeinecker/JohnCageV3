@@ -35,12 +35,6 @@ const LoginPage = ({ setUserName }: any) => {
         }
     }
 
-    const sendVerificationEmail = (email: string) => {
-        const currentURL: string = "https://localhost:3000/";
-
-
-    }
-
     const validate = (values: { email: string; password: string; }) => {
         const errors = regexCheck(values);
         // if(errors.email === '' && errors.password === ''){
