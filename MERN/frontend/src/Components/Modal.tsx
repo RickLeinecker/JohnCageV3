@@ -1,7 +1,8 @@
-import React, { MouseEventHandler } from 'react'
+import React, { MouseEventHandler,useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import concertData from '../Types/concertData'
-import MusicCard from './MusicCard'
+import MusicPlayer from "./MusicPlayer";
+import downloadConcert from "../API/downloadConcertAPI";
 
 type ModalData = {
     songData: concertData,
@@ -24,10 +25,78 @@ const MODAL: React.CSSProperties = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    backgroundColor: "#FFF",
+    
     padding: "50px",
     zIndex: 1000
 }
+
+function MusicCard(thisConcert: concertData) {
+
+    const [data, setData] = useState<concertData>({
+      id: -1,
+      title: "Click a Concert to Get Started.",
+      date: "",
+      description: "",
+      tags: "Sample Tags",
+      maestro: "",
+      performers: [""]
+    });
+  
+    // Get metadata useEffect hook
+    useEffect(() => {
+      if (thisConcert["id"] != -1) {
+        setData(thisConcert);
+      }
+      else
+        console.log("Concert is empteh");
+    }, [thisConcert]);
+  
+    return (
+      <React.Fragment>
+        <div
+          className="card"
+          style={{ width: "100%", height: "100%", backgroundColor: "#D9D9D9" }}
+        >
+          <div className="card-body" style={{ left: "25px", right: "25px" }}>
+            <div>
+              <h5 className="card-title song-name">
+                {data["title"]}
+              </h5>
+              <h6 className="card-subtitle mb-2 text-muted">
+                {data["date"]}
+              </h6>
+              <p className="text-muted">
+                {"Performers: "}
+                {
+                  data["performers"].map((key, i) => {
+                    return key + " ";
+                  })
+  
+                }
+              </p>
+              <p className="text-muted">
+                {"\nTags: "}
+                {
+                  data["tags"]
+                }
+              </p>
+            </div>
+            <div>
+              <MusicPlayer id={data["id"]} />
+              <p>
+                {"Description: "}
+                {data["description"]}
+              </p>
+              <button onClick={() => downloadConcert(data["id"], data["title"])}>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
+
 
 export default function Modal({ isOpen, onClose, songData }: ModalData) {
     if (!isOpen) return null;
