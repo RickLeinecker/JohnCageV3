@@ -7,6 +7,8 @@ import { useInView } from "react-intersection-observer";
 import { render } from "@testing-library/react";
 import React from "react";
 import schedule from "../API/scheduleAPI";
+import download from "downloadjs";
+import downloadConcert from "../API/downloadConcertAPI";
 
 
 //Functions

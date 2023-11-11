@@ -24,6 +24,25 @@ interface concertsAPI {
 }
 
 class ConcertsController implements concertsAPI {
+  async downloadConcertFile(req: Request, res: Response) {
+    let groupId: number = parseInt(req.query.id as string);
+    if (!groupId) { groupId = -1; }
+
+    await recordings.findOne({
+      where: { GroupID: groupId }
+    }).then((recording) => {
+      if (!recording) { throw new Error("Recording not found."); }
+
+      const fileName = recording.RecordingFileName;
+      const recordingFilePath = MUSIC_FOLDER + fileName;
+
+      res.download(recordingFilePath);
+    }).catch((e) => {
+      console_log("Error: ", e.message, "\n");
+      res.status(500).json({ error: e.message });
+    });
+  }
+
   async findAndPipeAudio(req: Request, res: Response) {
     let groupId: number = parseInt(req.query.id as string);
     if (!groupId) { groupId = -1; }
