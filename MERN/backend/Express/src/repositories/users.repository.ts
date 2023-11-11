@@ -1,9 +1,13 @@
-import { Op } from "sequelize";
-import { users } from "../models/init-models";
+import { Op } from 'sequelize';
+import { users } from '../models/init-models';
 
 interface IUsersRepository {
   //save(user: users): Promise<users>;
-  retrieveAll(searchParams: { userName: string, IsAdmin: boolean, IsVerified: boolean }): Promise<users[]>;
+  retrieveAll(searchParams: {
+    userName: string;
+    IsAdmin: boolean;
+    IsVerified: boolean;
+  }): Promise<users[]>;
   retrieveById(usersId: number): Promise<users | null>;
   update(users: users): Promise<number>;
   delete(usersId: number): Promise<number>;
@@ -35,10 +39,10 @@ class UsersRepository implements IUsersRepository {
       let condition: SearchCondition = {};
 
       return await users.findAll({
-        attributes: ['ID', 'UserName']
+        attributes: ['ID', 'UserName'],
       });
     } catch (error) {
-      throw new Error("Failed to retrieve Users!");
+      throw new Error('Failed to retrieve Users!');
     }
   }
 
@@ -67,7 +71,7 @@ class UsersRepository implements IUsersRepository {
     try {
       return await users.findByPk(userId);
     } catch (error) {
-      throw new Error("Failed to retrieve User!");
+      throw new Error('Failed to retrieve User!');
     }
   }
 
@@ -82,7 +86,7 @@ class UsersRepository implements IUsersRepository {
 
       return affectedRows[0];
     } catch (error) {
-      throw new Error("Failed to update User!");
+      throw new Error('Failed to update User!');
     }
   }
 
@@ -92,7 +96,7 @@ class UsersRepository implements IUsersRepository {
 
       return affectedRows;
     } catch (error) {
-      throw new Error("Failed to delete User!");
+      throw new Error('Failed to delete User!');
     }
   }
 }

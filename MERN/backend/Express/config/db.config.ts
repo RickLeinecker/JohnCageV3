@@ -24,9 +24,9 @@ const developmentSequelizeConfig: SequelizeOptions = {
 };
 
 const serverSequelizeConfig: SequelizeOptions = {
-  database: "jct3",
-  username: "TheBeast",
-  password: "WeLoveJCT",
+  database: process.env.MYSQL_SCHEMA,
+  username: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_PASSWORD,
   host: "localhost",
   dialect: "mysql",
   pool: {
