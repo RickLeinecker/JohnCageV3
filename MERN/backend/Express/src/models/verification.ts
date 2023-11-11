@@ -6,17 +6,19 @@ export interface verificationAttributes {
   ID: number;
   VerificationCode?: number;
   UserID?: number;
+  DateCreated?: Date;
 }
 
 export type verificationPk = "ID";
 export type verificationId = verification[verificationPk];
-export type verificationOptionalAttributes = "ID" | "VerificationCode" | "UserID";
+export type verificationOptionalAttributes = "ID" | "VerificationCode" | "UserID" | "DateCreated";
 export type verificationCreationAttributes = Optional<verificationAttributes, verificationOptionalAttributes>;
 
 export class verification extends Model<verificationAttributes, verificationCreationAttributes> implements verificationAttributes {
   ID!: number;
   VerificationCode?: number;
   UserID?: number;
+  DateCreated?: Date;
 
   // verification belongsTo users via UserID
   User!: users;
@@ -43,6 +45,11 @@ export class verification extends Model<verificationAttributes, verificationCrea
         model: 'users',
         key: 'ID'
       }
+    },
+    DateCreated: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     sequelize,

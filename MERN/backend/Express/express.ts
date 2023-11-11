@@ -4,11 +4,9 @@ import console_log from "../functions/logging/console_log"
 // Express API server
 import expressServer from "./src/expressServer";
 const expressServerInstance: expressServer = new expressServer();
-const expressPort = 5003;
+const expressPort = 5000;
 
-import 'dotenv/config';
-
-console.log(`Hello ${process.env.HELLO}`);
+console_log("Express server env variable test: ", process.env.HELLO)
 
 expressServerInstance
   .expressApp

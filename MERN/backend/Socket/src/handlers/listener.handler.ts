@@ -7,7 +7,7 @@ import { CustomHeader, Concert, Listener } from "../socket.types";
 
 // Functions
 import { retrieveHeader } from "../utilities/socket.binary";
-import { removePasscode } from "../functions/removepasscode";
+import { removePasscode } from "../utilities/removepasscode";
 
 const addConcertListener = function (ws: WebSocket, currentConcert: Concert, passcode: string) {
     let listener: Listener = { socket: ws, passcode: passcode };

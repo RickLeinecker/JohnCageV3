@@ -1,0 +1,111 @@
+Cleaning up at Thu Nov 09 2023 12:05:12 GMT-0500 (Eastern Standard Time)
+Concert data: 
+
+performerNames: 
+[]
+groupId: 
+-1
+fileName: 
+-1John Cagedefault195374
+maestroName: 
+John Cage
+Express server is listening on port 5000.
+Error: 
+[Error: ENOENT: no such file or directory, scandir '../temp/passcodes/listener/'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '../temp/passcodes/listener/'
+}
+
+
+2000-01-01
+00:00:00
+9999-12-31
+23:59:59
+Sequelize: MySQL connection has been established.
+Login query successful: 
+[]
+Error: 
+Cannot read properties of undefined (reading 'Password')
+
+
+Login query successful: 
+[]
+Error: 
+Cannot read properties of undefined (reading 'Password')
+
+
+Error: 
+Error: 
+    at Query.run (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/sequelize/src/dialects/mysql/query.js:46:25)
+    at /home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/sequelize/src/sequelize.js:650:28
+    at MySQLQueryInterface.insert (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/sequelize/src/dialects/abstract/query-interface.js:795:21)
+    at users.save (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/sequelize/src/model.js:4153:35)
+    at Function.create (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/sequelize/src/model.js:2305:12)
+    at /home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/src/controllers/user.controller.ts:41:9 {
+  name: 'SequelizeUniqueConstraintError',
+  errors: [
+    ValidationErrorItem {
+      message: 'UserName must be unique',
+      type: 'unique violation',
+      path: 'UserName',
+      value: 'tester2',
+      origin: 'DB',
+      instance: [users],
+      validatorKey: 'not_unique',
+      validatorName: null,
+      validatorArgs: []
+    }
+  ],
+  parent: Error: Duplicate entry 'tester2' for key 'users.UserName_UNIQUE'
+      at Packet.asError (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/packets/packet.js:728:17)
+      at Execute.execute (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/commands/command.js:29:26)
+      at Connection.handlePacket (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:478:34)
+      at PacketParser.onPacket (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:97:12)
+      at PacketParser.executeStart (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/packet_parser.js:75:16)
+      at Socket.<anonymous> (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:104:25)
+      at Socket.emit (node:events:517:28)
+      at addChunk (node:internal/streams/readable:335:12)
+      at readableAddChunk (node:internal/streams/readable:308:9)
+      at Socket.Readable.push (node:internal/streams/readable:245:10)
+      at Pipe.onStreamRead (node:internal/stream_base_commons:190:23) {
+    code: 'ER_DUP_ENTRY',
+    errno: 1062,
+    sqlState: '23000',
+    sqlMessage: "Duplicate entry 'tester2' for key 'users.UserName_UNIQUE'",
+    sql: 'INSERT INTO `users` (`UserName`,`Email`,`Password`) VALUES (?,?,?);',
+    parameters: [
+      'tester2',
+      'tester2@gmail.com',
+      '$2a$10$c7aUe1a.zLqnSeOkZB5fDe.iBYjIqz4kQ5JxpoSbe8I6gEVmIbZfS'
+    ]
+  },
+  original: Error: Duplicate entry 'tester2' for key 'users.UserName_UNIQUE'
+      at Packet.asError (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/packets/packet.js:728:17)
+      at Execute.execute (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/commands/command.js:29:26)
+      at Connection.handlePacket (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:478:34)
+      at PacketParser.onPacket (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:97:12)
+      at PacketParser.executeStart (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/packet_parser.js:75:16)
+      at Socket.<anonymous> (/home/kyle/Documents/Code/JohnCageTribute/JohnCageV3/MERN/backend/Express/node_modules/mysql2/lib/connection.js:104:25)
+      at Socket.emit (node:events:517:28)
+      at addChunk (node:internal/streams/readable:335:12)
+      at readableAddChunk (node:internal/streams/readable:308:9)
+      at Socket.Readable.push (node:internal/streams/readable:245:10)
+      at Pipe.onStreamRead (node:internal/stream_base_commons:190:23) {
+    code: 'ER_DUP_ENTRY',
+    errno: 1062,
+    sqlState: '23000',
+    sqlMessage: "Duplicate entry 'tester2' for key 'users.UserName_UNIQUE'",
+    sql: 'INSERT INTO `users` (`UserName`,`Email`,`Password`) VALUES (?,?,?);',
+    parameters: [
+      'tester2',
+      'tester2@gmail.com',
+      '$2a$10$c7aUe1a.zLqnSeOkZB5fDe.iBYjIqz4kQ5JxpoSbe8I6gEVmIbZfS'
+    ]
+  },
+  fields: { UserName: 'tester2' },
+  sql: 'INSERT INTO `users` (`UserName`,`Email`,`Password`) VALUES (?,?,?);'
+}
+
+

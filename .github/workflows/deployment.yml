@@ -33,6 +33,8 @@ jobs:
             pm2 stop 0
             pm2 stop 1
 
+            cp /var/www/johncagetribute/auth/.env /var/www/johncagetribute/JohnCageV3/MERN/backend/Express/.env
+
             cd MERN
             cd backend
             cd Express

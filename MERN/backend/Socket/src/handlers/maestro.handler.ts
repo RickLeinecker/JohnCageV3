@@ -16,7 +16,7 @@ import { receiveAudio } from "../events/internal/receive.event";
 import { retrieveMessageContents, retrieveHeader } from "../utilities/socket.binary";
 import { broadcastStart } from "../events/outgoing/start.broadcast";
 import { broadcastStop } from "../events/outgoing/stop.broadcast";
-import { removePasscode } from "../functions/removepasscode";
+import { removePasscode } from "../utilities/removepasscode";
 
 const addMaestro = function (ws: WebSocket, currentConcert: Concert, name: string, passcode: string) {
     currentConcert.active = false; // VERY TEMPORARY, DO NOT LEAVE ALONE
