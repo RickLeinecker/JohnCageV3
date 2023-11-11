@@ -136,6 +136,7 @@ const routeConnection = function (ws: WebSocket, req: IncomingMessage, wss: WebS
 
         // Authenticate
         if (!(validateDateTime() && validateListenerPasscode(passcode) && !currentConcert.activePasscodes.includes(passcode))) {
+            console_log("Passcodes: ", currentConcert.activePasscodes);
             ws.close();
         }
         else {

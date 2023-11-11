@@ -17,7 +17,7 @@ import './Style/index.css';
 
 const Compiled = () => {
 
-  var baseButtonList: string[] = ["Concerts", "About", "Calendar", "Profile"];
+  var baseButtonList: string[] = ["Concerts", "Schedule", "About", "Profile"];
 
   const [userName, setUserName] = useState("");
   const [buttonList, setButtonList] = useState(baseButtonList);
@@ -71,7 +71,7 @@ const Compiled = () => {
               <Route path="/About" element={<AboutPage />} />
               <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
               <Route path="/Socket" element={<SocketTest />} />
-              <Route path="/Calendar" element={<CalendarPage />} />
+              <Route path="/Schedule" element={<CalendarPage />} />
               <Route path="/Live" element={<LiveConcertCard />} />
             </Routes>
           </div>
