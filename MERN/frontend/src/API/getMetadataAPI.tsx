@@ -1,7 +1,7 @@
 import { buildPath } from "../Variables/expressServer";
 import concertData from "../Types/concertData";
 
-const getMetadata = async function (id: number) {
+const getMetadata = async function (id: number): Promise<concertData> {
     try {
         // Get song metadata based on unique song id
         const URL = buildPath('/concerts/getSongData?id=' + id);

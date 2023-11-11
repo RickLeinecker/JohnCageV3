@@ -74,7 +74,7 @@ const NavBar = ({ userName, setterFunction, buttonList }: navBarData) => {
               </h2>
             </Navbar.Brand>
             <Nav style={{ display: 'flex', justifyContent: 'flex-start' }}>
-              {buttonList.slice(0, 5).map((key, i) => (
+              {buttonList.slice(0, 3).map((key, i) => (
                 <NavButtons key={i} buttonName={key} />
               ))}
             </Nav>

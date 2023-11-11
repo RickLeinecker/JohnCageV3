@@ -74,6 +74,9 @@ class UserController {
             );
 
             // Set the 6-digit token in 'VerificationCode' field
+            const verifyEmailToken = Math.floor(100000 + Math.random() * 900000);
+
+            // Store the random code/string in the database with a reference to the User ID.
             user.VerificationCode = verifyEmailToken;
 
             // Update the users 'VerificationCode' field in the database

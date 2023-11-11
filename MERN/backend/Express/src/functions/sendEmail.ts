@@ -8,21 +8,21 @@ const sendEmail = async (options: any) => {
             host: SMTP.host,
             port: SMTP.port,
             auth: {
-              user: SMTP.email,
-              pass: SMTP.password,
+                user: SMTP.email,
+                pass: SMTP.password,
             },
         });
-    
+
         const msg = {
             from: `${SMTP.fromEmail}`, // sender address
             to: options.email, // list of receivers
             subject: options.subject, // Subject line
             html: options.html
         };
-    
+
         const info = await transporter.sendMail(msg);
-    
-        console.log("Message sent: %s", info.messageId);    
+
+        console.log("Message sent: %s", info.messageId);
     } catch (error) {
         console.log(error);
     }
