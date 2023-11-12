@@ -72,7 +72,7 @@ const Compiled = () => {
               <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
               <Route path="/Socket" element={<SocketTest />} />
               <Route path="/Schedule" element={<CalendarPage />} />
-              <Route path="/Live" element={<LiveConcertCard />} />
+              <Route path="/Live" element={<LiveConcertCard Title="asfd" Maestro="asf " Tags={['asf', 'as']} Description="adsf" Date="asf" Time="af" />} />
             </Routes>
           </div>
           <div className="col-2"></div>

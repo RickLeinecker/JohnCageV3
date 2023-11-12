@@ -2,7 +2,7 @@ import { buildPath } from "../Variables/expressServer";
 
 const getNextConcert = async function () {
     try {
-        // Get song metadata based on unique song id
+        // Get the scheduled concert closest to the present.
         const URL = buildPath('/schedules/getNextConcert');
         console.log("Fetch request URL: ", URL);
         const response = await fetch(URL, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
@@ -12,7 +12,6 @@ const getNextConcert = async function () {
 
         const tags = typeof concertData["Tags"] == "string" ? concertData["Tags"].split("`") : [];
 
-        // Save metadata to concertData type
         let nextConcertData = {
             GroupLeaderName: concertData["GroupID"],
             Title: concertData["Title"],
