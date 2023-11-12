@@ -8,6 +8,7 @@ import { removeDirectoryFiles } from "../../functions/file.functions";
 import { TEMP_FOLDER } from "../config/express.config";
 import { saveConcert } from "./functions/saveConcert.functions";
 import { sendEmail } from "./functions/sendEmail";
+const fs = require("fs");
 
 class expressServer {
   public expressApp: Application = express();
@@ -29,6 +30,10 @@ class expressServer {
       next();
     });
 
+    // Try to save and cleanup concert every minute.
+    this.saveTimerStart(minutesToMilliseconds(1));
+
+    // Save and clenaup concert every 20 minutes.
     this.cleanupTimerStart(minutesToMilliseconds(20));
   }
 
@@ -49,7 +54,19 @@ class expressServer {
     }
   }
 
-  private cleanupTimerStart(msPerInterval: number): void {
+  private saveTimerStart(msPerInterval: number): void {
+    const now = new Date();
+    console_log("Saving at " + now.toString());
+
+    if (fs.existsSync("../temp/finished")) {
+      fs.unlink("../temp/finished");
+      this.cleanup();
+    }
+
+    setTimeout(() => { console_log("Save timer event fired."); this.saveTimerStart(msPerInterval); }, msPerInterval);
+  }
+
+  private cleanup() {
     const now = new Date();
     console_log("Cleaning up at " + now.toString());
 
@@ -61,7 +78,10 @@ class expressServer {
     removeDirectoryFiles(TEMP_FOLDER + "passcodes/maestro/");
     removeDirectoryFiles(TEMP_FOLDER + "passcodes/performers/");
     removeDirectoryFiles(TEMP_FOLDER + "passcodes/listener/");
+  }
 
+  private cleanupTimerStart(msPerInterval: number): void {
+    this.cleanup()
     // Difficult to comprehensively test at intended interval 20 minutes each. 
     // Look at this function if there are temp file problems.
     // Finding a new offset each interval and using recursion ensures a degree of accuracy over time. 
