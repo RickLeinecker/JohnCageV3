@@ -59,7 +59,7 @@ var Results: searchResult[] = [{
 ];
 
 var testNextConcert:nextConcertData = {
-    GroupLeaderName: "Kyle the Crocodyle",
+    GroupLeaderName: "",
     Title: "Atlas",
     Tags: [""],
     Description: "Skibididi",
@@ -118,28 +118,50 @@ function NextSongCard(nextConcert:nextConcertModalData)
     if (nextConcert.nextConcert.GroupLeaderName === "")
     {
         return(
-            <div>
-
+            <div className="searchCard" style ={{width:"100%"}}>
+                <div className="card-body">
+                    <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
+                        {nextConcert.nextConcert.Title}
+                    </h3>
+                    <br />
+                    <h5 className="card-text">Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Description: {nextConcert.nextConcert.Description}
+                    </p>
+                    <br/>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Date: {nextConcert.nextConcert.Date}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Time: {nextConcert.nextConcert.Time}
+                    </p>
+                </div>
+                <br />
             </div>
         )
     }
     else
     {
         return(
-            <button className="songButton" onClick={nextConcert.onClick(true)}>
-                <div className="searchCard">
-                    <div className="card-body">
-                        <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
-                            {nextConcert.nextConcert.Title}
-                        </h3>
-                        <br />
-                        <h5 className="card-text">{nextConcert.nextConcert.GroupLeaderName}</h5>
-                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                            
-                        </p>
-                    </div>
-                    <br />
+            <button className="songButton" onClick={() => nextConcert.onClick(true)} style ={{width:"100%"}}>
+                <div className="searchCard" style ={{width:"100%"}}>
+                <div className="card-body">
+                    <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
+                        {nextConcert.nextConcert.Title}
+                    </h3>
+                    <h5 className="card-text">Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Description: {nextConcert.nextConcert.Description}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Date: {nextConcert.nextConcert.Date}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Time: {nextConcert.nextConcert.Time}
+                    </p>
                 </div>
+                <br />
+            </div>
             </button>
         )
     }
@@ -153,6 +175,7 @@ function ConcertPage() {
     const [page, setPage] = useState<number>(0);
     const [isOpen, setIsOpen] = useState(false);
     const [nextConcertData, setNextConcertData] = useState<nextConcertData>(testNextConcert);
+    const [isNextConcertModal,setIsNextConcertModal] = useState(false);
 
     // Pagination
     const nextPage = function () {
@@ -169,6 +192,13 @@ function ConcertPage() {
     function onClickCompound(index: number, open: boolean) {
         setActiveSelection(index);
         setIsOpen(open);
+        setIsNextConcertModal(false);
+    }
+
+    function OpenNextConcertModal(open:boolean)
+    {
+        setIsOpen(open)
+        setIsNextConcertModal(true);
     }
 
     // Search Text useEffect hook
@@ -198,13 +228,26 @@ function ConcertPage() {
         {
             let concertData:nextConcertData = await getNextConcert();
             setNextConcertData(concertData);
+            console.log("Got the new concert");
         }
+        if (nextConcertData.GroupLeaderName === "")
+        getNextConcertData();
     },[nextConcertData])
 
     return (
         <div className="container">
+            <div className="row">
+            </div>
+            <br/>
+            <div className="row">
+                <h3>Up Next:</h3>
+            </div>
             <div className ="row">
-            <NextSongCard nextConcert={nextConcertData} onClick={setIsOpen}/>
+                <div className="col-2"></div>
+                <div className="col-8" style ={{display:"block", margin:"auto", padding:"5px"}}>
+                    <NextSongCard nextConcert={nextConcertData} onClick={OpenNextConcertModal}/>
+                </div>
+                <div className="col-2"></div>
             </div>
             <div className="row">
                 <br />
@@ -259,7 +302,11 @@ function ConcertPage() {
                                 })
                             }
                         </div>
-                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData}></Modal>
+                        {isNextConcertModal ? 
+                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} concertData={nextConcertData} songData={null}/>:
+                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData} concertData={null}/>
+                        
+                    }
                     </div>
 
                 </div >
