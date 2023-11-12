@@ -230,9 +230,8 @@ function ConcertPage() {
             setNextConcertData(concertData);
             console.log("Got the new concert");
         }
-        if (nextConcertData.GroupLeaderName === "")
         getNextConcertData();
-    },[nextConcertData])
+    },[])
 
     return (
         <div className="container">
