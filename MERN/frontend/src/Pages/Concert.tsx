@@ -30,6 +30,15 @@ type ButtonState = {
     onClick: Function;
 }
 
+type NextConcert = {
+    groupLeaderName:string;
+    title: string;
+    tags: string;
+    description:string;
+    date:string;
+    time:string;
+}
+
 var Results: searchResult[] = [{
     id: 0,
     title: "Test",
@@ -72,18 +81,6 @@ function TagsString(tags: string): string {
 
 }
 
-class SongButton extends Component<ButtonState>
-{
-    nameOfClass: string = "btn "
-    handleClick = () => this.props.onClick(this.props.index)
-    render() {
-        return <button type="button" className=
-            {this.nameOfClass + (this.props.isActive ? 'current' : 'inactive')}
-            onClick={this.handleClick}>
-            {this.props.songName + " - - " + this.props.songTags}
-        </button>;;
-    }
-}
 
 class SongCard extends Component<ButtonState>
 {
@@ -91,7 +88,7 @@ class SongCard extends Component<ButtonState>
 
     render() {
         return (
-            <button onClick={this.handleClick}>
+            <button className="songButton" onClick={this.handleClick}>
                 <div className="searchCard">
                     <div className="card-body">
                         <h5 className="card-title" style={{ textAlign: "center", fontSize: "1rem" }}>
@@ -109,6 +106,13 @@ class SongCard extends Component<ButtonState>
     }
 }
 
+class NextConcertCard extends Component<NextConcert>
+{
+    render()
+    {
+        return(<div>   </div>);
+    }
+}
 //Functions
 function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
@@ -159,6 +163,9 @@ function ConcertPage() {
 
     return (
         <div className="container">
+            <div className ="row">
+
+            </div>
             <div className="row">
                 <br />
             </div>
