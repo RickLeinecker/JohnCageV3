@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "../Style/button.css"
 import { websocketURL } from "../Variables/websocketServer";
 import { Buffer } from "buffer";
+import { Row } from "react-bootstrap";
 
 const retrieveMessageContents = function (message: Buffer, headerEnd: number): ArrayBuffer {
   return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
@@ -54,11 +55,12 @@ const retrieveHeader = function (data: Buffer): CustomHeader {
 
 var ws: WebSocket | undefined = undefined;
 
-function LiveConcertCard() {
+function LiveConcertCard(nextConcert: { Maestro: string, Title: string, Tags: string[], Description: string, Date: string, Time: string }) {
 
   const [passcode, setPasscode] = useState<string>("");
+  const [status, setStatus] = useState<string>("Not connected.");
 
-  var audioCtx = new AudioContext();
+  var audioCtx: AudioContext;
   var nextStartTime = 0;
 
   const scheduleAudioChunk = (float32Samples: Float32Array) => {
@@ -82,6 +84,8 @@ function LiveConcertCard() {
   };
 
   const connect = function () {
+    audioCtx = new AudioContext();
+
     let connectionURL = websocketURL + "/concert/listener?name=Listener=passcode=" + passcode;
     console.log(connectionURL);
     ws = new WebSocket(connectionURL);
@@ -89,10 +93,13 @@ function LiveConcertCard() {
 
     ws.onopen = () => {
       console.log("Socket connection opened.");
+      setStatus("Listening.");
+
     }
 
-    ws.onclose = (event: any) => {
+    ws.onclose = () => {
       console.log("Socket connection closed.");
+      setStatus("Not connected.");
     }
 
     ws.onmessage = (event: any) => {
@@ -108,39 +115,60 @@ function LiveConcertCard() {
     }
   }
 
+  const close = function () { ws?.close(); }
+
   return (
     <div
       className="card"
-      style={{ width: "100%", height: "100%", backgroundColor: "#D9D9D9" }}
+      style={{ width: "50%", height: "100%", backgroundColor: "#D9D9D9", transform: "translateX(50%)" }}
     >
       <div className="card-body" style={{ left: "25px", right: "25px" }}>
         <div>
-          <h5 className="card-title song-name">
-            <button onClick={connect}>Connect to listener socket.</button>
-            <input
-              type='text'
-              name='passcode'
-              value={passcode}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setPasscode(e.target.value)}
-              style={{ padding: '10px', width: '100%', borderRadius: '1em' }}
-            ></input>
-          </h5>
-          <h6 className="card-subtitle mb-2 text-muted">
-
-          </h6>
-          <p className="text-muted">
+          <h1 className="card-title song-name">
+            <p>
+              {"Title: "}
+              {nextConcert.Title}
+            </p>
+          </h1>
+          <p>
+            {"Maestro: "}
+            {nextConcert.Title}
           </p>
-          <p className="text-muted">
-            {"\nTags: "}
-            {
-
-            }
+          <p>
+            {"Tags: "}
+            {nextConcert.Tags}
           </p>
-        </div>
-        <div>
           <p>
             {"Description: "}
+            {nextConcert.Description}
           </p>
+          <p>
+            {"Date and Time: "}
+            {nextConcert.Date + " " + nextConcert.Time + " UTC"}
+          </p>
+
+          <input
+            type='text'
+            name='passcode'
+            placeholder="Listener Passcode"
+            value={passcode}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setPasscode(e.target.value)}
+            style={{ padding: '10px', width: '100%', borderRadius: '1em' }}
+          ></input>
+          <text style={{ color: "red" }}>{status}</text>
+          <br></br>
+          <br></br>
+          <Row>
+            <button style={{
+              display: "block",
+              padding: '10px', width: '50%', borderRadius: '1em'
+            }} onClick={connect}>Connect to Listen Live</button>
+            <button style={{
+              display: "block",
+              padding: '10px', width: '50%', borderRadius: '1em'
+            }} onClick={close}>Stop</button>
+          </Row>
+
         </div>
       </div>
     </div>
