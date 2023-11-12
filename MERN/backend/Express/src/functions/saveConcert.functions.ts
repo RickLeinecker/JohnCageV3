@@ -7,27 +7,25 @@ const fs = require("fs");
 import { MUSIC_FOLDER } from "../../config/express.config";
 import { Op } from "sequelize";
 
-// NEEDS TO CATCH INVALID INPUTS BETTER.
 // Since this is reading arbitrary data from file, it needs more careful input validation.
-// Appears to work on first testing.
 const saveConcert = function () {
 
-    // Read from json
+    // Read from JSON saved to file.
     const path = TEMP_FOLDER + "data";
     const concertData: any = fs.existsSync(path) ? JSON.parse(fs.readFileSync(path).toString()) : "";
 
-    const performerNames: string[] = concertData.performerNames as string[] || [];
-    const groupId: number = concertData.groupId as number || -1;
-    const maestroName: string = concertData.maestroName as string || "John Cage";
-    const fileName: string = concertData.fileName as string || groupId + maestroName + "default" + Math.floor((Math.random() * 800000) + 100000).toString();
-
-    console_log("Concert data: ", concertData);
-    console_log("performerNames: ", performerNames);
-    console_log("groupId: ", groupId);
-    console_log("fileName: ", fileName);
-    console_log("maestroName: ", maestroName);
-
     if (concertData != "") {
+        const performerNames: string[] = concertData.performerNames as string[] || [];
+        const groupId: number = concertData.groupId as number || -1;
+        const maestroName: string = concertData.maestroName as string || "John Cage";
+        const fileName: string = concertData.fileName as string || groupId + maestroName + "default" + Math.floor((Math.random() * 800000) + 100000).toString();
+
+        console_log("Concert data: ", concertData);
+        console_log("performerNames: ", performerNames);
+        console_log("groupId: ", groupId);
+        console_log("fileName: ", fileName);
+        console_log("maestroName: ", maestroName);
+
         console_log("Starting save concert..");
 
         // // Convert raw audio file wav. 
