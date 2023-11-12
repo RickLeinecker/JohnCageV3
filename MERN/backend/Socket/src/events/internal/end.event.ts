@@ -62,7 +62,7 @@ const endConcert = function (currentConcert: Concert): void {
 
         try {
             // Save finished file to indicate to the Express server that recording has finished.
-            fs.writeFileSync("../temp/finished", (e: any) => { if (e) { console_log(e); } });
+            fs.writeFileSync("../temp/finished", "finished", (e: any) => { if (e) { console_log(e); } });
         }
         catch (e) { console_log(e); }
 
