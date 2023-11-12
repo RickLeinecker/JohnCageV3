@@ -59,7 +59,7 @@ class expressServer {
     console_log("Saving at " + now.toString());
 
     if (fs.existsSync("../temp/finished")) {
-      fs.unlink("../temp/finished");
+      fs.unlinkSync("../temp/finished");
       this.cleanup();
     }
 
