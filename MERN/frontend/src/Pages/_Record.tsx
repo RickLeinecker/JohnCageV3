@@ -1,3 +1,18 @@
+// USED FOR TESTING ONLY
+// This file records and sends webm audio chunks.
+// It is not complete or foolproof, but it works when paired with the Listen page.
+// It may be useful to look at when implementing a web frontend performer experience.
+// Currently the concert performer experience is limited to the mobile frontend.
+// The specific object used probably will not be useful. 
+// They were abandoned because of limited codec support, no raw audio support, or better solutions elsewhere.
+
+
+export { }
+
+
+
+/*
+
 import { useEffect, useRef } from 'react';
 import { Card, Button } from "react-bootstrap";
 import io from 'socket.io-client';
@@ -79,3 +94,5 @@ function Record() {
 }
 
 export default Record;
+
+*/

@@ -2,8 +2,6 @@ import { Component, useState, useEffect } from "react";
 import { createRoot } from 'react-dom/client';
 import NavBar from './Components/NavBar';
 import reportWebVitals from './reportWebVitals';
-import ListenPage from "./Pages/_Listen";
-import RecordPage from "./Pages/_Record";
 import ConcertPage from "./Pages/Concert";
 import HomePage from "./Pages/Home";
 import LoginPage from "./Pages/Login";
@@ -65,8 +63,6 @@ const Compiled = () => {
               <Route path="/" element={<HomePage />} />
               <Route path="/Home" element={<HomePage />} />
               <Route path="/Concerts" element={<ConcertPage />} />
-              <Route path="/Record" element={<RecordPage />} />
-              <Route path="/Listen" element={<ListenPage />} />
               <Route path="/Login" element={<LoginPage setUserName={LoggingIn} />} />
               <Route path="/About" element={<AboutPage />} />
               <Route path="/Register" element={<RegisterPage setUserName={LoggingIn} />} />
