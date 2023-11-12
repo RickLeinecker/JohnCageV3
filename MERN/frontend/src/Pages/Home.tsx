@@ -10,6 +10,7 @@ import schedule from "../API/scheduleAPI";
 import download from "downloadjs";
 import downloadConcert from "../API/downloadConcertAPI";
 import LiveConcertCard from "../Components/LiveConcertCard";
+import getNextConcert from "../API/getNextConcertAPI";
 
 
 //Functions
@@ -17,27 +18,9 @@ function buildPath(route: String) {
     return 'http://localhost:5000/' + route;
 }
 
+console.log(getNextConcert());
+
 function HomePage() {
-
-    // // Basic API test: If the page does not display hellow world as response text, API prob unconnected.
-    // useEffect(() => {
-    //     const helloWorld = async function () {
-    //         try {
-    //             const response = await fetch(buildPath(""), { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-    //             setResText("API Response Text: " + await response.text());
-    //         }
-    //         catch (e) {
-    //             if (e instanceof Error) {
-    //                 alert(e.toString());
-    //             }
-    //             return;
-    //         }
-    //     };
-
-    //     helloWorld();
-    // }, []);
-
-
 
     useEffect(() => {
 
