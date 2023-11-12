@@ -12,10 +12,12 @@ import Modal from "../Components/Modal";
 // API functions
 import getMetadata from "../API/getMetadataAPI";
 import searchSongs from "../API/searchSongsAPI";
+import getNextConcert from "../API/getNextConcertAPI";
 
 // Types
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
+import nextConcertData from "../Types/nextConcertData";
 
 // Just there
 import React from "react";
@@ -28,15 +30,6 @@ type ButtonState = {
     index: number;
     isActive: boolean;
     onClick: Function;
-}
-
-type NextConcert = {
-    groupLeaderName:string;
-    title: string;
-    tags: string;
-    description:string;
-    date:string;
-    time:string;
 }
 
 var Results: searchResult[] = [{
@@ -64,6 +57,20 @@ var Results: searchResult[] = [{
     maestro: "Kyle"
 }
 ];
+
+var testNextConcert:nextConcertData = {
+    GroupLeaderName: "Kyle the Crocodyle",
+    Title: "Atlas",
+    Tags: [""],
+    Description: "Skibididi",
+    Date: "01-01-1999",
+    Time: "03:04:00",
+};
+
+type nextConcertModalData = {
+    nextConcert:nextConcertData,
+    onClick:Function
+}
 
 function TagsString(tags: string): string {
 
@@ -106,11 +113,35 @@ class SongCard extends Component<ButtonState>
     }
 }
 
-class NextConcertCard extends Component<NextConcert>
+function NextSongCard(nextConcert:nextConcertModalData)
 {
-    render()
+    if (nextConcert.nextConcert.GroupLeaderName === "")
     {
-        return(<div>   </div>);
+        return(
+            <div>
+
+            </div>
+        )
+    }
+    else
+    {
+        return(
+            <button className="songButton" onClick={nextConcert.onClick(true)}>
+                <div className="searchCard">
+                    <div className="card-body">
+                        <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
+                            {nextConcert.nextConcert.Title}
+                        </h3>
+                        <br />
+                        <h5 className="card-text">{nextConcert.nextConcert.GroupLeaderName}</h5>
+                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                            
+                        </p>
+                    </div>
+                    <br />
+                </div>
+            </button>
+        )
     }
 }
 //Functions
@@ -121,6 +152,7 @@ function ConcertPage() {
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: "", maestro: "", performers: [""] });
     const [page, setPage] = useState<number>(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [nextConcertData, setNextConcertData] = useState<nextConcertData>(testNextConcert);
 
     // Pagination
     const nextPage = function () {
@@ -161,10 +193,18 @@ function ConcertPage() {
         }
     }, [searchList, activeSelection]);
 
+    useEffect(() => {
+        const getNextConcertData = async function()
+        {
+            let concertData:nextConcertData = await getNextConcert();
+            setNextConcertData(concertData);
+        }
+    },[nextConcertData])
+
     return (
         <div className="container">
             <div className ="row">
-
+            <NextSongCard nextConcert={nextConcertData} onClick={setIsOpen}/>
             </div>
             <div className="row">
                 <br />
