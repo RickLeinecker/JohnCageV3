@@ -2,23 +2,13 @@ import "../Style/App.css";
 import "../Style/button.css"
 import "../Style/style.css"
 import JohnCage from "../Images/JohnCage.png"
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useInView } from "react-intersection-observer";
-import { render } from "@testing-library/react";
-import React from "react";
-import schedule from "../API/scheduleAPI";
-import download from "downloadjs";
-import downloadConcert from "../API/downloadConcertAPI";
-import LiveConcertCard from "../Components/LiveConcertCard";
-import getNextConcert from "../API/getNextConcertAPI";
+import { useEffect } from "react";
 
 
 //Functions
 function buildPath(route: String) {
     return 'http://localhost:5000/' + route;
 }
-
-console.log(getNextConcert());
 
 function HomePage() {
 
@@ -146,17 +136,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-
-/*
-       <button onClick={() => schedule({
-                        title: "Example Input",
-                        tags: ["Example Tags", "Example Tag"],
-                        description: "Example Description",
-                        date: "2023-10-29",
-                        time: "20:00:00",
-                        identifier: "Try",
-                        password: "1111"
-                    })}>TEST</button>
-*/
-

@@ -38,6 +38,12 @@ const beginConcert = function (currentConcert: Concert): void {
     else {
         setTimeout(() => endConcert(currentConcert), msUntilNextSlot - minutesToMilliseconds(1));
     }
+
+    try {
+        // Make sure a finished file is not present from a previous concert.
+        if (fs.existsSync("../temp/finished")) { fs.unlink("../temp/finished"); }
+    }
+    catch (e) { console_log(e); }
 }
 
 export default beginConcert;

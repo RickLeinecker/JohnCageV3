@@ -90,7 +90,7 @@ const LoginPage = ({ setUserName }: any) => {
             <div className='login-container'>
                 <div className='login-header'>
                     <h1 id='login-header-title'>John Cage Tribute</h1>
-                    <h3>Sign in to get started</h3>
+                    <h3>Sign In</h3>
                     <hr />
                 </div>
 

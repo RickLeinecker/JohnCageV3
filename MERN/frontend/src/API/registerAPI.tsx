@@ -1,8 +1,8 @@
 import { buildPath } from "../Variables/expressServer";
 
-const register = async function name(screenName: string, userName: string, email: string, password: string, phoneNum: string, registerFunction: Function) {
+const register = async function name(userName: string, email: string, password: string, registerFunction: Function) {
     try {
-        const JSONObj = JSON.stringify({ "Name": screenName, "UserName": userName, "Password": password, "Email": email, "Phone": phoneNum });
+        const JSONObj = JSON.stringify({ "UserName": userName, "Password": password, "Email": email });
         console.log("Successfully created a JSON of new account: " + JSONObj);
         const URL = buildPath("/users/register");
         console.log("Fetch request URL:", URL);
