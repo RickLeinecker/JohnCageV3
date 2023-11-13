@@ -9,6 +9,7 @@ import scheduleArgs from '../Types/scheduleArgs';
 
 const CalendarPage: React.FC = () => {
     const testTimes = ['02:00 AM', '05:40 PM', '08:20 AM', '07:20 PM', '05:00 PM', '05:20 PM',]//delete later but for testing purposes of how select works
+    const [scheduleResponse, setScheduleResponse] = useState(undefined);
     let takenTimes: string[] = [];
 
     const initialValues = {
@@ -164,7 +165,7 @@ const CalendarPage: React.FC = () => {
         return triggeredError;
     }
 
-    const useSelectedTime = () => {
+    const useSelectedTime = async () => {
         console.log('Selected Time' + selectedTime);
         event.eventTime = selectedTime;
         setMaestroID(maestroID + 1);
@@ -194,7 +195,7 @@ const CalendarPage: React.FC = () => {
             scheduleData.tags = tagSplitter(event.eventTags);
             console.log("Tags list is " + scheduleData.tags);
             scheduleData.setterFunc = ErrorSetter;
-            schedule(scheduleData);
+            setScheduleResponse(await schedule(scheduleData));
         }
     }
 
@@ -269,6 +270,7 @@ const CalendarPage: React.FC = () => {
                             <button onClick={useSelectedTime} className='form-btn'>Book Appointment</button>
                         </div>
                     </div>
+                    <div><pre>{JSON.stringify(scheduleResponse, null, 2)}</pre></div>
                 </div>
             </div>
         </div>
