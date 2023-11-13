@@ -3,6 +3,7 @@ import "../Style/button.css"
 import { websocketURL } from "../Variables/websocketServer";
 import { Buffer } from "buffer";
 import { Row } from "react-bootstrap";
+import validateListener from "../API/validateListenerAPI";
 
 const retrieveMessageContents = function (message: Buffer, headerEnd: number): ArrayBuffer {
   return message.buffer.slice(message.byteOffset + headerEnd + 1, message.byteOffset + message.byteLength);
@@ -83,36 +84,40 @@ function LiveConcertCard(nextConcert: { Maestro: string, Title: string, Tags: st
     }
   };
 
-  const connect = function () {
-    audioCtx = new AudioContext();
+  const connect = async function () {
+    if (!(await validateListener(passcode))) { return; }
+    else {
+      audioCtx = new AudioContext();
 
-    let connectionURL = websocketURL + "/concert/listener?name=Listener=passcode=" + passcode;
-    console.log(connectionURL);
-    ws = new WebSocket(connectionURL);
-    ws.binaryType = "arraybuffer"; // VERY IMPORTANT
+      let connectionURL = websocketURL + "/concert/listener?name=Listener=passcode=" + passcode;
+      console.log(connectionURL);
+      ws = new WebSocket(connectionURL);
+      ws.binaryType = "arraybuffer"; // VERY IMPORTANT
 
-    ws.onopen = () => {
-      console.log("Socket connection opened.");
-      setStatus("Listening.");
+      ws.onopen = () => {
+        console.log("Socket connection opened.");
+        setStatus("Listening.");
 
-    }
+      }
 
-    ws.onclose = () => {
-      console.log("Socket connection closed.");
-      setStatus("Not connected.");
-    }
+      ws.onclose = () => {
+        console.log("Socket connection closed.");
+        setStatus("Not connected.");
+      }
 
-    ws.onmessage = (event: any) => {
-      let message: Buffer = Buffer.from(event.data as Buffer);
-      let headerData: CustomHeader = retrieveHeader(message);
+      ws.onmessage = (event: any) => {
+        let message: Buffer = Buffer.from(event.data as Buffer);
+        let headerData: CustomHeader = retrieveHeader(message);
 
-      let headerEnd: number = headerData.headerEnd;
-      let header: string = headerData.header;
+        let headerEnd: number = headerData.headerEnd;
+        let header: string = headerData.header;
 
-      if (header == "") {
-        scheduleAudioChunk(PCM16ArrayBuffertoFloat32Samples(retrieveMessageContents(message, headerEnd)));
+        if (header == "") {
+          scheduleAudioChunk(PCM16ArrayBuffertoFloat32Samples(retrieveMessageContents(message, headerEnd)));
+        }
       }
     }
+
   }
 
   const close = function () { ws?.close(); }

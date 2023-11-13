@@ -53,7 +53,7 @@ const schedule = async function (scheduleArgs: scheduleArgs | undefined) {
         let schedule = sd.schedule;
         console.log(group, schedule);
 
-        return;
+        return schedule;
     }
     catch (e) {
         if (e instanceof Error) { console.error(e.toString()); }
