@@ -113,8 +113,51 @@ class SongCard extends Component<ButtonState>
     }
 }
 
+function monthString(mon: string) {
+    return new Date(Date.parse(mon + " 1, 2012")).getMonth() + 1
+}
+
+function ConvertTimeStringtoLocal(date:string, time:string):string[]
+{
+    let finalStringTime:string[] = [];
+
+    date = date.replace(/-/gi,"/");
+
+    let convertedTime = new Date(date+" "+time+" UTC").toString().split(" ");
+
+    let dateString = convertedTime[3]+"-"+monthString(convertedTime[1])+"-"+convertedTime[2];
+    let timeString = convertedTime[4].split(":");
+
+    let finalTime = "";
+
+    let hour = parseInt(timeString[0],10);
+
+    if (hour > 12)
+    {
+        timeString[0] = (hour - 12).toString();
+    }
+
+    if (hour >= 12 && hour != 24)
+    {
+        timeString[2] = "PM"
+    }
+    else
+    {
+        timeString[2] = "AM"
+    }
+
+    console.log("Convert "+ convertedTime.toString());
+
+    finalStringTime.push(dateString);
+    finalStringTime.push(timeString[0]+":"+timeString[1]+" "+timeString[2]);
+
+    return finalStringTime;
+}
+
 function NextSongCard(nextConcert:nextConcertModalData)
 {
+    let convertedTime:string[] = ConvertTimeStringtoLocal(nextConcert.nextConcert.Date, nextConcert.nextConcert.Time);
+
     if (nextConcert.nextConcert.GroupLeaderName === "")
     {
         return(
@@ -130,10 +173,10 @@ function NextSongCard(nextConcert:nextConcertModalData)
                     </p>
                     <br/>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Date: {nextConcert.nextConcert.Date}
+                        Date: {convertedTime[0]}
                     </p>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Time: {nextConcert.nextConcert.Time}
+                        Time: {convertedTime[1]}
                     </p>
                 </div>
                 <br />
@@ -154,10 +197,10 @@ function NextSongCard(nextConcert:nextConcertModalData)
                         Description: {nextConcert.nextConcert.Description}
                     </p>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Date: {nextConcert.nextConcert.Date}
+                        Date: {convertedTime[0]}
                     </p>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Time: {nextConcert.nextConcert.Time}
+                        Time: {convertedTime[1]}
                     </p>
                 </div>
                 <br />

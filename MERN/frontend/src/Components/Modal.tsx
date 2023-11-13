@@ -39,20 +39,11 @@ const MODAL: React.CSSProperties = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    
+    backgroundColor:"white",
     padding: "50px",
     zIndex: 1000
 }
 
-const MODAL2: React.CSSProperties = {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    
-    padding: "10px",
-    zIndex: 1000
-}
 
 
 function ModalNextConcert({isOpen,onClose,concertData}:NextConcertModal)
