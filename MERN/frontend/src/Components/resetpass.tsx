@@ -45,20 +45,45 @@ const ResetPass = () => {
       <div className="login-container">
         <div className="login-header">
           <h1>John Cage Tribute</h1>
-          <h2>Enter your email below to reset your password</h2>
+          <h3>
+            Enter your email below
+            <br />
+            to reset your password
+          </h3>
           <hr />
         </div>
 
-        <div id="login-input" className="input-group">
-          <label htmlFor="Email">Email</label>
+        <div className="input-group">
+          <label htmlFor="Email" style={{ fontSize: "calc(5px + 2vmin)" }}>
+            Email
+          </label>
           <input
             type="text"
             name="email"
             id="login-email"
             onChange={handleChange}
             placeholder="example@gmail.com"
+            style={{
+              display: "block",
+              padding: "10px",
+              width: "100%",
+              borderRadius: "1em",
+            }}
           />
-          <input type="button" value="Send" onClick={passwordReset} />
+          <div className="submit-btn">
+            <input
+              type="button"
+              value="Send"
+              onClick={passwordReset}
+              style={{
+                display: "block",
+                padding: "5px",
+                width: "40%",
+                borderRadius: "1em",
+                marginTop: "15px",
+              }}
+            />
+          </div>
         </div>
         <div>{successfullLogin && generateMessage()}</div>
       </div>
