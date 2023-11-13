@@ -1,4 +1,5 @@
 import { buildPath } from "../Variables/expressServer";
+import nextConcertData from "../Types/nextConcertData";
 
 const getNextConcert = async function () {
     try {
@@ -31,7 +32,7 @@ const getNextConcert = async function () {
         let nextConcertData = {
             GroupLeaderName: "",
             Title: "No future concert found.",
-            Tags: "",
+            Tags: [],
             Description: "Schedule your own today!",
             Date: "",
             Time: "",
