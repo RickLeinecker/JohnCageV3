@@ -156,7 +156,6 @@ function ConvertTimeStringtoLocal(date:string, time:string):string[]
 
 function NextSongCard(nextConcert:nextConcertModalData)
 {
-    let convertedTime:string[] = ConvertTimeStringtoLocal(nextConcert.nextConcert.Date, nextConcert.nextConcert.Time);
 
     if (nextConcert.nextConcert.GroupLeaderName === "")
     {
@@ -173,10 +172,10 @@ function NextSongCard(nextConcert:nextConcertModalData)
                     </p>
                     <br/>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Date: {convertedTime[0]}
+                        Date: {nextConcert.nextConcert.Date}
                     </p>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
-                        Time: {convertedTime[1]}
+                        Time: {nextConcert.nextConcert.Time}
                     </p>
                 </div>
                 <br />
@@ -185,6 +184,7 @@ function NextSongCard(nextConcert:nextConcertModalData)
     }
     else
     {
+        let convertedTime:string[] = ConvertTimeStringtoLocal(nextConcert.nextConcert.Date, nextConcert.nextConcert.Time);
         return(
             <button className="songButton" onClick={() => nextConcert.onClick(true)} style ={{width:"100%"}}>
                 <div className="searchCard" style ={{width:"100%"}}>
