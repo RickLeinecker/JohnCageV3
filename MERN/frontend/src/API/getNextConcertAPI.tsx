@@ -13,7 +13,7 @@ const getNextConcert = async function () {
         const tags = typeof concertData["Tags"] == "string" ? concertData["Tags"].split("`") : [];
 
         let nextConcertData = {
-            GroupLeaderName: concertData["GroupID"],
+            GroupLeaderName: concertData["GroupLeaderName"],
             Title: concertData["Title"],
             Tags: tags,
             Description: concertData["Description"],
