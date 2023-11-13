@@ -1,7 +1,7 @@
 import { buildPath } from "../Variables/expressServer";
 
 
-const ResetPassword = async function(emailAddress: string): Promise<void> {
+const ResetPassword = async function(emailAddress: string) {
     try {
         const URL = buildPath('/users/forgot-password');
         console.log("URL: " + URL);
@@ -9,7 +9,13 @@ const ResetPassword = async function(emailAddress: string): Promise<void> {
         console.log("JSONObj: " + JSONObj);
         const response = await fetch(URL, { method: 'POST', mode: "cors", headers: { 'Content-Type': 'application/json' }, body: JSONObj})
         const JSONText = JSON.parse(await response.text());
-        console.log("JSONText" + JSONText);
+        console.log("JSONText is" + JSONText);
+
+        if (response.status == 500)
+        {
+            console.log("Failure");
+        }
+
         return JSONText;
     }
     catch (e) {
@@ -20,6 +26,7 @@ const ResetPassword = async function(emailAddress: string): Promise<void> {
         else {
             console.error(e);
         }
+        return null;
     }
 };
 

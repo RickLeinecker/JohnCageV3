@@ -124,7 +124,7 @@ function NextSongCard(nextConcert:nextConcertModalData)
                         {nextConcert.nextConcert.Title}
                     </h3>
                     <br />
-                    <h5 className="card-text">Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <h5 className="card-text" style={{textAlign:"center"}}>Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
                         Description: {nextConcert.nextConcert.Description}
                     </p>
@@ -149,7 +149,7 @@ function NextSongCard(nextConcert:nextConcertModalData)
                     <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
                         {nextConcert.nextConcert.Title}
                     </h3>
-                    <h5 className="card-text">Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <h5 className="card-text" style={{textAlign:"center"}}>Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
                     <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
                         Description: {nextConcert.nextConcert.Description}
                     </p>

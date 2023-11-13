@@ -12,14 +12,20 @@ const ResetPass = () => {
     console.log("email: " + email);
   };
 
-  const passwordReset = () => {
-    const APIresponse = ResetPassword(email);
+  const passwordReset = async function passReset()
+  {
+    const APIresponse = await ResetPassword(email);
 
-    if (APIresponse.success === true) {
-      setsuccessfullLogin(true);
-    } else {
-      setsuccessfullLogin(false);
+    if (APIresponse)
+    {
+      if (APIresponse.success === true) {
+        setsuccessfullLogin(true);
+      } else {
+        setsuccessfullLogin(false);
+      }
     }
+
+    
   };
 
   function generateMessage() {
