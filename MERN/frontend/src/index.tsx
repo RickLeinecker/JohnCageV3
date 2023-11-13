@@ -10,6 +10,7 @@ import RegisterPage from "./Pages/Register";
 import CalendarPage from './Pages/Calendar';
 import SocketTest from "./Pages/SocketTest"
 import LiveConcertCard from "./Components/LiveConcertCard";
+import ResetPass from "./Components/resetpass";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './Style/index.css';
 
@@ -69,6 +70,7 @@ const Compiled = () => {
               <Route path="/Socket" element={<SocketTest />} />
               <Route path="/Schedule" element={<CalendarPage />} />
               <Route path="/Live" element={<LiveConcertCard Title="asfd" Maestro="asf " Tags={['asf', 'as']} Description="adsf" Date="asf" Time="af" />} />
+              <Route path="/resetPass" element={<ResetPass/>} />
             </Routes>
           </div>
           <div className="col-2"></div>

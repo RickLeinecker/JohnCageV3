@@ -12,10 +12,12 @@ import Modal from "../Components/Modal";
 // API functions
 import getMetadata from "../API/getMetadataAPI";
 import searchSongs from "../API/searchSongsAPI";
+import getNextConcert from "../API/getNextConcertAPI";
 
 // Types
 import concertData from "../Types/concertData";
 import searchResult from "../Types/searchResult";
+import nextConcertData from "../Types/nextConcertData";
 
 // Just there
 import React from "react";
@@ -56,33 +58,36 @@ var Results: searchResult[] = [{
 }
 ];
 
+var testNextConcert:nextConcertData = {
+    GroupLeaderName: "",
+    Title: "Atlas",
+    Tags: [""],
+    Description: "Skibididi",
+    Date: "01-01-1999",
+    Time: "03:04:00",
+};
+
+type nextConcertModalData = {
+    nextConcert:nextConcertData,
+    onClick:Function
+}
+
 function TagsString(tags: string): string {
-    return tags;
 
     if (tags.length < 1)
-        return ""
-    let tagString: string = tags[0];
-
-    for (let i = 1; i < tags.length; i++) {
-        tagString += ", " + tags[i];
+        return "";
+    let tagsSplit:string[] = tags.split("`");
+    let tagString:string = tagsSplit[0];
+    for(let i = 1; i < tagsSplit.length; i++)
+    {
+        tagString += ","+tagsSplit[i];
     }
+
 
     return tagString;
 
 }
 
-class SongButton extends Component<ButtonState>
-{
-    nameOfClass: string = "btn "
-    handleClick = () => this.props.onClick(this.props.index)
-    render() {
-        return <button type="button" className=
-            {this.nameOfClass + (this.props.isActive ? 'current' : 'inactive')}
-            onClick={this.handleClick}>
-            {this.props.songName + " - - " + this.props.songTags}
-        </button>;;
-    }
-}
 
 class SongCard extends Component<ButtonState>
 {
@@ -90,24 +95,120 @@ class SongCard extends Component<ButtonState>
 
     render() {
         return (
-            <a onClick={this.handleClick}>
+            <button className="songButton" onClick={this.handleClick}>
                 <div className="searchCard">
                     <div className="card-body">
                         <h5 className="card-title" style={{ textAlign: "center", fontSize: "1rem" }}>
                             {this.props.songName}
                         </h5>
                         <br />
-                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem" }}>
+                        <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
                             {TagsString(this.props.songTags)}
                         </p>
                     </div>
                     <br />
                 </div>
-            </a>
+            </button>
         )
     }
 }
 
+function monthString(mon: string) {
+    return new Date(Date.parse(mon + " 1, 2012")).getMonth() + 1
+}
+
+function ConvertTimeStringtoLocal(date:string, time:string):string[]
+{
+    let finalStringTime:string[] = [];
+
+    date = date.replace(/-/gi,"/");
+
+    let convertedTime = new Date(date+" "+time+" UTC").toString().split(" ");
+
+    let dateString = convertedTime[3]+"-"+monthString(convertedTime[1])+"-"+convertedTime[2];
+    let timeString = convertedTime[4].split(":");
+
+    let finalTime = "";
+
+    let hour = parseInt(timeString[0],10);
+
+    if (hour > 12)
+    {
+        timeString[0] = (hour - 12).toString();
+    }
+
+    if (hour >= 12 && hour != 24)
+    {
+        timeString[2] = "PM"
+    }
+    else
+    {
+        timeString[2] = "AM"
+    }
+
+    console.log("Convert "+ convertedTime.toString());
+
+    finalStringTime.push(dateString);
+    finalStringTime.push(timeString[0]+":"+timeString[1]+" "+timeString[2]);
+
+    return finalStringTime;
+}
+
+function NextSongCard(nextConcert:nextConcertModalData)
+{
+    let convertedTime:string[] = ConvertTimeStringtoLocal(nextConcert.nextConcert.Date, nextConcert.nextConcert.Time);
+
+    if (nextConcert.nextConcert.GroupLeaderName === "")
+    {
+        return(
+            <div className="searchCard" style ={{width:"100%"}}>
+                <div className="card-body">
+                    <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
+                        {nextConcert.nextConcert.Title}
+                    </h3>
+                    <br />
+                    <h5 className="card-text" style={{textAlign:"center"}}>Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Description: {nextConcert.nextConcert.Description}
+                    </p>
+                    <br/>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Date: {convertedTime[0]}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Time: {convertedTime[1]}
+                    </p>
+                </div>
+                <br />
+            </div>
+        )
+    }
+    else
+    {
+        return(
+            <button className="songButton" onClick={() => nextConcert.onClick(true)} style ={{width:"100%"}}>
+                <div className="searchCard" style ={{width:"100%"}}>
+                <div className="card-body">
+                    <h3 className="card-title" style={{ textAlign: "center", fontSize: "2rem" }}>
+                        {nextConcert.nextConcert.Title}
+                    </h3>
+                    <h5 className="card-text" style={{textAlign:"center"}}>Group Leader: {nextConcert.nextConcert.GroupLeaderName}</h5>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Description: {nextConcert.nextConcert.Description}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Date: {convertedTime[0]}
+                    </p>
+                    <p className="card-text" style={{ textAlign: "center", fontSize: "0.75rem", overflowWrap:"break-word" }}>
+                        Time: {convertedTime[1]}
+                    </p>
+                </div>
+                <br />
+            </div>
+            </button>
+        )
+    }
+}
 //Functions
 function ConcertPage() {
     const [searchText, setSearchText] = useState<string>('');
@@ -116,6 +217,8 @@ function ConcertPage() {
     const [metaData, setMetaData] = useState<concertData>({ id: -1, title: "", date: "", description: "", tags: "", maestro: "", performers: [""] });
     const [page, setPage] = useState<number>(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [nextConcertData, setNextConcertData] = useState<nextConcertData>(testNextConcert);
+    const [isNextConcertModal,setIsNextConcertModal] = useState(false);
 
     // Pagination
     const nextPage = function () {
@@ -132,6 +235,13 @@ function ConcertPage() {
     function onClickCompound(index: number, open: boolean) {
         setActiveSelection(index);
         setIsOpen(open);
+        setIsNextConcertModal(false);
+    }
+
+    function OpenNextConcertModal(open:boolean)
+    {
+        setIsOpen(open)
+        setIsNextConcertModal(true);
     }
 
     // Search Text useEffect hook
@@ -156,8 +266,31 @@ function ConcertPage() {
         }
     }, [searchList, activeSelection]);
 
+    useEffect(() => {
+        const getNextConcertData = async function()
+        {
+            let concertData:nextConcertData = await getNextConcert();
+            setNextConcertData(concertData);
+            console.log("Got the new concert");
+        }
+        getNextConcertData();
+    },[])
+
     return (
         <div className="container">
+            <div className="row">
+            </div>
+            <br/>
+            <div className="row">
+                <h3>Up Next:</h3>
+            </div>
+            <div className ="row">
+                <div className="col-2"></div>
+                <div className="col-8" style ={{display:"block", margin:"auto", padding:"5px"}}>
+                    <NextSongCard nextConcert={nextConcertData} onClick={OpenNextConcertModal}/>
+                </div>
+                <div className="col-2"></div>
+            </div>
             <div className="row">
                 <br />
             </div>
@@ -172,32 +305,32 @@ function ConcertPage() {
                 <br />
             </div>
             <div className="row">
+                <div className="col-4">
+                    <Button onClick={prevPage}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+                        </svg>
+                    </Button>
+                </div>
+                <div className="col-4" style={{ textAlign: "center" }}>
+                    <p>Page: {page + 1}</p>
+                </div>
+                <div className="col-4" style={{ textAlign: "right" }}>
+                    <Button onClick={nextPage}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z" />
+                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </Button>
+                </div>
+                <br />
+                <br />
+                </div>
+            <div className="row">
                 <div className="col">
 
                     <div className="d-grid" role="group" aria-label="Toolbar with button groups">
-                        <div className="row">
-                            <div className="col">
-                                <Button onClick={prevPage}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-left" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-                                    </svg>
-                                </Button>
-                            </div>
-                            <div className="col" style={{ textAlign: "center" }}>
-                                <p>Page: {page + 1}</p>
-                            </div>
-                            <div className="col" style={{ textAlign: "right" }}>
-                                <Button onClick={nextPage}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z" />
-                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z" />
-                                    </svg>
-                                </Button>
-                            </div>
-                            <br />
-                            <br />
-                        </div>
                         <div className="row">
                             {
                                 searchList.map((key, i) => {
@@ -211,7 +344,11 @@ function ConcertPage() {
                                 })
                             }
                         </div>
-                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData}></Modal>
+                        {isNextConcertModal ? 
+                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} concertData={nextConcertData} songData={null}/>:
+                        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} songData={metaData} concertData={null}/>
+                        
+                    }
                     </div>
 
                 </div >

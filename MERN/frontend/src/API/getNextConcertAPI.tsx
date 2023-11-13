@@ -1,6 +1,8 @@
 import { buildPath } from "../Variables/expressServer";
+import nextConcertData from "../Types/nextConcertData";
 
 const getNextConcert = async function () {
+    let nextConcertData:nextConcertData;
     try {
         // Get the scheduled concert closest to the present.
         const URL = buildPath('/schedules/getNextConcert');
@@ -12,7 +14,7 @@ const getNextConcert = async function () {
 
         const tags = typeof concertData["Tags"] == "string" ? concertData["Tags"].split("`") : [];
 
-        let nextConcertData = {
+        nextConcertData= {
             GroupLeaderName: concertData["GroupID"],
             Title: concertData["Title"],
             Tags: tags,
@@ -28,10 +30,10 @@ const getNextConcert = async function () {
         if (e instanceof Error) { console.error(e.toString()); }
         else { console.error(e); }
 
-        let nextConcertData = {
+        nextConcertData = {
             GroupLeaderName: "",
             Title: "No future concert found.",
-            Tags: "",
+            Tags: [],
             Description: "Schedule your own today!",
             Date: "",
             Time: "",

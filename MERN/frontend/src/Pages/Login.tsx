@@ -113,7 +113,7 @@ const LoginPage = ({ setUserName }: any) => {
                                 <label htmlFor='Password' style={{ marginRight: '120px', fontSize: 'calc(5px + 2vmin)' }}>Password</label>
                                 <Link
                                     className='forgot-password'
-                                    to='/resetpass.tsx'>
+                                    to='/resetPass'>
                                     Forgot Password?
                                 </Link>
                                 <input
